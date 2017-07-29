@@ -108,7 +108,7 @@ class AjaxHandlers extends Singleton
 			
 			foreach( scandir( $basedir ) as $file ) 
 			{
-				if ( in_array( $file, array( '.', '..' ) ) ) {
+				if ( in_array( $file, array( '.', '..', '.git', '.svn' ) ) ) {
 					continue;
 				}
 				
@@ -131,15 +131,24 @@ class AjaxHandlers extends Singleton
 					$ext = array_pop( $parts );
 					$icon = 'fa fa-file-o';
 					$selectable = false;
+					$mode = null;
 					
 					if ( in_array( $ext, array( 'php', 'css', 'js', 'html', 'xml' ) ) ) {
 						$icon = 'fa fa-file-code-o';
 						$selectable = true;
+						switch( $ext ) {
+							case 'js'  : $mode = 'javascript'; break;
+							default    : $mode = $ext;
+						}
 					}
 					
 					if ( in_array( $ext, array( 'txt', 'md' ) ) ) {
 						$icon = 'fa fa-file-text-o';
 						$selectable = true;
+						switch( $ext ) {
+							case 'txt'  : $mode = 'text'; break;
+							case 'md'   : $mode = 'markdown'; break;
+						}
 					}
 					
 					if ( in_array( $ext, array( 'zip', 'tar', 'phar' ) ) ) {
@@ -164,9 +173,12 @@ class AjaxHandlers extends Singleton
 					
 					$nodes[] = array(
 						'type' => 'file',
+						'id' => md5( $basedir . '/' . $file ),
 						'icon' => $icon,
 						'selectable' => $selectable,
 						'text' => $file,
+						'mode' => $mode,
+						'path' => str_replace( WP_PLUGIN_DIR, '', $basedir . '/' . $file ),
 					);
 				}
 			}
@@ -177,4 +189,25 @@ class AjaxHandlers extends Singleton
 		wp_send_json( array( 'nodes' => $read_directory( $basedir ) ) );
 	}
 	
+	/**
+	 * Fetch the files contained within a plugin
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_get_file_content", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function getFileContent()
+	{
+		$file_path = str_replace( '../', '', $_REQUEST['path'] );
+		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		
+		if ( file_exists( $file ) and is_file( $file ) )
+		{
+			wp_send_json( array( 'file' => $file, 'content' => file_get_contents( $file ) ) );
+		}
+		else
+		{
+			wp_send_json( array( 'content' => '' ) );
+		}
+	}
 }

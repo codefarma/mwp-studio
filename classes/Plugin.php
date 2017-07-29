@@ -43,6 +43,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public $mainScript = 'assets/js/main.js';
 	
 	/**
+	 * Ace code editor
+	 * @Wordpress\Script
+	 */
+	public $aceEditor = 'assets/ace/src-min-noconflict/ace.js';
+	
+	/**
 	 * Bootflat JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 */
@@ -103,7 +109,11 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$this->useStyle( $this->bootstrapTreeviewCSS );
 		$this->useScript( $this->bootstrapTreeviewJS );
 		
+		// Font Awesome
 		$this->useStyle( $this->fontawesome );
+		
+		// Ace Editor
+		$this->useScript( $this->aceEditor );
 		
 		// Studio
 		$this->useStyle( $this->mainStyle );

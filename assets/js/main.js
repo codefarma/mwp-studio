@@ -57,8 +57,9 @@
 			this.viewModel = 
 			{
 				plugins: kb.collectionObservable( this.plugins ),
-				currentPlugin: ko.observable()
-			}
+				currentPlugin: ko.observable(),
+				openFiles: ko.observableArray(),
+			};
 			
 			// Load available plugins and make the first one active
 			this.loadPlugins().done( function() {
@@ -253,7 +254,7 @@
 		var attr1 = model1.get(attr).toLowerCase(); var attr2 = model2.get(attr).toLowerCase();
 		
 		return attr1 === attr2 ? 0 : ( [ attr1, attr2 ].sort()[0] === attr1 ? -1 : 1 );
-	}
+	};
 	
 	/**
 	 * [Model] File Tree Node
@@ -285,7 +286,7 @@
 	 * @var	string		type		File type (dir, file)
 	 */
 	var FileTreeNode = mwp.model.set( 'mwp-studio-filetree-node', CollectorModel.extend( CollectibleModel.prototype ).extend(
-	{
+	{		
 		/**
 		 * Initialize
 		 *
@@ -293,12 +294,77 @@
 		 */
 		initialize: function()
 		{
+			var self = this;
+			
+			/**
+			 * @var	bool		Is the file open for editing?
+			 */
+			this.open = ko.observable( false );
+			
+			/**
+			 * Collectible attributes
+			 */
 			if ( this.get('type') == 'dir' ) {
 				this.defineCollectibles([
 					{ attribute: 'nodes', options: { model: FileTreeNode, comparator: fileComparator } }
 				]);
 			}
-		}
+			
+			var fileViewModel = kb.viewModel( self );
+			
+			// add this file to the open files observable when open, and remove when not open
+			this.open.subscribe( function( status ) {
+				if ( status === true ) {
+					mainController.viewModel.openFiles.push( fileViewModel );
+				} else {
+					mainController.viewModel.openFiles.remove( fileViewModel );
+				}
+			});
+			
+			// open files when selected in the tree
+			this.on( 'nodeSelected', function( event, tree, node ) {
+				node.model.open( true );
+				setTimeout( function() {
+					//tree.unselectNode( node );
+				}, 500 );
+			});
+		},
+		
+		/**
+		 * Retrieve the file content from the backend
+		 *
+		 * @return	string
+		 */
+		getContent: function()
+		{
+			var self = this;
+			
+			return $.ajax({
+				method: 'post',
+				url: mainController.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_get_file_content',
+					path: self.get('path')
+				}
+			});			
+		},
+		
+		/**
+		 * On selected
+		 */
+		
+		/** 
+		 * Return this model and its collections as json
+		 *
+		 * @return	object
+		 */
+		toJSON: function() 
+		{
+			var json = FileTreeNode.__super__.toJSON.apply( this );
+			json.model = this;
+			
+			return json;
+		}	
 	}));
 	
 	/**
@@ -320,10 +386,21 @@
 			/**
 			 * @var	Tree
 			 */
-			this.fileTree = new FileTree;
+			this.fileTree = new FileTree();
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
 			this.set( 'filenodes', this.fileTree.filenodes );
 			
+		},
+		
+		/**
+		 * Switch to this plugin as the active studio plugin
+		 * 
+		 * @return	void
+		 */
+		switchToPlugin: function()
+		{
+			var i = this.collection.indexOf( this );
+			mainController.viewModel.currentPlugin( mainController.viewModel.plugins()[ i ] );
 		},
 		
 		/**
@@ -340,13 +417,13 @@
 		/**
 		 * Fetch the most recent file tree
 		 *
-		 * @return	void
+		 * @return	$.Deferred
 		 */
 		fetchFileTree: function()
 		{
 			var self = this;
 			
-			$.ajax({
+			return $.ajax({
 				method: 'post',
 				url: mainController.local.ajaxurl,
 				data: { 
@@ -360,8 +437,7 @@
 				}
 			});			
 		}
-	});
-	
+	});	
 
 	/**
 	 * Extend the knockout bindings
@@ -374,7 +450,40 @@
 			{
 				if ( $.fn.treeview != undefined ) {
 					var treenodes = ko.utils.unwrapObservable( valueAccessor() );				
-					$(element).treeview( { data: treenodes } );
+					var tree = $(element).treeview( { data: treenodes } );
+					tree.on( 'nodeChecked nodeCollapsed nodeDisabled nodeEnabled nodeExpanded nodeSelected nodeUnchecked nodeUnselected', function( event, node ) {
+						if ( node.model instanceof Backbone.Model ) {
+							node.model.trigger( event.type, event, tree, node );
+						}
+					});
+					
+				}
+			}
+		},
+		
+		aceEditor:
+		{
+			init: function( element, valueAccessor, allBindingsAccessor )
+			{
+				if ( typeof ace != 'undefined' ) {
+					var options = ko.utils.unwrapObservable( valueAccessor() );
+					var file = options.model;
+					
+					var editor = ace.edit(element);
+					
+					if ( file.get('mode') ) {
+						editor.getSession().setMode( 'ace/mode/' + file.get('mode') );
+					}
+					
+					file.getContent().done( function( data ) {
+						editor.setValue( data.content );
+						editor.gotoLine(1);
+					});
+					
+					// option to show a tab upon opening
+					if ( options.showtab ) {
+						$(options.showtab).tab('show');
+					}
 				}
 			}
 		}
