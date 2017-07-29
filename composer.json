@@ -1,0 +1,11 @@
+{
+    "name": "mwp/studio",
+    "description": "Wordpress Plugin Studio",
+    "type": "project",
+    "require": {},
+	"autoload": {
+		"psr-4": {
+		  "MWP\\Studio\\": "classes/"
+		}
+	}
+}
