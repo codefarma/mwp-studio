@@ -31,19 +31,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	  <div class="container-fluid">
 		<!-- Brand and toggle get grouped for better mobile display -->
 		<div class="navbar-header">
+		  <span class="navbar-brand">
+			<i class="fa fa-wordpress fa-lg"></i>
+			<h4 style="display:inline">MWP</h4>
+		  </span>
 		  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
 			<span class="sr-only">Toggle navigation</span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 			<span class="icon-bar"></span>
 		  </button>
-		  <div class="navbar-brand" data-bind="with: currentPlugin()"><span data-bind="text: name"></span></div>
 		</div>
 		<!-- Collect the nav links, forms, and other content for toggling -->
 		<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 		  <ul class="nav navbar-nav">
 			<li class="dropdown">
-			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Plugin <b class="caret"></b></a>
+			  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Studio <b class="caret"></b></a>
 			  <ul class="dropdown-menu" role="menu">
 				<li><a href="#">New Plugin</a></li>
 			    <li class="dropdown-submenu">
@@ -64,13 +67,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 			  </ul>
 			</li>
 		  </ul>
-		  <div class="navbar-text navbar-right"><h4 style="display:inline">MWP Studio</h4></div>
 		</div><!-- /.navbar-collapse -->
 	  </div><!-- /.container-fluid -->
 	</nav>
 	
 	<div class="row">
-		<div class="col-md-4">
+		<div class="col-md-3">
+			<ul class="breadcrumb" data-bind="with: currentPlugin()">
+				<li><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span>
+			</ul>
+			
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
 				<li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
@@ -93,12 +99,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</div>
 		</div>
 		<div class="col-md-8 ace-editors">
-			<ul class="nav nav-tabs" data-bind="foreach: openFiles" role="tablist">
-				<li role="presentation" class=""><a aria-controls="files" role="tab" data-bind="text: text, attr: { href: '#' + id(), id: 'id-' + id() }" data-toggle="tab"></a></li>
+			<ul class="breadcrumb" data-bind="foreach: activeFileBreadcrumbs">
+				<li><span data-bind="text: $data"></span></li>
 			</ul>
-			<div class="panel panel-default tabbed-panel" data-bind="foreach: openFiles">
+		
+			<ul class="nav nav-tabs" data-bind="foreach: openFiles" role="tablist">
+				<li role="presentation" class="">
+					<a aria-controls="files" role="tab" data-bind="attr: { href: '#' + id(), id: 'id-' + id() }, event: { 'shown.bs.tab': function(){ ko.dataFor(jQuery('#'+id())[0]).model().editor.focus(); } }" data-toggle="tab">
+						<i data-bind="attr: { class: icon }"></i>
+						<span>
+							<span data-bind="text: text"></span>
+							<span data-bind="visible: model().changed">*</span>
+						</span>
+						<span title="Close" class="btn btn-xxs btn-tab-xs" href="#" data-bind="click: function() { model().closeFile(); }"><i class="fa fa-close"></i></span>
+						<span title="Save" class="btn btn-xxs btn-tab-xs btn-success" href="#" data-bind="visible: model().changed, click: function() { model().saveFile(); }"><i class="fa fa-check"></i></span>
+					</a>
+				</li>
+			</ul>
+			<div class="panel panel-default tabbed-panel" style="min-height: 500px;" data-bind="foreach: openFiles">
 				<div data-bind="attr: { id: id() }" role="tabpanel" class="tab-pane">
-					<div class="tabbed-editor" data-bind="aceEditor: { model: model(), showtab: '#id-' + id() }" style="width: 100%; height: 500px;"></div>
+					<div style="min-height: 500px;" class="tabbed-editor" data-bind="aceEditor: { file: $data, options: { switchTo: function() { jQuery('#id-'+id()).tab('show'); } } }"></div>
 				</div>
 			</div>
 		</div>

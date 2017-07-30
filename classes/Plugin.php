@@ -91,6 +91,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public $bootstrapTreeviewJS = 'assets/js/bootstrap-treeview.min.js';
 	
 	/**
+	 * Bootstrap Context Menu JS
+	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 */
+	public $bootstrapContextmenuJS = 'assets/js/bootstrap-contextmenu.min.js';
+	
+	/**
 	 * Enqueue scripts and stylesheets
 	 * 
 	 * @Wordpress\Action( for="admin_enqueue_scripts" )
@@ -108,6 +114,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 		// Bootstrap Treeview
 		$this->useStyle( $this->bootstrapTreeviewCSS );
 		$this->useScript( $this->bootstrapTreeviewJS );
+		
+		// Bootstrap context menu
+		$this->useScript( $this->bootstrapContextmenuJS );
 		
 		// Font Awesome
 		$this->useStyle( $this->fontawesome );

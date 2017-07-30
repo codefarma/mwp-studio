@@ -62,6 +62,19 @@ class AjaxHandlers extends Singleton
 	}
 	
 	/**
+	 * Authorize access
+	 *
+	 * @return	void
+	 */
+	public function authorize()
+	{
+		if ( get_current_user_id() !== 1 )
+		{
+			exit('unauthorized');
+		}
+	}
+	
+	/**
 	 * Load available studio plugins
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_load_plugins", for={"users"} )
@@ -70,6 +83,8 @@ class AjaxHandlers extends Singleton
 	 */
 	public function loadStudioPlugins()
 	{
+		$this->authorize();
+		
 		$_plugins = get_plugins();
 		$plugins = array();
 		
@@ -96,6 +111,8 @@ class AjaxHandlers extends Singleton
 	 */
 	public function fetchFiletree()
 	{
+		$this->authorize();
+		
 		$basedir = WP_PLUGIN_DIR . '/' . basename( $_REQUEST['plugin'] );
 		
 		if ( ! is_dir( $basedir ) ) {
@@ -190,7 +207,7 @@ class AjaxHandlers extends Singleton
 	}
 	
 	/**
-	 * Fetch the files contained within a plugin
+	 * Get the content of a file 
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_get_file_content", for={"users"} )
 	 *
@@ -198,6 +215,8 @@ class AjaxHandlers extends Singleton
 	 */
 	public function getFileContent()
 	{
+		$this->authorize();
+		
 		$file_path = str_replace( '../', '', $_REQUEST['path'] );
 		$file = WP_PLUGIN_DIR . '/' . $file_path;
 		
@@ -210,4 +229,24 @@ class AjaxHandlers extends Singleton
 			wp_send_json( array( 'content' => '' ) );
 		}
 	}
+	
+	/**
+	 * Save the content of a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_save_file_content", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function saveFileContent()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['path'] );
+		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		
+		file_put_contents( $file, wp_unslash( $_REQUEST['content'] ) );
+
+		wp_send_json( array( 'success' => true ) );
+	}
+	
 }
