@@ -444,7 +444,7 @@
 				}).done( function() 
 				{
 					self.changed(false);
-				});;
+				});
 			}
 			
 			return $.Deferred();
@@ -557,7 +557,7 @@
 				addTemplate: 
 				{
 					name: 'Add Template',
-					iconClass: 'fa-plus',
+					iconClass: 'fa-code',
 					onClick: function( node ) {
 					
 					},
@@ -572,7 +572,7 @@
 				addCSS: 
 				{
 					name: 'Add Stylesheet',
-					iconClass: 'fa-plus',
+					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
 					
 					},
@@ -588,7 +588,7 @@
 				addJS: 
 				{
 					name: 'Add Javascript',
-					iconClass: 'fa-plus',
+					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
 					
 					},
@@ -596,8 +596,23 @@
 						var file = node.model;
 						return file.rootDir(0) == 'assets' && ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' );
 					}
-				}
+				},
 				
+				/**
+				 * Add new php class
+				 */
+				addClass: 
+				{
+					name: 'Add Class',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+					
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						return file.rootDir(0) == 'classes';
+					}
+				}
 			}
 		}
 	}));
@@ -702,6 +717,8 @@
 					var fileview = setup.file;
 					var file = fileview.model();
 					var editor = ace.edit(element);
+					
+					editor.setShowPrintMargin(false);
 					
 					if ( file.get('mode') ) {
 						editor.getSession().setMode( 'ace/mode/' + file.get('mode') );

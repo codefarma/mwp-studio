@@ -52,12 +52,22 @@
     border-radius: 6px 0 6px 6px;
 }
 
+/* Menus */
+
+.mwp-studio .dropdown-menu li i.fa {
+	min-width: 20px;
+}
+
 /* Tabs Panel */
 .mwp-studio .tabbed-panel {
     -webkit-border-radius: 0 0 4px 4px;
     -moz-border-radius: 0 0 4px 4px;
     border-radius: 0 0 4px 4px;
 	border-top: 0px;
+}
+
+.mwp-studio .files-tabpanel .list-group-item {
+	border: none;
 }
 
 /* Ace Editors */
@@ -79,4 +89,15 @@
 .mwp-studio .btn-tab-xs {
 	margin-left: 5px;
 	vertical-align: 1px;
+}
+
+.mwp-studio .btn-flex {
+	display: flex;
+	align-items: stretch;
+	align-content: stretch;
+}
+
+.mwp-studio .btn-flex .btn:first-child {
+    flex-grow: 1;
+    text-align: left;
 }

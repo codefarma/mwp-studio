@@ -73,35 +73,69 @@ if ( ! defined( 'ABSPATH' ) ) {
 	
 	<div class="row">
 		<div class="col-md-3">
-			<ul class="breadcrumb" data-bind="with: currentPlugin()">
-				<li><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span>
-			</ul>
+			<div class="breadcrumb" data-bind="with: currentPlugin()">
+				<div class="btn-group btn-flex">
+				  <button type="button" style="border-right: 0;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
+				  <ul class="dropdown-menu pull-left" data-bind="foreach: $root.plugins">
+					<li><a href="javascript:;" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
+				  </ul>
+				  <div class="btn-group">
+					  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="caret"></span>
+						<span class="sr-only">Toggle Dropdown</span>
+					  </button>
+					  <ul class="dropdown-menu pull-right">
+					    <li class="dropdown-header">Meta Information</li>
+						<li><a href="#"><i class="fa fa-info-circle"></i> Edit Plugin Info</a></li>
+						<li><a href="#"><i class="fa fa-database"></i> Edit Database Tables</a></li>
+						<li><a href="#"><i class="fa fa-sitemap"></i> Edit Dependencies</a></li>
+						<li class="divider" role="separator"></li>
+						<li class="dropdown-header">Resources</li>
+						<li><a href="#"><i class="fa fa-code"></i> Add PHP Class</a></li>
+						<li><a href="#"><i class="fa fa-code"></i> Add HTML Template</a></li>
+						<li><a href="#"><i class="fa fa-code"></i> Add Stylesheet</a></li>
+						<li><a href="#"><i class="fa fa-code"></i> Add Javascript</a></li>
+						<li class="divider" role="separator"></li>
+						<li><a href="#"><i class="fa fa-cogs"></i> Build Plugin</a></li>
+					  </ul>
+				  </div>
+				</div>
+			</div>
 			
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
 				<li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
 				<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Views/Templates</a></li>
 			</ul>
-			<div class="panel panel-default tabbed-panel">
-				<div class="panel-body">
-					<div class="tab-content">
-						<div id="files" role="tabpanel" class="tab-pane active">
-							<?php echo $this->getTemplateContent( 'views/components/filetree' ) ?>
-						</div>
-						<div id="classes" role="tabpanel" class="tab-pane">
-						
-						</div>
-						<div id="views" role="tabpanel" class="tab-pane">
-						
-						</div>
-					</div>
+			<div class="panel panel-default tabbed-panel" style="max-height: 500px; overflow-y: scroll;">
+				<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">
+					<?php echo $this->getTemplateContent( 'views/components/filetree' ) ?>
+				</div>
+				<div id="classes" role="tabpanel" class="tab-pane">
+				
+				</div>
+				<div id="views" role="tabpanel" class="tab-pane">
+				
 				</div>
 			</div>
 		</div>
-		<div class="col-md-8 ace-editors">
-			<ul class="breadcrumb" data-bind="foreach: activeFileBreadcrumbs">
-				<li><span data-bind="text: $data"></span></li>
-			</ul>
+		<div class="col-md-6 ace-editors">
+			
+			<div class="breadcrumb">
+				<div class="btn-group pull-right">
+				  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().changed }, disable: ( ! activeFile() ) || ( ! activeFile().model().changed() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
+				  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().changed() }" data-toggle="dropdown">
+					<span class="caret"></span>
+					<span class="sr-only">Toggle Dropdown</span>
+				  </button>
+				  <ul class="dropdown-menu" role="menu">
+					<li><a href="#">Save All</a></li>
+				  </ul>
+				</div>
+				<ul class="breadcrumb" style="margin-bottom: 0; padding: 5px 0;" data-bind="foreach: activeFileBreadcrumbs">
+					<li><span data-bind="text: $data"></span></li>
+				</ul>
+			</div>
 		
 			<ul class="nav nav-tabs" data-bind="foreach: openFiles" role="tablist">
 				<li role="presentation" class="">
@@ -122,6 +156,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</div>
 			</div>
 		</div>
+		
+		<div class="col-md-3 mwp-toolbox">
+			<div class="breadcrumb">
+				<h5>Toolbox</h5>
+			</div>
+		</div>
+		
 	</div>
 	
 </div>
