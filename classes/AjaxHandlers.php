@@ -85,18 +85,13 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$_plugins = get_plugins();
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		$studio = \MWP\Studio\Plugin::instance();
 		$plugins = array();
 		
-		foreach( $_plugins as $file => $data )
-		{
-			$slug = str_replace( "/" . basename( $file ), "", $file );
-			$_data = array( 'slug' => $slug );
-			foreach( $data as $key => $value ) {
-				$_data[strtolower($key)] = $value;
-			}
-			
-			$plugins[] = $_data;
+		foreach( get_plugins() as $file => $data )
+		{			
+			$plugins[] = $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $file );
 		}
 		
 		wp_send_json( array( 'plugins' => $plugins ) );
@@ -113,97 +108,13 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$basedir = WP_PLUGIN_DIR . '/' . basename( $_REQUEST['plugin'] );
+		$basedir = WP_PLUGIN_DIR . str_replace( '../', '', $_REQUEST['plugin'] );
 		
 		if ( ! is_dir( $basedir ) ) {
 			wp_send_json( array( 'success' => false ) );
 		}
 		
-		$read_directory = function( $basedir ) use ( &$read_directory )
-		{
-			$nodes = array();
-			
-			foreach( scandir( $basedir ) as $file ) 
-			{
-				if ( in_array( $file, array( '.', '..', '.git', '.svn' ) ) ) {
-					continue;
-				}
-				
-				if ( is_dir( $basedir . '/' . $file ) ) 
-				{
-					$nodes[] = array( 
-						'type' => 'dir',
-						'text' => $file,
-						'icon' => 'fa fa-folder',
-						'selectable' => false,
-						'state' => array(
-							'expanded' => false,
-						),
-						'nodes' => $read_directory( $basedir . '/' . $file )
-					);
-				}
-				else
-				{
-					$parts = explode( '.', $file );
-					$ext = array_pop( $parts );
-					$icon = 'fa fa-file-o';
-					$selectable = false;
-					$mode = null;
-					
-					if ( in_array( $ext, array( 'php', 'css', 'js', 'html', 'xml' ) ) ) {
-						$icon = 'fa fa-file-code-o';
-						$selectable = true;
-						switch( $ext ) {
-							case 'js'  : $mode = 'javascript'; break;
-							default    : $mode = $ext;
-						}
-					}
-					
-					if ( in_array( $ext, array( 'txt', 'md' ) ) ) {
-						$icon = 'fa fa-file-text-o';
-						$selectable = true;
-						switch( $ext ) {
-							case 'txt'  : $mode = 'text'; break;
-							case 'md'   : $mode = 'markdown'; break;
-						}
-					}
-					
-					if ( in_array( $ext, array( 'zip', 'tar', 'phar' ) ) ) {
-						$icon = 'fa fa-file-archive-o';
-					}
-					
-					if ( in_array( $ext, array( 'png', 'jpg', 'jpeg', 'bmp' ) ) ) {
-						$icon = 'fa fa-file-image-o';
-					}
-					
-					if ( in_array( $ext, array( 'pdf' ) ) ) {
-						$icon = 'fa fa-file-pdf-o';
-					}
-					
-					if ( in_array( $ext, array( 'mp4', 'mpeg', 'mpg', 'flv' ) ) ) {
-						$icon = 'fa fa-file-video-o';
-					}
-					
-					if ( in_array( $ext, array( 'mp3', 'wav' ) ) ) {
-						$icon = 'fa fa-file-audio-o';
-					}
-					
-					$nodes[] = array(
-						'type' => 'file',
-						'id' => md5( $basedir . '/' . $file ),
-						'icon' => $icon,
-						'selectable' => $selectable,
-						'text' => $file,
-						'mode' => $mode,
-						'path' => str_replace( WP_PLUGIN_DIR, '', $basedir . '/' . $file ),
-					);
-				}
-			}
-			
-			return $nodes;
-		};
-		
-		wp_send_json( array( 'nodes' => $read_directory( $basedir ) ) );
+		wp_send_json( $this->getPlugin()->getFileNodeInfo( $basedir ) );
 	}
 	
 	/**
@@ -247,6 +158,33 @@ class AjaxHandlers extends Singleton
 		file_put_contents( $file, wp_unslash( $_REQUEST['content'] ) );
 
 		wp_send_json( array( 'success' => true ) );
+	}
+
+	/**
+	 * Create a new php class
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_add_class", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createPHPClass()
+	{
+		$this->authorize();
+		
+		$framework = \Modern\Wordpress\Framework::instance();
+		$classname = wp_unslash( $_REQUEST['classname'] );
+		$plugin = wp_unslash( $_REQUEST['plugin'] );
+		
+		try 
+		{
+			$class_file = $framework->createClass( $plugin, $classname );
+			wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $class_file ) ) );
+		}
+		catch( \ErrorException $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
+		
 	}
 	
 }

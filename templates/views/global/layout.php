@@ -91,7 +91,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<li><a href="#"><i class="fa fa-sitemap"></i> Edit Dependencies</a></li>
 						<li class="divider" role="separator"></li>
 						<li class="dropdown-header">Resources</li>
-						<li><a href="#"><i class="fa fa-code"></i> Add PHP Class</a></li>
+						<li><a href="#" data-bind="click: function(){ $root.controller.addClassDialog(); }"><i class="fa fa-code"></i> Add PHP Class</a></li>
 						<li><a href="#"><i class="fa fa-code"></i> Add HTML Template</a></li>
 						<li><a href="#"><i class="fa fa-code"></i> Add Stylesheet</a></li>
 						<li><a href="#"><i class="fa fa-code"></i> Add Javascript</a></li>
@@ -105,7 +105,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<ul class="nav nav-tabs" role="tablist">
 				<li role="presentation" class="active"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
 				<li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
-				<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Views/Templates</a></li>
+				<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Templates</a></li>
 			</ul>
 			<div class="panel panel-default tabbed-panel" style="max-height: 500px; overflow-y: scroll;">
 				<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">
@@ -123,8 +123,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			
 			<div class="breadcrumb">
 				<div class="btn-group pull-right">
-				  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().changed }, disable: ( ! activeFile() ) || ( ! activeFile().model().changed() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
-				  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().changed() }" data-toggle="dropdown">
+				  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() ) || ( ! activeFile().model().edited() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
+				  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }" data-toggle="dropdown">
 					<span class="caret"></span>
 					<span class="sr-only">Toggle Dropdown</span>
 				  </button>
@@ -143,10 +143,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<i data-bind="attr: { class: icon }"></i>
 						<span>
 							<span data-bind="text: text"></span>
-							<span data-bind="visible: model().changed">*</span>
+							<span data-bind="visible: model().edited">*</span>
 						</span>
-						<span title="Close" class="btn btn-xxs btn-tab-xs" href="#" data-bind="click: function() { model().closeFile(); }"><i class="fa fa-close"></i></span>
-						<span title="Save" class="btn btn-xxs btn-tab-xs btn-success" href="#" data-bind="visible: model().changed, click: function() { model().saveFile(); }"><i class="fa fa-check"></i></span>
+						<span title="Close" class="btn btn-xxs btn-tab-xs" href="#" data-bind="click: function() { model().closeFile(); }, css: { 'btn-danger': model().edited }"><i class="fa fa-close"></i></span>
 					</a>
 				</li>
 			</ul>
@@ -166,3 +165,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 	
 </div>
+
+<?php echo $this->getTemplateContent( 'dialogs/class-form' ) ?>

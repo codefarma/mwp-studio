@@ -59,6 +59,7 @@
 			 */
 			this.viewModel = 
 			{
+				controller: this,
 				plugins: kb.collectionObservable( this.plugins ),
 				currentPlugin: ko.observable(),
 				openFiles: ko.observableArray(),
@@ -89,7 +90,7 @@
 						}
 						
 						if ( currentNode instanceof FileTree ) {
-							breadcrumbs.unshift( currentNode.plugin.get('slug') );
+							breadcrumbs.unshift( currentNode.plugin.get('basedir') );
 						}
 					}
 					
@@ -127,6 +128,121 @@
 					self.plugins.add( data.plugins );
 				}
 			});
+		},
+		
+		/**
+		 * Add a new php class
+		 *
+		 * @param	object		node		The plugin to add the class to
+		 * @param	string		namespace	Optional suggested namespace
+		 * @return	$.Deferred
+		 */
+		addClassDialog: function( plugin, namespace )
+		{
+			var self = this;
+			var plugin = plugin || self.viewModel.currentPlugin().model();
+			
+			var viewModel = {
+				plugin: kb.viewModel( plugin ),
+				classname: ko.observable( namespace )
+			};
+			
+			var dialogInteraction = $.Deferred();
+			var dialogTemplate = $('#studio-tmpl-class-form').html();
+			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			
+			ko.applyBindings( viewModel, dialogContent[0] );
+			
+			bootbox.dialog(
+			{
+				size: 'large',
+				title: 'Create PHP Class',
+				message: dialogContent,
+				buttons: 
+				{
+					cancel: {
+						'label': 'Cancel',
+					},
+					
+					ok: {
+						'label': 'Create Class',
+						'className': 'btn-success',
+						'callback': function() {
+							$.when( 
+								self.createClass( plugin.get('slug'), viewModel.classname() ) 
+							)
+							.done( function( response ) 
+							{
+								if ( response.success ) 
+								{
+									var parent = plugin.fileTree.findChild( 'nodes', function( node ) {
+										return node.get('id') === response.file.parent_id;
+									});
+									
+									if ( parent ) {
+										var file = new FileTreeNode( response.file );
+										parent.nodes.add( file );
+										console.log(file);
+										file.switchTo();
+										dialogInteraction.resolve( file );
+									}
+									else
+									{
+										$.when( plugin.fetchFileTree() ).done( function() 
+										{
+											var file = plugin.fileTree.findChild( 'nodes', function( node ) {
+												if ( node.get('id') === response.file.id ) {
+													console.log( 'yep' );
+													console.log( node.get('id') );
+													console.log( response.file.id );
+													console.log( node );
+													return true;
+												}
+											});
+											
+											console.log( file );
+											
+											if ( file ) {
+												file.switchTo();
+												dialogInteraction.resolve( file );
+											}
+										});
+									}									
+								}
+								else if ( response.success === false ) {
+									bootbox.alert({
+										size: 'Small',
+										title: 'Create Class Failed',
+										message: response.message
+									});
+								}
+							});
+						}
+					}
+				}
+			});
+			
+			return dialogInteraction;
+		},
+		
+		/**
+		 * Create a new php class
+		 * 
+		 * @param	string			plugin			Plugin slug
+		 * @param	string			classname		Classname to create
+		 * @return	$.Deferred
+		 */
+		createClass: function( plugin, classname )
+		{
+			return $.ajax({
+				url: this.local.ajaxurl,
+				data: {
+					action: 'mwp_studio_add_class',
+					plugin: plugin,
+					classname: classname
+				}
+				
+			});
 		}
 	
 	});
@@ -137,9 +253,9 @@
 	var CollectorModel = mwp.model( 'mwp-studio-collector',
 	{
 		/**
-		 * @var	array			Collectible attributes
+		 * @var	array			Collectible attribute definitions
 		 */
-		collectibles: [],
+		_collectibles: [],
 		
 		/**
 		 * Define the collectible properties for this model
@@ -150,13 +266,15 @@
 		defineCollectibles: function( collectibles )
 		{
 			var self = this;
-			self.collectibles = collectibles;
+			self._collectibles = collectibles;
 			
-			$.each( self.collectibles, function( i, collectible )
+			$.each( self._collectibles, function( i, collectible )
 			{
 				var items = self.get( collectible.attribute );
-				self[ collectible.attribute ] = self.createCollection( items, collectible.options );
-				self.set( collectible.attribute, kb.collectionObservable( self[ collectible.attribute ] ) );			
+				var collection = self.createCollection( items, collectible.options );
+				var observable = kb.collectionObservable( collection );			
+				self[ collectible.attribute ] = collection;
+				self.set( collectible.attribute, observable );
 			});
 		},
 		
@@ -189,6 +307,36 @@
 			}
 		},
 
+		/**
+		 * Find a child node
+		 *
+		 * @param	string		attribute	The child attribute to search in
+		 * @param	function	test		A function to test for the correct child to return
+		 * @return	FileTreeNode|null
+		 */
+		findChild: function( attribute, test )
+		{
+			var self = this;
+			var found = null;
+			
+			if ( self[attribute] instanceof Backbone.Collection ) {
+				$.each( self[attribute].models, function( i, model ) {
+					if ( test(model) ) {
+						found = model;
+						return false;
+					}
+					if ( model instanceof CollectorModel && model[attribute] instanceof Backbone.Collection ) {
+						found = model.findChild( attribute, test );
+						if ( found ) {
+							return false;
+						}
+					}
+				});
+			}
+			
+			return found;
+		},
+		
 		/** 
 		 * Return this model and its collections as json
 		 *
@@ -199,12 +347,12 @@
 			var self = this;
 			var json = CollectorModel.__super__.toJSON.apply( self );
 			
-			$.each( self.collectibles, function( i, collectible ) {
+			$.each( self._collectibles, function( i, collectible ) {
 				json[ collectible.attribute ] = self[ collectible.attribute ].toJSON();
 			});
 			
 			return json;
-		}	
+		}
 	
 	});
 	
@@ -350,7 +498,7 @@
 			/**
 			 * @var	bool		File changed in editor?
 			 */
-			this.changed = ko.observable( false );
+			this.edited = ko.observable( false );
 			
 			/**
 			 * @var	$.Deferred	File editor ready
@@ -443,7 +591,7 @@
 					}
 				}).done( function() 
 				{
-					self.changed(false);
+					self.edited(false);
 				});
 			}
 			
@@ -457,17 +605,65 @@
 		 */
 		closeFile: function()
 		{
+			var self = this;
+
 			if ( this.open() ) 
 			{
-				if ( this.changed() ) {
-					// Ask to save file first
-				}
+				var closeit = function() 
+				{
+					var viewModel = mainController.viewModel;
+					var tabindex = viewModel.openFiles.indexOf( self.fileViewModel );
+					self.editorReady = $.Deferred();
+					self.editor.destroy();
+					self.editor = null;
+					viewModel.openFiles.remove( self.fileViewModel );
+					self.open(false);
+					
+					// If we're closing the active file, we need to pick a new active file
+					if ( viewModel.activeFile() === self.fileViewModel )
+					{
+						var openFileCount = viewModel.openFiles().length;
+						
+						if ( openFileCount == 0 ) {
+							viewModel.activeFile( null );
+						}
+						else
+						{
+							// pick the new file in the same index position, or the last file
+							tabindex = tabindex >= openFileCount ? openFileCount - 1 : tabindex;
+							viewModel.openFiles()[tabindex].model().switchTo();
+						}
+					}
+				};
 				
-				this.editorReady = $.Deferred();
-				this.editor.destroy();
-				this.editor = null;
-				mainController.viewModel.openFiles.remove( this.fileViewModel );
-				this.open(false);
+				if ( this.edited() ) 
+				{
+					bootbox.dialog( {
+						size: 'large',
+						title: 'Close File: ' + self.get('text'),
+						message: "This file has been edited. Do you want to save it before closing?",
+						buttons: {
+							cancel: {
+								label: 'Cancel',
+								className: 'btn-default'
+							},
+							no: {
+								label: 'No',
+								className: 'btn-danger',
+								callback: closeit
+							},
+							yes: {
+								label: 'Yes',
+								className: 'btn-success',
+								callback: function() { $.when( self.saveFile() ).done( closeit ); }
+							}
+						}
+					});
+				}
+				else
+				{
+					closeit();
+				}
 			}
 		},
 		
@@ -603,10 +799,10 @@
 				 */
 				addClass: 
 				{
-					name: 'Add Class',
+					name: 'Create New Class',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-					
+						mainController.openAddClassDialog( node.model.getParent( FileTree ).plugin );
 					},
 					isShown: function( node ) {
 						var file = node.model;
@@ -678,16 +874,31 @@
 				url: mainController.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_fetch_filetree',
-					plugin: self.get('slug')
+					plugin: self.get('basedir')
 				}
 			})
-			.done( function( data ) {
+			.then( function( data ) {
 				if ( data.nodes ) {
+					self.fileTree.nodes.reset();
 					self.fileTree.nodes.set( data.nodes );
+					
+					// Merge in open files
+					_.each( mainController.viewModel.openFiles(), function( file ) 
+					{
+						var parent = self.fileTree.findChild( 'nodes', function( node ) { 
+							return node.get('id') == file.parent_id(); 
+						});
+						
+						if ( parent ) {
+							file.model().collection = undefined;
+							parent.nodes.remove( file.id() );
+							parent.nodes.add( file.model() );
+						}
+					});
 				}
-			});			
+			});
 		}
-	});	
+	});
 
 	/**
 	 * Custom knockout bindings
@@ -729,14 +940,14 @@
 						editor.setValue( data.content );
 						editor.getSession().setUndoManager(new ace.UndoManager())
 						editor.gotoLine(1);
-						file.changed(false);
+						file.edited(false);
 						file.editor = editor;
 						file.editorReady.resolve( editor, options );
 					});
 					
 					// Track file changes
 					editor.on( 'change', function() {
-						file.changed(true);
+						file.edited(true);
 					});
 
 					// Track the currently active editor
