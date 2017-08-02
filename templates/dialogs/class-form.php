@@ -15,9 +15,6 @@
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
- *
- * @param	string		$title		The provided title
- * @param	string		$content	The provided content
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,8 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	  <label for="classname">Class Name</label>
 	  <div class="input-group">
 	    <div class="input-group-addon" data-bind="text: plugin.namespace() + '\\'"></div>
-		<input type="text" class="form-control" data-bind="textInput: classname" id="classname" />
-	  </div>
+		<input type="text" class="form-control" placeholder="Class\Name" data-bind="textInput: classname, event:{ keypress: enterKeySubmit }" id="classname" />
 	  </div>
 	</div>
   </div>

@@ -187,4 +187,84 @@ class AjaxHandlers extends Singleton
 		
 	}
 	
+	/**
+	 * Create a new php template
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_add_template", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createPHPTemplate()
+	{
+		$this->authorize();
+		
+		$framework = \Modern\Wordpress\Framework::instance();
+		$template = wp_unslash( $_REQUEST['template'] );
+		$plugin = wp_unslash( $_REQUEST['plugin'] );
+		
+		try 
+		{
+			$template_file = $framework->createTemplate( $plugin, $template );
+			wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $template_file ) ) );
+		}
+		catch( \ErrorException $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
+		
+	}	
+	
+	/**
+	 * Create a new css file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_add_css", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createCSS()
+	{
+		$this->authorize();
+		
+		$framework = \Modern\Wordpress\Framework::instance();
+		$filename = wp_unslash( $_REQUEST['filename'] );
+		$plugin = wp_unslash( $_REQUEST['plugin'] );
+		
+		try 
+		{
+			$css_file = $framework->createStylesheet( $plugin, $filename );
+			wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $css_file ) ) );
+		}
+		catch( \ErrorException $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
+		
+	}
+
+	/**
+	 * Create a new javascript file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_add_js", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createJS()
+	{
+		$this->authorize();
+		
+		$framework = \Modern\Wordpress\Framework::instance();
+		$filename = wp_unslash( $_REQUEST['filename'] );
+		$plugin = wp_unslash( $_REQUEST['plugin'] );
+		
+		try 
+		{
+			$javascript_file = $framework->createJavascript( $plugin, $filename );
+			wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $javascript_file ) ) );
+		}
+		catch( \ErrorException $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
+		
+	}	
 }

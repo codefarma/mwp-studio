@@ -98,14 +98,20 @@
 				})			
 			});
 			
-			// Load available plugins and make the first one active
-			this.loadPlugins().done( function() {
-				self.viewModel.currentPlugin( self.viewModel.plugins()[0] );
+			// Load available plugins and select the last active one, or the first if not
+			this.loadPlugins().done( function() 
+			{
+				var plugin_id = localStorage.getItem( 'mwp-studio-current-plugin' );
+				var index = self.plugins.indexOf( self.plugins.get( plugin_id ) );
+				
+				if ( index == -1 ) { index = 0; }				
+				self.viewModel.currentPlugin( self.viewModel.plugins()[index] );
 			});
 			
 			// Refresh plugins when they become active
 			this.viewModel.currentPlugin.subscribe( function( plugin ) {
 				plugin.model().refreshStudio();
+				localStorage.setItem( 'mwp-studio-current-plugin', plugin.id() );
 			});			
 		},
 		
@@ -147,16 +153,121 @@
 				classname: ko.observable( namespace )
 			};
 			
-			var dialogInteraction = $.Deferred();
 			var dialogTemplate = $('#studio-tmpl-class-form').html();
 			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
 			
+			return this.createDialog( 'Class', dialogContent, viewModel, function() { 
+				if ( ! viewModel.classname() ) { return false; }
+				return self.createClass( plugin.get('slug'), viewModel.classname() ); 
+			}, { size: 500 });
+		},
+		
+		/**
+		 * Add a new html template
+		 *
+		 * @param	object		node		The plugin to add the class to
+		 * @param	string		namespace	Optional suggested base path
+		 * @return	$.Deferred
+		 */
+		addTemplateDialog: function( plugin, filepath )
+		{
+			var self = this;
+			var plugin = plugin || self.viewModel.currentPlugin().model();
+			
+			var viewModel = {
+				plugin: kb.viewModel( plugin ),
+				filepath: ko.observable( filepath )
+			};
+			
+			var dialogTemplate = $('#studio-tmpl-template-form').html();
+			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			
+			return this.createDialog( 'Template', dialogContent, viewModel, function() { 
+				if ( ! viewModel.filepath() ) { return false; }
+				return self.createTemplate( plugin.get('slug'), viewModel.filepath() ); 
+			}, { size: 500 });
+		},
+		
+		/**
+		 * Add a new css file dialog
+		 *
+		 * @param	object		node		The plugin to add the file to
+		 * @param	string		filename	Optional suggested filename
+		 * @return	$.Deferred
+		 */
+		addCSSDialog: function( plugin, filename )
+		{
+			var self = this;
+			var plugin = plugin || self.viewModel.currentPlugin().model();
+			
+			var viewModel = {
+				plugin: kb.viewModel( plugin ),
+				filename: ko.observable( filename )
+			};
+			
+			var dialogTemplate = $('#studio-tmpl-stylesheet-form').html();
+			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			
+			return this.createDialog( 'Stylesheet File', dialogContent, viewModel, function() { 
+				if ( ! viewModel.filename() ) { return false; }
+				return self.createCSS( plugin.get('slug'), viewModel.filename() ); 
+			}, { size: 500 });
+		},
+		
+		/**
+		 * Add a new javascript file dialog
+		 *
+		 * @param	object		node		The plugin to add the file to
+		 * @param	string		filename	Optional suggested filename
+		 * @return	$.Deferred
+		 */
+		addJSDialog: function( plugin, filename )
+		{
+			var self = this;
+			var plugin = plugin || self.viewModel.currentPlugin().model();
+			
+			var viewModel = {
+				plugin: kb.viewModel( plugin ),
+				filename: ko.observable( filename )
+			};
+			
+			var dialogTemplate = $('#studio-tmpl-javascript-form').html();
+			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			
+			return this.createDialog( 'Javascript Module', dialogContent, viewModel, function() { 
+				if ( ! viewModel.filename() ) { return false; }
+				return self.createJS( plugin.get('slug'), viewModel.filename() ); 
+			}, { size: 500 });
+		},
+		
+		/**
+		 * Show a dialog
+		 *
+		 * @param	string		title			The title of the item being created
+		 * @param	jQuery		dialogContent	The jquery wrapped dialog content
+		 * @param	function	creator			The creator function that creates the resource
+		 * @param	object		extraOptions	Any extra options to pass to the bootbox dialog
+		 * @return	$.Deferred
+		 */
+		createDialog: function( title, dialogContent, viewModel, creator, extraOptions )
+		{
+			var dialogInteraction = $.Deferred();
+			var plugin = viewModel.plugin.model() || self.viewModel.currentPlugin().model();
+			var dialog;
+			
+			viewModel.enterKeySubmit = function( data, event ) {
+				if ( event.which == 13 ) {
+					dialog.modal('hide');
+					opts.buttons.ok.callback();
+				}
+				return true;
+			}
+			
 			ko.applyBindings( viewModel, dialogContent[0] );
 			
-			bootbox.dialog(
-			{
+			var opts = {
 				size: 'large',
-				title: 'Create PHP Class',
+				title: 'Add New ' + title,
 				message: dialogContent,
 				buttons: 
 				{
@@ -165,45 +276,48 @@
 					},
 					
 					ok: {
-						'label': 'Create Class',
-						'className': 'btn-success',
-						'callback': function() {
-							$.when( 
-								self.createClass( plugin.get('slug'), viewModel.classname() ) 
-							)
-							.done( function( response ) 
+						label: 'Create ' + title,
+						className: 'btn-success',
+						callback: function() {
+							$.when( creator() ).done( function( response ) 
 							{
 								if ( response.success ) 
 								{
+									// Look for existing parent node
 									var parent = plugin.fileTree.findChild( 'nodes', function( node ) {
 										return node.get('id') === response.file.parent_id;
 									});
 									
-									if ( parent ) {
-										var file = new FileTreeNode( response.file );
-										parent.nodes.add( file );
-										console.log(file);
-										file.switchTo();
+									if ( parent ) 
+									{
+										// Possible it exists if the file was deleted on the host but remained
+										// open in the editor
+										var file = parent.nodes.get( response.file.id );
+										
+										if ( ! file ) {
+											// Attach to existing parent. Easy.
+											file = new FileTreeNode( response.file );
+											parent.nodes.add( file );
+										}
+										else
+										{
+											file.edited(true);
+										}
+										
+										file.switchTo(true);
 										dialogInteraction.resolve( file );
 									}
 									else
 									{
-										$.when( plugin.fetchFileTree() ).done( function() 
-										{
+										// Refresh the whole file tree and then find the correct file. 
+										$.when( plugin.fetchFileTree() ).done( function() {
 											var file = plugin.fileTree.findChild( 'nodes', function( node ) {
-												if ( node.get('id') === response.file.id ) {
-													console.log( 'yep' );
-													console.log( node.get('id') );
-													console.log( response.file.id );
-													console.log( node );
-													return true;
-												}
+												return node.get('id') === response.file.id;
 											});
 											
-											console.log( file );
-											
-											if ( file ) {
-												file.switchTo();
+											if ( file ) 
+											{
+												file.switchTo(true);
 												dialogInteraction.resolve( file );
 											}
 										});
@@ -212,7 +326,7 @@
 								else if ( response.success === false ) {
 									bootbox.alert({
 										size: 'Small',
-										title: 'Create Class Failed',
+										title: 'Add New ' + title + ' Failed',
 										message: response.message
 									});
 								}
@@ -220,9 +334,12 @@
 						}
 					}
 				}
-			});
+			};
+
+			extraOptions = extraOptions || {};
+			dialog = bootbox.dialog( _.extend( opts, extraOptions ) );
 			
-			return dialogInteraction;
+			return dialogInteraction;		
 		},
 		
 		/**
@@ -241,10 +358,66 @@
 					plugin: plugin,
 					classname: classname
 				}
-				
 			});
-		}
+		},
 	
+		/**
+		 * Create a new php template
+		 * 
+		 * @param	string			plugin			Plugin slug
+		 * @param	string			template		Template to create
+		 * @return	$.Deferred
+		 */
+		createTemplate: function( plugin, template )
+		{
+			return $.ajax({
+				url: this.local.ajaxurl,
+				data: {
+					action: 'mwp_studio_add_template',
+					plugin: plugin,
+					template: template
+				}
+			});
+		},
+		
+		/**
+		 * Create a new css file
+		 * 
+		 * @param	string			plugin			Plugin slug
+		 * @param	string			filename		Filename to create
+		 * @return	$.Deferred
+		 */
+		createCSS: function( plugin, filename )
+		{
+			return $.ajax({
+				url: this.local.ajaxurl,
+				data: {
+					action: 'mwp_studio_add_css',
+					plugin: plugin,
+					filename: filename
+				}
+			});
+		},
+
+		/**
+		 * Create a new javascript file
+		 * 
+		 * @param	string			plugin			Plugin slug
+		 * @param	string			filename		Filename to create
+		 * @return	$.Deferred
+		 */
+		createJS: function( plugin, filename )
+		{
+			return $.ajax({
+				url: this.local.ajaxurl,
+				data: {
+					action: 'mwp_studio_add_js',
+					plugin: plugin,
+					filename: filename
+				}
+			});
+		}		
+		
 	});
 	
 	/**
@@ -670,13 +843,22 @@
 		/**
 		 * Switch to / open file in the editor
 		 *
+		 * @param	bool		reveal			Reveal the file in the treeview
 		 * @return	$.Deferred
 		 */
-		switchTo: function()
+		switchTo: function( reveal )
 		{
+			var self = this;
 			return $.when( this.openFile() ).then( function( editor, options ) {
 				if ( typeof options.switchTo == 'function' ) {
 					options.switchTo(); 
+				}
+				if ( reveal ) {
+					var treeview = $('.mwp-studio .file-treeview .treeview').treeview(true);
+					if ( typeof treeview.search == 'function' ) {
+						treeview.search( self.get('text'), { exactMatch: true, ignoreCase: false, revealResults: true } );
+						setTimeout( function() { treeview.clearSearch(); }, 3000 );
+					}
 				}
 			});
 		},
@@ -748,6 +930,33 @@
 				},
 				
 				/**
+				 * Add new php class
+				 */
+				addClass: 
+				{
+					name: 'Create New Class',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+						var model = node.model;
+						var namespaces = [];
+						while( model.get('name') !== 'classes' ) { 
+							namespaces.unshift( model.get('name') );
+							model = model.getParent();
+						}
+						
+						var suggestedNamespace = namespaces.length ? namespaces.join('\\') + '\\' : '';
+						mainController.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.get('type') == 'dir' 
+							&& file.rootDir(0) == 'classes' 
+							&& plugin.get('framework') == 'mwp';
+					}
+				},
+				
+				/**
 				 * Add new view template
 				 */
 				addTemplate: 
@@ -755,10 +964,23 @@
 					name: 'Add Template',
 					iconClass: 'fa-code',
 					onClick: function( node ) {
-					
+						var model = node.model;
+						var namespaces = [];
+						while( model.get('name') !== 'templates' && model instanceof CollectibleModel ) { 
+							namespaces.unshift( model.get('name') );
+							model = model.getParent();
+						}
+						
+						console.log( namespaces );
+						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
+						mainController.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
 					},
 					isShown: function( node ) {
-						return node.model.rootDir(0) == 'templates';
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.get('type') == 'dir' 
+							&& node.model.rootDir(0) == 'templates' 
+							&& plugin.get('framework') == 'mwp';
 					}
 				},
 				
@@ -770,11 +992,14 @@
 					name: 'Add Stylesheet',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-					
+						mainController.addCSSDialog( node.model.getParent( FileTree ).plugin );					
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						return file.rootDir(0) == 'assets' && ( file.rootDir(1) === undefined || file.rootDir(1) == 'css' );
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.rootDir(0) == 'assets' 
+							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'css' ) 
+							&& plugin.get('framework') == 'mwp';
 					}
 				},
 
@@ -786,29 +1011,16 @@
 					name: 'Add Javascript',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-					
+						mainController.addJSDialog( node.model.getParent( FileTree ).plugin );
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						return file.rootDir(0) == 'assets' && ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' );
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.rootDir(0) == 'assets' 
+							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' ) 
+							&& plugin.get('framework') == 'mwp';
 					}
-				},
-				
-				/**
-				 * Add new php class
-				 */
-				addClass: 
-				{
-					name: 'Create New Class',
-					iconClass: 'fa-file-code-o',
-					onClick: function( node ) {
-						mainController.openAddClassDialog( node.model.getParent( FileTree ).plugin );
-					},
-					isShown: function( node ) {
-						var file = node.model;
-						return file.rootDir(0) == 'classes';
-					}
-				}
+				}			
 			}
 		}
 	}));

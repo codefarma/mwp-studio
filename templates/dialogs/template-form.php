@@ -15,9 +15,6 @@
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
- *
- * @param	string		$title		The provided title
- * @param	string		$content	The provided content
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -26,5 +23,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <script type="text/template" id="studio-tmpl-template-form">
-
+    <div class="form-group">
+	  <label for="classname">Template Name</label>
+	  <div class="input-group">
+		<div class="input-group-addon" data-bind="text: plugin.slug() + '/templates/'"></div>
+		<input type="text" placeholder="views/name" class="form-control" data-bind="textInput: filepath, event:{ keypress: enterKeySubmit }" id="classname" />
+	    <div class="input-group-addon">.php</div>
+	  </div>
+	  </div>
+	</div>	
 </script>

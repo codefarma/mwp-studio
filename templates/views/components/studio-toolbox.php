@@ -2,7 +2,7 @@
 /**
  * Plugin HTML Template
  *
- * Created:  July 29, 2017
+ * Created:  August 2, 2017
  *
  * @package  Wordpress Plugin Studio
  * @author   Kevin Carwile
@@ -11,7 +11,7 @@
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:
  * ```
- * $content = $plugin->getTemplateContent( 'views/components/filetree' ); 
+ * $content = $plugin->getTemplateContent( 'views/components/studio-toolbox' ); 
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
@@ -22,9 +22,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-
-<div data-view-model="mwp-studio" class="mwp-bootstrap">
-	<div class="file-treeview" data-bind="with: currentPlugin()">
-		<div data-bind="treeView: filenodes(), contextMenu: { selector: '#files .list-group-item[data-nodeId]', config: mwp.model.get('mwp-studio-filetree-node').contextMenu }"></div>
+<div data-view-model="mwp-studio" class="mwp-studio-toolbox">
+	<div class="breadcrumb">
+		<h5>Toolbox</h5>
 	</div>
 </div>

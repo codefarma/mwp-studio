@@ -153,6 +153,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$basedir = str_replace( WP_PLUGIN_DIR, '', str_replace( "/" . basename( $file ), "", $file ) );
 		$composite_data[ 'pluginfile' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
+		$composite_data[ 'framework' ] = '';
 		
 		foreach( $core_data as $key => $value )	{
 			$composite_data[ strtolower( $key ) ] = $value;		
@@ -162,10 +163,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 		{
 			$plugin_data = json_decode( include( WP_PLUGIN_DIR . $basedir  . '/data/plugin-meta.php' ), true );
 			if ( is_array( $plugin_data ) ) {
-				$plugin_data[ 'framework' ] = 'mwp';
+				$composite_data[ 'framework' ] = 'mwp';
 				$composite_data = array_merge( $plugin_data, $composite_data );
 			}
 		}
+		
+		$composite_data[ 'id' ] = md5( $basedir );
 		
 		return $composite_data;		
 	}
@@ -278,7 +281,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function output( $content )
 	{
-		echo $this->getTemplateContent( 'views/global/layout', array(
+		echo $this->getTemplateContent( 'views/layouts/studio', array(
 			'content' => $content,
 		));
 	}

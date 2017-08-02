@@ -1,0 +1,70 @@
+<?php
+/**
+ * Plugin HTML Template
+ *
+ * Created:  August 2, 2017
+ *
+ * @package  Wordpress Plugin Studio
+ * @author   Kevin Carwile
+ * @since    {build_version}
+ *
+ * Here is an example of how to get the contents of this template while 
+ * providing the values of the $title and $content variables:
+ * ```
+ * $content = $plugin->getTemplateContent( 'views/components/resource-browser' ); 
+ * ```
+ * 
+ * @param	Plugin		$this		The plugin instance which is loading this template
+ */
+
+if ( ! defined( 'ABSPATH' ) ) {
+	die( 'Access denied.' );
+}
+
+?>
+
+<div class="breadcrumb" data-view-model="mwp-studio" data-bind="with: currentPlugin()">
+	<div class="btn-group btn-flex">
+	  <button type="button" style="border-right: 0;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
+	  <ul class="dropdown-menu pull-left" data-bind="foreach: $root.plugins">
+		<li><a href="javascript:;" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
+	  </ul>
+	  <div class="btn-group">
+		  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			<span class="caret"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		  </button>
+		  <ul class="dropdown-menu pull-right">
+		    <li class="dropdown-header">Meta Information</li>
+			<li><a href="#"><i class="fa fa-info-circle"></i> Edit Plugin Info</a></li>
+			<li><a href="#"><i class="fa fa-database"></i> Edit Database Tables</a></li>
+			<li><a href="#"><i class="fa fa-sitemap"></i> Edit Dependencies</a></li>
+			<li data-bind="visible: framework() == 'mwp'" class="divider" role="separator"></li>
+			<li data-bind="visible: framework() == 'mwp'" class="dropdown-header">Resources</li>
+			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addClassDialog(); }"><i class="fa fa-code"></i> Add PHP Class</a></li>
+			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addTemplateDialog(); }"><i class="fa fa-code"></i> Add HTML Template</a></li>
+			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addCSSDialog(); }"><i class="fa fa-code"></i> Add Stylesheet</a></li>
+			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addJSDialog(); }"><i class="fa fa-code"></i> Add Javascript</a></li>
+			<li data-bind="visible: framework() == 'mwp'" class="divider" role="separator"></li>
+			<li data-bind="visible: framework() == 'mwp'"><a href="#"><i class="fa fa-cogs"></i> Build Plugin</a></li>
+		  </ul>
+	  </div>
+	</div>
+</div>
+
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
+	<!-- <li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
+	<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Templates</a></li> -->
+</ul>
+<div class="panel panel-default tabbed-panel" style="max-height: 500px; overflow-y: scroll;">
+	<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">
+		<?php echo $this->getTemplateContent( 'views/components/resource/filetree' ) ?>
+	</div>
+	<div id="classes" role="tabpanel" class="tab-pane">
+	
+	</div>
+	<div id="views" role="tabpanel" class="tab-pane">
+	
+	</div>
+</div>
