@@ -1,7 +1,7 @@
 /**
  * Plugin Javascript Module
  *
- * Created     May 1, 2017
+ * Created     August 8, 2017
  *
  * @package    Wordpress Plugin Studio
  * @author     Kevin Carwile
@@ -9,415 +9,16 @@
  */
 
 /**
- * Controller Design Pattern
- *
- * Note: This pattern has a dependency on the "mwp" script
- * i.e. @Wordpress\Script( deps={"mwp"} )
+ * Studio Models
  */
 (function( $, undefined ) {
 	
 	"use strict";
-
-	/**
-	 * Main Controller
-	 *
-	 * The init() function is called after the page is fully loaded.
-	 *
-	 * Data passed into your script from the server side is available
-	 * by the mainController.local property inside your controller:
-	 *
-	 * > var ajaxurl = mainController.local.ajaxurl;
-	 *
-	 * The viewModel of your controller will be bound to any HTML structure
-	 * which uses the data-view-model attribute and names this controller.
-	 *
-	 * Example:
-	 *
-	 * <div data-view-model="mwp-studio">
-	 *   <span data-bind="text: title"></span>
-	 * </div>
-	 */
-	var mainController = mwp.controller( 'mwp-studio', 
-	{
-		/**
-		 * Initialization function
-		 *
-		 * @return	void
-		 */
-		init: function()
-		{
-			var self = this;
-			$( 'html' ).addClass( 'mwp-bootstrap' );
-			
-			/**
-			 * @var	Collection
-			 */
-			this.plugins = new Backbone.Collection( [], { model: Plugin } );
-			
-			/**
-			 * View Model
-			 */
-			this.viewModel = 
-			{
-				controller: this,
-				plugins: kb.collectionObservable( this.plugins ),
-				currentPlugin: ko.observable(),
-				openFiles: ko.observableArray(),
-				activeFile: ko.observable()
-			};
-			
-			/**
-			 * More View Model
-			 */
-			_.extend( this.viewModel, 
-			{
-				/**
-				 * Active file breadcrumbs
-				 * @return	array
-				 */
-				activeFileBreadcrumbs: ko.computed( function() 
-				{
-					var breadcrumbs = [];
-					var currentFile = self.viewModel.activeFile();
-					
-					if ( currentFile ) 
-					{
-						var currentNode = currentFile.model();
-
-						while( currentNode instanceof CollectibleModel && currentNode.getParent() ) {
-							breadcrumbs.unshift( currentNode.get('text') );
-							currentNode = currentNode.getParent();
-						}
-						
-						if ( currentNode instanceof FileTree ) {
-							breadcrumbs.unshift( currentNode.plugin.get('basedir') );
-						}
-					}
-					
-					return breadcrumbs.length ? breadcrumbs : [ 'No file open' ];
-				})			
-			});
-			
-			// Load available plugins and select the last active one, or the first if not
-			this.loadPlugins().done( function() 
-			{
-				var plugin_id = localStorage.getItem( 'mwp-studio-current-plugin' );
-				var index = self.plugins.indexOf( self.plugins.get( plugin_id ) );
-				
-				if ( index == -1 ) { index = 0; }				
-				self.viewModel.currentPlugin( self.viewModel.plugins()[index] );
-			});
-			
-			// Refresh plugins when they become active
-			this.viewModel.currentPlugin.subscribe( function( plugin ) {
-				plugin.model().refreshStudio();
-				localStorage.setItem( 'mwp-studio-current-plugin', plugin.id() );
-			});			
-		},
-		
-		/**
-		 * Load available studio plugins from the backend
-		 *
-		 * @return	$.Deferred
-		 */
-		loadPlugins: function()
-		{
-			var self = this;
-			
-			return $.ajax({
-				method: 'post',
-				url: this.local.ajaxurl,
-				data: { action: 'mwp_studio_load_plugins' }
-			})
-			.then( function( data ) {
-				if ( data.plugins ) {
-					self.plugins.add( data.plugins );
-				}
-			});
-		},
-		
-		/**
-		 * Add a new php class
-		 *
-		 * @param	object		node		The plugin to add the class to
-		 * @param	string		namespace	Optional suggested namespace
-		 * @return	$.Deferred
-		 */
-		addClassDialog: function( plugin, namespace )
-		{
-			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
-			
-			var viewModel = {
-				plugin: kb.viewModel( plugin ),
-				classname: ko.observable( namespace )
-			};
-			
-			var dialogTemplate = $('#studio-tmpl-class-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
-			
-			return this.createDialog( 'Class', dialogContent, viewModel, function() { 
-				if ( ! viewModel.classname() ) { return false; }
-				return self.createClass( plugin.get('slug'), viewModel.classname() ); 
-			}, { size: 500 });
-		},
-		
-		/**
-		 * Add a new html template
-		 *
-		 * @param	object		node		The plugin to add the class to
-		 * @param	string		namespace	Optional suggested base path
-		 * @return	$.Deferred
-		 */
-		addTemplateDialog: function( plugin, filepath )
-		{
-			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
-			
-			var viewModel = {
-				plugin: kb.viewModel( plugin ),
-				filepath: ko.observable( filepath )
-			};
-			
-			var dialogTemplate = $('#studio-tmpl-template-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
-			
-			return this.createDialog( 'Template', dialogContent, viewModel, function() { 
-				if ( ! viewModel.filepath() ) { return false; }
-				return self.createTemplate( plugin.get('slug'), viewModel.filepath() ); 
-			}, { size: 500 });
-		},
-		
-		/**
-		 * Add a new css file dialog
-		 *
-		 * @param	object		node		The plugin to add the file to
-		 * @param	string		filename	Optional suggested filename
-		 * @return	$.Deferred
-		 */
-		addCSSDialog: function( plugin, filename )
-		{
-			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
-			
-			var viewModel = {
-				plugin: kb.viewModel( plugin ),
-				filename: ko.observable( filename )
-			};
-			
-			var dialogTemplate = $('#studio-tmpl-stylesheet-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
-			
-			return this.createDialog( 'Stylesheet File', dialogContent, viewModel, function() { 
-				if ( ! viewModel.filename() ) { return false; }
-				return self.createCSS( plugin.get('slug'), viewModel.filename() ); 
-			}, { size: 500 });
-		},
-		
-		/**
-		 * Add a new javascript file dialog
-		 *
-		 * @param	object		node		The plugin to add the file to
-		 * @param	string		filename	Optional suggested filename
-		 * @return	$.Deferred
-		 */
-		addJSDialog: function( plugin, filename )
-		{
-			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
-			
-			var viewModel = {
-				plugin: kb.viewModel( plugin ),
-				filename: ko.observable( filename )
-			};
-			
-			var dialogTemplate = $('#studio-tmpl-javascript-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
-			
-			return this.createDialog( 'Javascript Module', dialogContent, viewModel, function() { 
-				if ( ! viewModel.filename() ) { return false; }
-				return self.createJS( plugin.get('slug'), viewModel.filename() ); 
-			}, { size: 500 });
-		},
-		
-		/**
-		 * Show a dialog
-		 *
-		 * @param	string		title			The title of the item being created
-		 * @param	jQuery		dialogContent	The jquery wrapped dialog content
-		 * @param	function	creator			The creator function that creates the resource
-		 * @param	object		extraOptions	Any extra options to pass to the bootbox dialog
-		 * @return	$.Deferred
-		 */
-		createDialog: function( title, dialogContent, viewModel, creator, extraOptions )
-		{
-			var dialogInteraction = $.Deferred();
-			var plugin = viewModel.plugin.model() || self.viewModel.currentPlugin().model();
-			var dialog;
-			
-			viewModel.enterKeySubmit = function( data, event ) {
-				if ( event.which == 13 ) {
-					dialog.modal('hide');
-					opts.buttons.ok.callback();
-				}
-				return true;
-			}
-			
-			ko.applyBindings( viewModel, dialogContent[0] );
-			
-			var opts = {
-				size: 'large',
-				title: 'Add New ' + title,
-				message: dialogContent,
-				buttons: 
-				{
-					cancel: {
-						'label': 'Cancel',
-					},
-					
-					ok: {
-						label: 'Create ' + title,
-						className: 'btn-success',
-						callback: function() {
-							$.when( creator() ).done( function( response ) 
-							{
-								if ( response.success ) 
-								{
-									// Look for existing parent node
-									var parent = plugin.fileTree.findChild( 'nodes', function( node ) {
-										return node.get('id') === response.file.parent_id;
-									});
-									
-									if ( parent ) 
-									{
-										// Possible it exists if the file was deleted on the host but remained
-										// open in the editor
-										var file = parent.nodes.get( response.file.id );
-										
-										if ( ! file ) {
-											// Attach to existing parent. Easy.
-											file = new FileTreeNode( response.file );
-											parent.nodes.add( file );
-										}
-										else
-										{
-											file.edited(true);
-										}
-										
-										file.switchTo(true);
-										dialogInteraction.resolve( file );
-									}
-									else
-									{
-										// Refresh the whole file tree and then find the correct file. 
-										$.when( plugin.fetchFileTree() ).done( function() {
-											var file = plugin.fileTree.findChild( 'nodes', function( node ) {
-												return node.get('id') === response.file.id;
-											});
-											
-											if ( file ) 
-											{
-												file.switchTo(true);
-												dialogInteraction.resolve( file );
-											}
-										});
-									}									
-								}
-								else if ( response.success === false ) {
-									bootbox.alert({
-										size: 'Small',
-										title: 'Add New ' + title + ' Failed',
-										message: response.message
-									});
-								}
-							});
-						}
-					}
-				}
-			};
-
-			extraOptions = extraOptions || {};
-			dialog = bootbox.dialog( _.extend( opts, extraOptions ) );
-			
-			return dialogInteraction;		
-		},
-		
-		/**
-		 * Create a new php class
-		 * 
-		 * @param	string			plugin			Plugin slug
-		 * @param	string			classname		Classname to create
-		 * @return	$.Deferred
-		 */
-		createClass: function( plugin, classname )
-		{
-			return $.ajax({
-				url: this.local.ajaxurl,
-				data: {
-					action: 'mwp_studio_add_class',
-					plugin: plugin,
-					classname: classname
-				}
-			});
-		},
 	
-		/**
-		 * Create a new php template
-		 * 
-		 * @param	string			plugin			Plugin slug
-		 * @param	string			template		Template to create
-		 * @return	$.Deferred
-		 */
-		createTemplate: function( plugin, template )
-		{
-			return $.ajax({
-				url: this.local.ajaxurl,
-				data: {
-					action: 'mwp_studio_add_template',
-					plugin: plugin,
-					template: template
-				}
-			});
-		},
-		
-		/**
-		 * Create a new css file
-		 * 
-		 * @param	string			plugin			Plugin slug
-		 * @param	string			filename		Filename to create
-		 * @return	$.Deferred
-		 */
-		createCSS: function( plugin, filename )
-		{
-			return $.ajax({
-				url: this.local.ajaxurl,
-				data: {
-					action: 'mwp_studio_add_css',
-					plugin: plugin,
-					filename: filename
-				}
-			});
-		},
-
-		/**
-		 * Create a new javascript file
-		 * 
-		 * @param	string			plugin			Plugin slug
-		 * @param	string			filename		Filename to create
-		 * @return	$.Deferred
-		 */
-		createJS: function( plugin, filename )
-		{
-			return $.ajax({
-				url: this.local.ajaxurl,
-				data: {
-					action: 'mwp_studio_add_js',
-					plugin: plugin,
-					filename: filename
-				}
-			});
-		}		
-		
+	var studioController;
+	
+	mwp.on( 'mwp-studio.ready', function( controller ) {
+		studioController = controller;
 	});
 	
 	/**
@@ -674,6 +275,11 @@
 			this.edited = ko.observable( false );
 			
 			/**
+			 * @var	bool		File is in a conflicting state
+			 */
+			this.conflicted = ko.observable( false );
+			
+			/**
 			 * @var	$.Deferred	File editor ready
 			 */
 			this.editorReady = $.Deferred();
@@ -705,6 +311,20 @@
 					}, 500 );
 				});
 			});
+			
+			/**
+			 * Ask user to resolve conflicts immediately in a focused editor
+			 *
+			 * @param	bool		conflicted			Whether the file is conflicted or not
+			 * @return	void
+			 */
+			this.conflicted.subscribe( function( conflicted ) {
+				if ( conflicted ) {
+					if ( studioController.viewModel.activeFile() && studioController.viewModel.activeFile().id() == self.get('id') ) {
+						self.resolveConflict();
+					}
+				}
+			});
 		},
 		
 		/**
@@ -716,7 +336,8 @@
 		{
 			if ( ! this.open() ) 
 			{
-				mainController.viewModel.openFiles.push( this.fileViewModel );
+				// Pushing onto open files causes editor to open the file
+				studioController.viewModel.openFiles.push( this.fileViewModel );
 				this.open(true);
 			}
 			
@@ -735,7 +356,7 @@
 			
 			return $.ajax({
 				method: 'post',
-				url: mainController.local.ajaxurl,
+				url: studioController.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_get_file_content',
 					path: self.get('path')
@@ -756,19 +377,23 @@
 			{
 				return $.ajax({
 					method: 'post',
-					url: mainController.local.ajaxurl,
+					url: studioController.local.ajaxurl,
 					data: { 
 						action: 'mwp_studio_save_file_content',
 						path: self.get('path'),
 						content: this.editor.getValue()
 					}
-				}).done( function() 
+				}).done( function( response ) 
 				{
-					self.edited(false);
+					if ( response.success ) {
+						self.conflicted( false );
+						self.edited( false );
+						self.set( 'modified', response.modified );
+					}
 				});
 			}
 			
-			return $.Deferred();
+			return $.Deferred().promise();
 		},
 		
 		/**
@@ -784,13 +409,15 @@
 			{
 				var closeit = function() 
 				{
-					var viewModel = mainController.viewModel;
+					var viewModel = studioController.viewModel;
 					var tabindex = viewModel.openFiles.indexOf( self.fileViewModel );
 					self.editorReady = $.Deferred();
 					self.editor.destroy();
 					self.editor = null;
 					viewModel.openFiles.remove( self.fileViewModel );
 					self.open(false);
+					self.conflicted(false);
+					self.edited(false);
 					
 					// If we're closing the active file, we need to pick a new active file
 					if ( viewModel.activeFile() === self.fileViewModel )
@@ -838,6 +465,97 @@
 					closeit();
 				}
 			}
+		},
+		
+		/**
+		 * Synchronize with disk, check if file has been modified
+		 *
+		 *	@return	$.Deferred		
+		 *		@param	bool	True if file is synced, false if it is in conflict
+		 */
+		checkSync: function()
+		{
+			var self = this;
+			
+			var check = $.Deferred();
+			
+			$.ajax({
+				url: studioController.local.ajaxurl,
+				method: 'post',
+				data: {
+					action: 'mwp_studio_sync_file',
+					path: self.get('path')
+				}
+			})
+			.then( function( response ) {
+				if ( response.success ) {
+					if ( self.get('modified') < response.modified ) {
+						self.conflicted( true );
+						check.resolve( false );
+					}
+					else
+					{
+						self.conflicted( false );
+						check.resolve( true );
+					}
+				}
+			});
+			
+			return check.promise();
+		},
+		
+		/**
+		 * Resolve a conflicting state between the editor and the file on disk
+		 *
+		 * @return	$.Deferred
+		 *   @param		bool		Dialog response
+		 */
+		resolveConflict: function()
+		{
+			var self = this;
+			var response = $.Deferred();
+			
+			var message = self.get('name') + ' has been modified on the disk. Do you want to reload it?';
+			if ( self.edited() ) {
+				message = message + ' If you do, you will lose your unsaved changes from this editor.';
+			}
+			
+			bootbox.confirm({
+				size: 500,
+				title: 'File has been modified',
+				message: message,
+				callback: function( yes ) {
+					if ( yes ) {
+						self.reloadFile();
+					}
+					response.resolve( yes );
+				}
+			});
+			
+			return response;
+		},
+		
+		/**
+		 * Reload the file in the editor
+		 *
+		 * @return	$.Deferred
+		 */
+		reloadFile: function() 
+		{
+			var self = this;
+			
+			return $.when( self.getContent() ).then( function( response ) {
+				if ( response.success ) {
+					self.set( 'modified', response.modified );
+					self.conflicted( false );
+					if ( self.editor ) {
+						self.editor.setValue( response.content );
+						self.editor.getSession().setUndoManager( new ace.UndoManager() )
+						self.editor.gotoLine(1);
+						self.edited( false );
+					}
+				}
+			});
 		},
 		
 		/**
@@ -945,7 +663,7 @@
 						}
 						
 						var suggestedNamespace = namespaces.length ? namespaces.join('\\') + '\\' : '';
-						mainController.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+						studioController.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
 					},
 					isShown: function( node ) {
 						var file = node.model;
@@ -973,7 +691,7 @@
 						
 						console.log( namespaces );
 						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
-						mainController.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+						studioController.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
 					},
 					isShown: function( node ) {
 						var file = node.model;
@@ -992,7 +710,7 @@
 					name: 'Add Stylesheet',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-						mainController.addCSSDialog( node.model.getParent( FileTree ).plugin );					
+						studioController.addCSSDialog( node.model.getParent( FileTree ).plugin );					
 					},
 					isShown: function( node ) {
 						var file = node.model;
@@ -1011,7 +729,7 @@
 					name: 'Add Javascript',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-						mainController.addJSDialog( node.model.getParent( FileTree ).plugin );
+						studioController.addJSDialog( node.model.getParent( FileTree ).plugin );
 					},
 					isShown: function( node ) {
 						var file = node.model;
@@ -1032,8 +750,7 @@
 	 * @var	string		slug		Plugin slug
 	 */
 	var Plugin = mwp.model( 'mwp-studio-plugin',
-	{
-		
+	{		
 		/**
 		 * Initialize
 		 *
@@ -1046,8 +763,10 @@
 			 */
 			this.fileTree = new FileTree();
 			this.fileTree.plugin = this;
+			this.studio = studioController.interfaces.get(this.get('framework')) || studioController.interfaces.get('generic');
+			
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
-			this.set( 'filenodes', this.fileTree.filenodes );			
+			this.set( 'filenodes', this.fileTree.filenodes );
 		},
 		
 		/**
@@ -1058,7 +777,7 @@
 		switchToPlugin: function()
 		{
 			var i = this.collection.indexOf( this );
-			mainController.viewModel.currentPlugin( mainController.viewModel.plugins()[ i ] );
+			studioController.viewModel.currentPlugin( studioController.viewModel.plugins()[ i ] );
 		},
 		
 		/**
@@ -1083,7 +802,7 @@
 			
 			return $.ajax({
 				method: 'post',
-				url: mainController.local.ajaxurl,
+				url: studioController.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_fetch_filetree',
 					plugin: self.get('basedir')
@@ -1095,7 +814,7 @@
 					self.fileTree.nodes.set( data.nodes );
 					
 					// Merge in open files
-					_.each( mainController.viewModel.openFiles(), function( file ) 
+					_.each( studioController.viewModel.openFiles(), function( file ) 
 					{
 						var parent = self.fileTree.findChild( 'nodes', function( node ) { 
 							return node.get('id') == file.parent_id(); 
@@ -1110,79 +829,6 @@
 				}
 			});
 		}
-	});
-
-	/**
-	 * Custom knockout bindings
-	 */
-	_.extend( ko.bindingHandlers, 
-	{
-		treeView: {
-			update: function( element, valueAccessor, allBindingsAccessor )	{
-				if ( $.fn.treeview != undefined ) {
-					var treenodes = ko.utils.unwrapObservable( valueAccessor() );				
-					var tree = $(element).treeview( { data: treenodes } );
-					tree.on( 'nodeChecked nodeCollapsed nodeDisabled nodeEnabled nodeExpanded nodeSelected nodeUnchecked nodeUnselected', function( event, node ) {
-						if ( node.model instanceof Backbone.Model ) {
-							node.model.trigger( event.type, event, tree, node );
-						}
-					});
-					
-				}
-			}
-		},
-		
-		aceEditor: {
-			init: function( element, valueAccessor, allBindingsAccessor ) {
-				if ( typeof ace != 'undefined' ) {
-					var setup = ko.utils.unwrapObservable( valueAccessor() );
-					var options = setup.options || {};
-					var fileview = setup.file;
-					var file = fileview.model();
-					var editor = ace.edit(element);
-					
-					editor.setShowPrintMargin(false);
-					
-					if ( file.get('mode') ) {
-						editor.getSession().setMode( 'ace/mode/' + file.get('mode') );
-					}
-					
-					// Initialize the editor with the file content
-					file.getContent().done( function( data ) {
-						editor.setValue( data.content );
-						editor.getSession().setUndoManager(new ace.UndoManager())
-						editor.gotoLine(1);
-						file.edited(false);
-						file.editor = editor;
-						file.editorReady.resolve( editor, options );
-					});
-					
-					// Track file changes
-					editor.on( 'change', function() {
-						file.edited(true);
-					});
-
-					// Track the currently active editor
-					editor.on( 'focus', function() {
-						mainController.viewModel.activeFile( fileview );
-					});
-				}
-			}
-		},
-		
-		contextMenu: {
-			init: function( element, valueAccessor, allBindingsAccessor ) {
-				var options = ko.utils.unwrapObservable( valueAccessor() );
-				if ( typeof BootstrapMenu != 'undefined' ) {
-					var menu = new BootstrapMenu( options.selector, _.extend({
-						fetchElementData: function( el ) {
-							return ko.dataFor( el );
-						}
-					}, options.config ));
-				}				
-			}
-		}
-		
 	});
 	
 })( jQuery );

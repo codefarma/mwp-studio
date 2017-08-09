@@ -46,4 +46,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	echo $this->getTemplateContent( 'dialogs/template-form' );
 	echo $this->getTemplateContent( 'dialogs/stylesheet-form' );
 	echo $this->getTemplateContent( 'dialogs/javascript-form' );
+	echo $this->getTemplateContent( 'dialogs/create-plugin-form' );
 ?>

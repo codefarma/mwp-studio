@@ -25,6 +25,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div data-view-model="mwp-studio" class="mwp-bootstrap">
 	<div class="file-treeview" data-bind="with: currentPlugin()">
-		<div class="treeview" data-bind="treeView: filenodes(), contextMenu: { selector: '#files .list-group-item[data-nodeId]', config: mwp.model.get('mwp-studio-filetree-node').contextMenu }"></div>
+		<div class="treeview" data-bind="treeView: filenodes(), contextMenu: { selector: '#files .list-group-item[data-nodeId]', config: model().studio.fileContextActions() }"></div>
 	</div>
 </div>

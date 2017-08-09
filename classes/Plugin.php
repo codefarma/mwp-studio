@@ -38,9 +38,21 @@ class Plugin extends \Modern\Wordpress\Plugin
 	
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( deps={"mwp", "mwp-bootstrap", "knockback"} )
+	 * @Wordpress\Script( handle="mwp-studio-models", deps={"mwp", "mwp-bootstrap", "knockback"} )
 	 */
-	public $mainScript = 'assets/js/main.js';
+	public $studioModels = 'assets/js/studio.models.js';
+
+	/**
+	 * Main Javascript Controller
+	 * @Wordpress\Script( handle="mwp-studio-interfaces", deps={"mwp-studio-models"} )
+	 */
+	public $studioInterfaces = 'assets/js/studio.interfaces.js';
+
+	/**
+	 * Main Javascript Controller
+	 * @Wordpress\Script( handle="mwp-studio-controller", deps={"mwp-studio-interfaces"} )
+	 */
+	public $studioController = 'assets/js/studio.controller.js';
 	
 	/**
 	 * Ace code editor
@@ -135,7 +147,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		// Studio
 		$this->useStyle( $this->mainStyle );
-		$this->useScript( $this->mainScript );
+		$this->useScript( $this->studioModels );
+		$this->useScript( $this->studioInterfaces );
+		$this->useScript( $this->studioController, array( 'heartbeat_interval' => 10000 ) );
 	}
 	
 	/**
@@ -235,6 +249,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 				'id'         => md5( $relative_path ),
 				'parent_id'  => md5( $parent_path ),
 				'name'       => $file,
+				'modified'   => filemtime( $fullpath ),
 				'type'       => 'file',
 				'icon'       => $icon,
 				'selectable' => $selectable,

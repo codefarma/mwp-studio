@@ -43,9 +43,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<li class="dropdown">
 		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Studio <b class="caret"></b></a>
 		  <ul class="dropdown-menu" role="menu">
-			<li><a href="#">Create A New Plugin</a></li>
+			<li><a href="#" data-bind="click: function(){ $root._controller.createPluginDialog(); }"><i class="fa fa-plus-square"></i> Create A New Plugin</a></li>
+			<li><a href="#"><i class="fa fa-refresh"></i> Update Boilerplate Plugin</a></li>
 		    <li class="dropdown-submenu">
-			  <a tabindex="-1" href="javascript:;">Open Plugin In Studio</a>
+			  <a tabindex="-1" href="javascript:;"><i class="fa fa-folder-open-o"></i> Open Plugin In Studio</a>
 			  <ul data-bind="foreach: plugins" class="dropdown-menu">
 				<li><a href="javascript:;" data-bind="click: function(){ model().switchToPlugin(); }"><span data-bind="text: name"></span></a></li>
 			  </ul>

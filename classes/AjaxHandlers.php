@@ -133,11 +133,35 @@ class AjaxHandlers extends Singleton
 		
 		if ( file_exists( $file ) and is_file( $file ) )
 		{
-			wp_send_json( array( 'file' => $file, 'content' => file_get_contents( $file ) ) );
+			wp_send_json( array( 'success' => true, 'file' => $file, 'content' => file_get_contents( $file ), 'modified' => filemtime( $file ) ) );
 		}
 		else
 		{
-			wp_send_json( array( 'content' => '' ) );
+			wp_send_json( array( 'success' => false, 'content' => '' ) );
+		}
+	}
+	
+	/**
+	 * Synchronize the modification state of a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_sync_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function synchronizeFile()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['path'] );
+		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		
+		if ( file_exists( $file ) and is_file( $file ) )
+		{
+			wp_send_json( array( 'success' => true, 'modified' => filemtime( $file ) ) );
+		}
+		else
+		{
+			wp_send_json( array( 'success' => false ) );
 		}
 	}
 	
@@ -157,9 +181,36 @@ class AjaxHandlers extends Singleton
 		
 		file_put_contents( $file, wp_unslash( $_REQUEST['content'] ) );
 
-		wp_send_json( array( 'success' => true ) );
+		wp_send_json( array( 'success' => true, 'modified' => filemtime( $file ) ) );
 	}
 
+	/**
+	 * Create a new php class
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_create_plugin", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createPlugin()
+	{
+		$this->authorize();
+		
+		$framework = \Modern\Wordpress\Framework::instance();
+		$studio = \MWP\Studio\Plugin::instance();
+		$options = wp_unslash( $_REQUEST['options'] );
+		
+		try 
+		{
+			$class_file = $framework->createPlugin( $options );
+			wp_send_json( array( 'success' => true, 'plugin' => $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $options['slug'] . '/plugin.php' ) ) );
+		}
+		catch( \Exception $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
+		
+	}
+	
 	/**
 	 * Create a new php class
 	 *

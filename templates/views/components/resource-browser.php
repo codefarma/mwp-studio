@@ -27,26 +27,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="btn-group btn-flex">
 	  <button type="button" style="border-right: 0;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
 	  <ul class="dropdown-menu pull-left" data-bind="foreach: $root.plugins">
-		<li><a href="javascript:;" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
+		<li><a href="#" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
 	  </ul>
 	  <div class="btn-group">
 		  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		  </button>
-		  <ul class="dropdown-menu pull-right">
-		    <li class="dropdown-header">Meta Information</li>
-			<li><a href="#"><i class="fa fa-info-circle"></i> Edit Plugin Info</a></li>
-			<li><a href="#"><i class="fa fa-database"></i> Edit Database Tables</a></li>
-			<li><a href="#"><i class="fa fa-sitemap"></i> Edit Dependencies</a></li>
-			<li data-bind="visible: framework() == 'mwp'" class="divider" role="separator"></li>
-			<li data-bind="visible: framework() == 'mwp'" class="dropdown-header">Resources</li>
-			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addClassDialog(); }"><i class="fa fa-code"></i> Add PHP Class</a></li>
-			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addTemplateDialog(); }"><i class="fa fa-code"></i> Add HTML Template</a></li>
-			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addCSSDialog(); }"><i class="fa fa-code"></i> Add Stylesheet</a></li>
-			<li data-bind="visible: framework() == 'mwp'"><a href="#" data-bind="click: function(){ $root.controller.addJSDialog(); }"><i class="fa fa-code"></i> Add Javascript</a></li>
-			<li data-bind="visible: framework() == 'mwp'" class="divider" role="separator"></li>
-			<li data-bind="visible: framework() == 'mwp'"><a href="#"><i class="fa fa-cogs"></i> Build Plugin</a></li>
+		  <ul class="dropdown-menu pull-right" data-bind="foreach: model().studio.pluginMenuElements">
+		    <li data-bind="if: type == 'header'" class="dropdown-header"><span data-bind="text: title"></span></li>
+			<li data-bind="if: type == 'action'">
+				<a href="#" data-bind="click: callback">
+					<i data-bind="if: $element.icon, attr: { class: icon }"></i> 
+					<span data-bind="text: title"></span>
+				</a>
+			</li>
+			<li data-bind="if: type == 'divider'" class="divider" role="separator"></li>
 		  </ul>
 	  </div>
 	</div>

@@ -29,13 +29,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div data-view-model="mwp-studio" class="ace-editors">
 	<div class="breadcrumb">
 		<div class="btn-group pull-right">
-		  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() ) || ( ! activeFile().model().edited() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
-		  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }" data-toggle="dropdown">
+		  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
+		  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() )" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		  </button>
 		  <ul class="dropdown-menu" role="menu">
-			<li><a href="#">Save All</a></li>
+			<li><a href="#" data-bind="click: function() { activeFile().model().reloadFile(); }"><i class="fa fa-refresh"></i> Reload File</a></li>
 		  </ul>
 		</div>
 		<ul class="breadcrumb" style="margin-bottom: 0; padding: 5px 0;" data-bind="foreach: activeFileBreadcrumbs">
@@ -48,7 +48,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<a aria-controls="files" role="tab" data-bind="attr: { href: '#' + id(), id: 'id-' + id() }, event: { 'shown.bs.tab': function(){ ko.dataFor(jQuery('#'+id())[0]).model().editor.focus(); } }" data-toggle="tab">
 				<i data-bind="attr: { class: icon }"></i>
 				<span>
-					<span data-bind="text: text"></span>
+					<span data-bind="text: text, style: { color: model().conflicted() ? 'red' : 'inherit' }"></span>
 					<span data-bind="visible: model().edited">*</span>
 				</span>
 				<span title="Close" class="btn btn-xxs btn-tab-xs" href="#" data-bind="click: function() { model().closeFile(); }, css: { 'btn-danger': model().edited }"><i class="fa fa-close"></i></span>
