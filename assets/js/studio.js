@@ -27,19 +27,15 @@
 	var Plugin            = mwp.model.get( 'mwp-studio-plugin' );
 	var GenericInterface  = mwp.model.get( 'mwp-studio-generic-interface' );
 	
-	mwp.on( 'mwp-studio.init', function( studio ) {
-		studio.interfaces.add( new GenericInterface({ id: 'generic' }) );
-	});
-	
 	/**
 	 * Main Controller
 	 *
 	 * The init() function is called after the page is fully loaded.
 	 *
 	 * Data passed into your script from the server side is available
-	 * by the studioController.local property inside your controller:
+	 * by the studio.local property inside your controller:
 	 *
-	 * > var ajaxurl = studioController.local.ajaxurl;
+	 * > var ajaxurl = studio.local.ajaxurl;
 	 *
 	 * The viewModel of your controller will be bound to any HTML structure
 	 * which uses the data-view-model attribute and names this controller.
@@ -50,12 +46,12 @@
 	 *   <span data-bind="text: title"></span>
 	 * </div>
 	 */
-	var studioController = mwp.controller( 'mwp-studio', 
+	var studio = mwp.controller( 'mwp-studio', 
 	{
 		/**
 		 * @var	Collection
 		 */
-		interfaces: new Backbone.Collection(),
+		environments: new Backbone.Collection(),
 		
 		/**
 		 * Initialization function
@@ -80,7 +76,10 @@
 				plugins: kb.collectionObservable( this.plugins ),
 				currentPlugin: ko.observable(),
 				openFiles: ko.observableArray(),
-				activeFile: ko.observable()
+				activeFile: ko.observable(),
+				env: function() {
+					return self.env();
+				}
 			};
 			
 			/**
@@ -127,13 +126,38 @@
 			
 			// Refresh plugins when they become active
 			this.viewModel.currentPlugin.subscribe( function( plugin ) {
-				plugin.model().refreshStudio();
-				
+				plugin.model().refreshStudio();			
 				localStorage.setItem( 'mwp-studio-current-plugin', plugin.id() );
 			});	
 
 			// Start the ticker
 			this.heartbeat();
+		},
+		
+		/**
+		 * Get the current studio environment
+		 *
+		 * @return	Environment
+		 */
+		env: function()
+		{
+			if ( this.viewModel.currentPlugin() ) {
+				return this.viewModel.currentPlugin().model().env;
+			}
+			
+			return this.environments.get('generic');
+		},
+		
+		/**
+		 * Proxy ajax requests for abstract functionality implementation
+		 *
+		 * @param	object			options			The ajax options
+		 * @return	$.ajax
+		 */
+		ajax: function( options )
+		{
+			options.url = this.local.ajaxurl;
+			return $.ajax( options );
 		},
 		
 		/**
@@ -236,8 +260,8 @@
 
 					// Track the currently active editor
 					editor.on( 'focus', function() {
-						if ( studioController.viewModel.activeFile() !== fileview ) {
-							studioController.viewModel.activeFile( fileview );
+						if ( studio.viewModel.activeFile() !== fileview ) {
+							studio.viewModel.activeFile( fileview );
 							file.conflicted() ? file.resolveConflict() : file.checkSync();
 						}
 					});

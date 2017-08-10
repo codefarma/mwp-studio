@@ -44,15 +44,15 @@ class Plugin extends \Modern\Wordpress\Plugin
 
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( handle="mwp-studio-interfaces", deps={"mwp-studio-models"} )
+	 * @Wordpress\Script( handle="mwp-studio-environment", deps={"mwp-studio-models"} )
 	 */
-	public $studioInterfaces = 'assets/js/studio.interfaces.js';
+	public $studioInterfaces = 'assets/js/studio.environment.js';
 
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( handle="mwp-studio-controller", deps={"mwp-studio-interfaces"} )
+	 * @Wordpress\Script( handle="mwp-studio", deps={"mwp-studio-environment"} )
 	 */
-	public $studioController = 'assets/js/studio.controller.js';
+	public $studioController = 'assets/js/studio.js';
 	
 	/**
 	 * Ace code editor
@@ -100,19 +100,19 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 * Bootstrap Treeview JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 */
-	public $bootstrapTreeviewJS = 'assets/js/bootstrap-treeview.min.js';
+	public $bootstrapTreeviewJS = 'assets/js/lib/bootstrap-treeview.min.js';
 	
 	/**
 	 * Bootstrap Context Menu JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 */
-	public $bootstrapContextmenuJS = 'assets/js/bootstrap-contextmenu.min.js';
+	public $bootstrapContextmenuJS = 'assets/js/lib/bootstrap-contextmenu.min.js';
 	
 	/**
 	 * Bootbox JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 */
-	public $bootboxJS = 'assets/js/bootstrap-bootbox.min.js';
+	public $bootboxJS = 'assets/js/lib/bootstrap-bootbox.min.js';
 	
 	/**
 	 * Enqueue scripts and stylesheets
@@ -167,7 +167,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$basedir = str_replace( WP_PLUGIN_DIR, '', str_replace( "/" . basename( $file ), "", $file ) );
 		$composite_data[ 'pluginfile' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
-		$composite_data[ 'framework' ] = '';
+		$composite_data[ 'environment' ] = 'generic';
 		
 		foreach( $core_data as $key => $value )	{
 			$composite_data[ strtolower( $key ) ] = $value;		
@@ -177,14 +177,14 @@ class Plugin extends \Modern\Wordpress\Plugin
 		{
 			$plugin_data = json_decode( include( WP_PLUGIN_DIR . $basedir  . '/data/plugin-meta.php' ), true );
 			if ( is_array( $plugin_data ) ) {
-				$composite_data[ 'framework' ] = 'mwp';
+				$composite_data[ 'environment' ] = 'mwp';
 				$composite_data = array_merge( $plugin_data, $composite_data );
 			}
 		}
 		
 		$composite_data[ 'id' ] = md5( $basedir );
 		
-		return $composite_data;		
+		return apply_filters( 'mwp_studio_plugin_info', $composite_data );
 	}
 	
 	/**

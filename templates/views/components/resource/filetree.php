@@ -24,7 +24,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div data-view-model="mwp-studio" class="mwp-bootstrap">
-	<div class="file-treeview" data-bind="with: currentPlugin()">
-		<div class="treeview" data-bind="treeView: filenodes(), contextMenu: { selector: '#files .list-group-item[data-nodeId]', config: model().studio.fileContextActions() }"></div>
+	<div id="file-treeview" class="file-treeview" data-bind="with: currentPlugin()">
+		<div class="treeview" data-bind="treeView: filenodes(), 
+			contextMenu: { 
+				selector: '#file-treeview .list-group-item[data-nodeId]', 
+				config: {
+					fetchElementData: function(el) { return jQuery(el).closest('.treeview').treeview('getNode', jQuery(el).data('nodeid')); },
+					actions: $root.env().fileContextActions()
+				}
+			}
+		"></div>
 	</div>
 </div>

@@ -12,18 +12,15 @@
 	
 	"use strict";
 
-	var studioController;
+	var studio;
 	
-	mwp.on( 'mwp-studio.ready', function( studio ) {
-		studioController = studio;
+	mwp.on( 'mwp-studio.ready', function( controller ) {
+		studio = controller;
 	});
 	
-	mwp.on( 'mwp-studio.init', function( studio ) {
-		studio.interfaces.add( new MWPInterface({ id: 'mwp' }) );
-	});
-	
-	var CollectorModel = mwp.model.get( 'mwp-studio-collector' );
+	var CollectorModel   = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel = mwp.model.get( 'mwp-studio-collectible' );
+	var FileTree         = mwp.model.get( 'mwp-studio-filetree' );
 	
 	/**
 	 * [Model] Base Framework
@@ -31,7 +28,7 @@
 	 * This class should be extended to provide framework specific support and
 	 * studio elements for projects
 	 */
-	var GenericInterface = mwp.model.set( 'mwp-studio-generic-interface', CollectorModel.extend(
+	var GenericEnvironment = mwp.model.set( 'mwp-studio-generic-environment', CollectorModel.extend(
 	{
 		/**
 		 * Initialize
@@ -46,7 +43,7 @@
 			 * Studio menu elements
 			 */
 			this.studioMenuElements = ko.computed( function() {
-				var plugin = studioController.viewModel.currentPlugin();
+				var plugin = studio.viewModel.currentPlugin();
 				return plugin ? self.getStudioMenuElements( plugin.model() ) : [];
 			});
 			
@@ -54,7 +51,7 @@
 			 * Plugin menu elements
 			 */
 			this.pluginMenuElements = ko.computed( function() {
-				var plugin = studioController.viewModel.currentPlugin();
+				var plugin = studio.viewModel.currentPlugin();
 				return plugin ? self.getPluginMenuElements( plugin.model() ) : [];
 			});
 			
@@ -62,7 +59,7 @@
 			 * File context actions
 			 */
 			this.fileContextActions = ko.computed( function() {
-				var plugin = studioController.viewModel.currentPlugin();
+				var plugin = studio.viewModel.currentPlugin();
 				return plugin ? self.getFileContextActions( plugin.model() ) : [];
 			});
 		},
@@ -109,91 +106,33 @@
 		getFileContextActions: function( plugin )
 		{
 			return {
-			
 				/**
-				 * Get the context node
-				 *
-				 * @param	domElement		el		Clicked dom element
-				 * @return	object
+				 * Edit the file in the editor
 				 */
-				fetchElementData: function( el ) {
-					return $(el).closest('.treeview').treeview('getNode', $(el).data('nodeid'));
-				},
-				
-				actions: 
-				{
-					/**
-					 * Edit the file in the editor
-					 */
-					editFile: {
-						name: 'Edit File',
-						iconClass: 'fa-pencil',
-						onClick: function( node ) {
-							node.model.switchTo();
-						},
-						isShown: function( node ) {
-							return node.selectable;
-						}
+				editFile: {
+					name: 'Edit File',
+					iconClass: 'fa-pencil',
+					onClick: function( node ) {
+						node.model.switchTo();
+					},
+					isShown: function( node ) {
+						return node.selectable;
 					}
 				}
 			};
-		},
-		
-		/**
-		 * Create a new plugin
-		 *
-		 * @param	object		node		The plugin to add the class to
-		 * @param	string		name		Optional suggested plugin name
-		 * @return	$.Deferred
-		 */
-		createPluginDialog: function( name )
-		{
-			var self = this;
-			
-			var viewModel = {
-				name:        ko.observable( name || '' ),
-				description: ko.observable( '' ),
-				vendor:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-name' ) || '' ),
-				author:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-author' ) || '' ),
-				authorurl:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-authorurl' ) || '' ),
-				pluginurl:   ko.observable( '' ),
-				slug:        ko.observable( '' ),
-				namespace:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-namespace' ) || '' )
-			};
-			
-			var dialogTemplate = $('#studio-tmpl-create-plugin-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
-			
-			return this.createDialog( 'Plugin', dialogContent, viewModel, function() 
-			{ 
-				if ( ! viewModel.name() ) { return false; }
-				
-				localStorage.setItem( 'mwp-studio-vendor-name', viewModel.vendor() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-author', viewModel.author() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-authorurl', viewModel.authorurl() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-namespace', viewModel.namespace().split('\\')[0] || '' );
-				
-				var plugin_opts = {
-					name:        viewModel.name(),
-					description: viewModel.description(),
-					vendor:      viewModel.vendor(),
-					author:      viewModel.author(),
-					author_url:  viewModel.authorurl(),
-					plugin_url:  viewModel.pluginurl(),
-					slug:        viewModel.slug(),
-					namespace:   viewModel.namespace()
-				};
-				
-				return self.createPlugin( plugin_opts ); 
-			}, { size: 500 });
-		}		
+		}
 
 	}));
+
+	// Add Generic Environment
+	mwp.on( 'mwp-studio.init', function( studio ) {
+		studio.environments.add( new GenericEnvironment({ id: 'generic' }) );
+	});
 	
 	/**
-	 * Modern Wordpress Interface
+	 * Modern Wordpress Environment
 	 */
-	var MWPInterface = mwp.model.set( 'mwp-studio-mwp-interface', GenericInterface.extend(
+	var MWPEnvironment = mwp.model.set( 'mwp-studio-mwp-environment', GenericEnvironment.extend(
 	{
 		/**
 		 * Get plugin menu elements
@@ -204,9 +143,10 @@
 		getPluginMenuElements: function( plugin )
 		{
 			var self = this;
-			var elements = MWPInterface.__super__.getPluginMenuElements.call( this, plugin );
+			var elements = MWPEnvironment.__super__.getPluginMenuElements.call( this, plugin );
 			
-			elements.push({
+			elements.push(
+			{
 				type: 'divider'
 			},
 			{
@@ -258,7 +198,99 @@
 		getFileContextActions: function( plugin )
 		{
 			var self = this;
-			var actions = MWPInterface.__super__.getFileContextActions.call( this, plugin );
+			var actions = MWPEnvironment.__super__.getFileContextActions.call( this, plugin ) || {};
+			
+			_.extend( actions, 
+			{
+				/**
+				 * Add new php class
+				 */
+				addClass: 
+				{
+					name: 'Create New Class',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+						var model = node.model;
+						var namespaces = [];
+						while( model.get('name') !== 'classes' ) { 
+							namespaces.unshift( model.get('name') );
+							model = model.getParent();
+						}
+						
+						var suggestedNamespace = namespaces.length ? namespaces.join('\\') + '\\' : '';
+						self.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.get('type') == 'dir' 
+							&& file.rootDir(0) == 'classes';
+					}
+				},
+				
+				/**
+				 * Add new view template
+				 */
+				addTemplate: 
+				{
+					name: 'Add Template',
+					iconClass: 'fa-code',
+					onClick: function( node ) {
+						var model = node.model;
+						var namespaces = [];
+						while( model.get('name') !== 'templates' && model instanceof CollectibleModel ) { 
+							namespaces.unshift( model.get('name') );
+							model = model.getParent();
+						}
+						
+						console.log( namespaces );
+						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
+						self.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.get('type') == 'dir' 
+							&& node.model.rootDir(0) == 'templates';
+					}
+				},
+				
+				/**
+				 * Add new css resource
+				 */
+				addCSS: 
+				{
+					name: 'Add Stylesheet',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+						self.addCSSDialog( node.model.getParent( FileTree ).plugin );					
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.rootDir(0) == 'assets' 
+							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'css' );
+					}
+				},
+
+				/**
+				 * Add new javascript module
+				 */
+				addJS: 
+				{
+					name: 'Add Javascript',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+						self.addJSDialog( node.model.getParent( FileTree ).plugin );
+					},
+					isShown: function( node ) {
+						var file = node.model;
+						var plugin = file.getParent( FileTree ).plugin;
+						return file.rootDir(0) == 'assets' 
+							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' );
+					}
+				}
+			});
 			
 			return actions;
 		},
@@ -620,6 +652,11 @@
 			});
 		}		
 	}));
+	
+	// Add MWP Environment
+	mwp.on( 'mwp-studio.init', function( studio ) {
+		studio.environments.add( new MWPEnvironment({ id: 'mwp' }) );
+	});	
 	
 })( jQuery );
  

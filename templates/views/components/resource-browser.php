@@ -34,15 +34,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		  </button>
-		  <ul class="dropdown-menu pull-right" data-bind="foreach: model().studio.pluginMenuElements">
-		    <li data-bind="if: type == 'header'" class="dropdown-header"><span data-bind="text: title"></span></li>
-			<li data-bind="if: type == 'action'">
+		  <ul class="dropdown-menu pull-right" data-bind="foreach: $root.env().pluginMenuElements">
+		    <li data-bind="if: type == 'header', visible: type == 'header'" class="dropdown-header"><span data-bind="text: title"></span></li>
+			<li data-bind="if: type == 'action', visible: type == 'action'">
 				<a href="#" data-bind="click: callback">
 					<i data-bind="if: $element.icon, attr: { class: icon }"></i> 
 					<span data-bind="text: title"></span>
 				</a>
 			</li>
-			<li data-bind="if: type == 'divider'" class="divider" role="separator"></li>
+			<li data-bind="if: type == 'divider', visible: type == 'divider'" class="divider" role="separator"></li>
 		  </ul>
 	  </div>
 	</div>

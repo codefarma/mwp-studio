@@ -15,10 +15,10 @@
 	
 	"use strict";
 	
-	var studioController;
+	var studio;
 	
 	mwp.on( 'mwp-studio.ready', function( controller ) {
-		studioController = controller;
+		studio = controller;
 	});
 	
 	/**
@@ -320,7 +320,7 @@
 			 */
 			this.conflicted.subscribe( function( conflicted ) {
 				if ( conflicted ) {
-					if ( studioController.viewModel.activeFile() && studioController.viewModel.activeFile().id() == self.get('id') ) {
+					if ( studio.viewModel.activeFile() && studio.viewModel.activeFile().id() == self.get('id') ) {
 						self.resolveConflict();
 					}
 				}
@@ -337,7 +337,7 @@
 			if ( ! this.open() ) 
 			{
 				// Pushing onto open files causes editor to open the file
-				studioController.viewModel.openFiles.push( this.fileViewModel );
+				studio.viewModel.openFiles.push( this.fileViewModel );
 				this.open(true);
 			}
 			
@@ -356,7 +356,7 @@
 			
 			return $.ajax({
 				method: 'post',
-				url: studioController.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_get_file_content',
 					path: self.get('path')
@@ -377,7 +377,7 @@
 			{
 				return $.ajax({
 					method: 'post',
-					url: studioController.local.ajaxurl,
+					url: studio.local.ajaxurl,
 					data: { 
 						action: 'mwp_studio_save_file_content',
 						path: self.get('path'),
@@ -409,7 +409,7 @@
 			{
 				var closeit = function() 
 				{
-					var viewModel = studioController.viewModel;
+					var viewModel = studio.viewModel;
 					var tabindex = viewModel.openFiles.indexOf( self.fileViewModel );
 					self.editorReady = $.Deferred();
 					self.editor.destroy();
@@ -480,7 +480,7 @@
 			var check = $.Deferred();
 			
 			$.ajax({
-				url: studioController.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				method: 'post',
 				data: {
 					action: 'mwp_studio_sync_file',
@@ -612,135 +612,6 @@
 			
 			return json;
 		}
-	},
-	{
-		/**
-		 * Context Menu Options
-		 */
-		contextMenu: 
-		{	
-			/**
-			 * Get the context node
-			 *
-			 * @param	domElement		el		Clicked dom element
-			 * @return	object
-			 */
-			fetchElementData: function( el ) {
-				return $(el).closest('.treeview').treeview('getNode', $(el).data('nodeid'));
-			},
-			
-			// Context menu actions
-			actions: 
-			{
-				/**
-				 * Edit the file in the editor
-				 */
-				editFile:
-				{
-					name: 'Edit File',
-					iconClass: 'fa-pencil',
-					onClick: function( node ) {
-						node.model.switchTo();
-					},
-					isShown: function( node ) {
-						return node.selectable;
-					}
-				},
-				
-				/**
-				 * Add new php class
-				 */
-				addClass: 
-				{
-					name: 'Create New Class',
-					iconClass: 'fa-file-code-o',
-					onClick: function( node ) {
-						var model = node.model;
-						var namespaces = [];
-						while( model.get('name') !== 'classes' ) { 
-							namespaces.unshift( model.get('name') );
-							model = model.getParent();
-						}
-						
-						var suggestedNamespace = namespaces.length ? namespaces.join('\\') + '\\' : '';
-						studioController.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
-					},
-					isShown: function( node ) {
-						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
-						return file.get('type') == 'dir' 
-							&& file.rootDir(0) == 'classes' 
-							&& plugin.get('framework') == 'mwp';
-					}
-				},
-				
-				/**
-				 * Add new view template
-				 */
-				addTemplate: 
-				{
-					name: 'Add Template',
-					iconClass: 'fa-code',
-					onClick: function( node ) {
-						var model = node.model;
-						var namespaces = [];
-						while( model.get('name') !== 'templates' && model instanceof CollectibleModel ) { 
-							namespaces.unshift( model.get('name') );
-							model = model.getParent();
-						}
-						
-						console.log( namespaces );
-						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
-						studioController.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
-					},
-					isShown: function( node ) {
-						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
-						return file.get('type') == 'dir' 
-							&& node.model.rootDir(0) == 'templates' 
-							&& plugin.get('framework') == 'mwp';
-					}
-				},
-				
-				/**
-				 * Add new css resource
-				 */
-				addCSS: 
-				{
-					name: 'Add Stylesheet',
-					iconClass: 'fa-file-code-o',
-					onClick: function( node ) {
-						studioController.addCSSDialog( node.model.getParent( FileTree ).plugin );					
-					},
-					isShown: function( node ) {
-						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
-						return file.rootDir(0) == 'assets' 
-							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'css' ) 
-							&& plugin.get('framework') == 'mwp';
-					}
-				},
-
-				/**
-				 * Add new javascript module
-				 */
-				addJS: 
-				{
-					name: 'Add Javascript',
-					iconClass: 'fa-file-code-o',
-					onClick: function( node ) {
-						studioController.addJSDialog( node.model.getParent( FileTree ).plugin );
-					},
-					isShown: function( node ) {
-						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
-						return file.rootDir(0) == 'assets' 
-							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' ) 
-							&& plugin.get('framework') == 'mwp';
-					}
-				}			
-			}
-		}
 	}));
 	
 	/**
@@ -763,7 +634,7 @@
 			 */
 			this.fileTree = new FileTree();
 			this.fileTree.plugin = this;
-			this.studio = studioController.interfaces.get(this.get('framework')) || studioController.interfaces.get('generic');
+			this.env = studio.environments.get( this.get('environment') ) || studio.environments.get('generic');
 			
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
 			this.set( 'filenodes', this.fileTree.filenodes );
@@ -777,7 +648,7 @@
 		switchToPlugin: function()
 		{
 			var i = this.collection.indexOf( this );
-			studioController.viewModel.currentPlugin( studioController.viewModel.plugins()[ i ] );
+			studio.viewModel.currentPlugin( studio.viewModel.plugins()[ i ] );
 		},
 		
 		/**
@@ -802,7 +673,7 @@
 			
 			return $.ajax({
 				method: 'post',
-				url: studioController.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_fetch_filetree',
 					plugin: self.get('basedir')
@@ -814,7 +685,7 @@
 					self.fileTree.nodes.set( data.nodes );
 					
 					// Merge in open files
-					_.each( studioController.viewModel.openFiles(), function( file ) 
+					_.each( studio.viewModel.openFiles(), function( file ) 
 					{
 						var parent = self.fileTree.findChild( 'nodes', function( node ) { 
 							return node.get('id') == file.parent_id(); 

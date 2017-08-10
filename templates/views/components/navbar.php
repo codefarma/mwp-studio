@@ -42,15 +42,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	  <ul class="nav navbar-nav">
 		<li class="dropdown">
 		  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Studio <b class="caret"></b></a>
-		  <ul class="dropdown-menu" role="menu">
-			<li><a href="#" data-bind="click: function(){ $root._controller.createPluginDialog(); }"><i class="fa fa-plus-square"></i> Create A New Plugin</a></li>
-			<li><a href="#"><i class="fa fa-refresh"></i> Update Boilerplate Plugin</a></li>
-		    <li class="dropdown-submenu">
-			  <a tabindex="-1" href="javascript:;"><i class="fa fa-folder-open-o"></i> Open Plugin In Studio</a>
-			  <ul data-bind="foreach: plugins" class="dropdown-menu">
-				<li><a href="javascript:;" data-bind="click: function(){ model().switchToPlugin(); }"><span data-bind="text: name"></span></a></li>
-			  </ul>
+		  <ul class="dropdown-menu" role="menu" data-bind="foreach: $root.env().studioMenuElements">
+		    <li data-bind="if: type == 'header', visible: type == 'header'" class="dropdown-header"><span data-bind="text: title"></span></li>
+			<li data-bind="if: type == 'action', visible: type == 'action'">
+				<a href="#" data-bind="click: callback">
+					<i data-bind="if: $element.icon, attr: { class: icon }"></i> 
+					<span data-bind="text: title"></span>
+				</a>
 			</li>
+			<li data-bind="if: type == 'divider', visible: type == 'divider'" class="divider" role="separator"></li>
 		  </ul>
 		</li>
 	  </ul>
