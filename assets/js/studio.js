@@ -106,7 +106,7 @@
 						}
 						
 						if ( currentNode instanceof FileTree ) {
-							breadcrumbs.unshift( currentNode.plugin.get('basedir') );
+							breadcrumbs.unshift( currentNode.plugin.get('basedir').replace(/^\//,'') );
 						}
 					}
 					
@@ -280,8 +280,22 @@
 					}, options.config ));
 				}				
 			}
-		}
+		},
 		
+		layout: {
+			init: function( element, valueAccessor, allBindingsAccessor ) {
+				var options = ko.utils.unwrapObservable( valueAccessor() );
+				$(element).layout( options );			
+			}
+		}
+	});
+	
+	$(document).ready( function() {
+		$(window).resize( function() {
+			$('#mwp-studio-container').css({height: $(window).height() - 32});
+		}).resize();
+		
+		setTimeout( function() { $(window).resize(); }, 200 );
 	});
 	
 })( jQuery );

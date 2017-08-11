@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<nav class="navbar navbar-default" role="navigation" data-view-model="mwp-studio">
+<nav class="navbar navbar-default" role="navigation" data-view-model="mwp-studio" style="margin-bottom: 0">
   <div class="container-fluid">
 	<!-- Brand and toggle get grouped for better mobile display -->
 	<div class="navbar-header">

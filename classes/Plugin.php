@@ -55,6 +55,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public $studioController = 'assets/js/studio.js';
 	
 	/**
+	 * jQuery Layout JS
+	 * @Wordpress\Script( deps={"jquery","jquery-ui-draggable"} )
+	 */
+	public $jqueryLayout = 'assets/js/lib/jquery.layout.js';
+	
+	/**
 	 * Ace code editor
 	 * @Wordpress\Script
 	 */
@@ -123,6 +129,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function enqueueScripts()
 	{
+		// jQuery Layout
+		$this->useScript( $this->jqueryLayout );
+		
 		// Bootflat UI
 		$this->useStyle( $this->bootflatCSS );
 		$this->useScript( $this->bootflatJS1 );

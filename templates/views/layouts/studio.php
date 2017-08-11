@@ -21,23 +21,37 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
+echo $this->getTemplateContent( 'views/styles' );
 ?>
-<div data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap wrap">
-	<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
 
-	<div class="row">
-		<div class="col-md-3">
+<div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" 
+	data-bind="layout: { 
+		applyDefaultStyles: true, 
+		south: { size: 200 }, 
+		north: { 
+			resizable: false, 
+			closable: false, 
+			spacing_open: 0 
+		} 
+	}">
+	<div class="ui-layout-north">
+		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
+	</div>
+	<div class="ui-layout-center">
+		<div class="col-md-3" style="max-height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/resource-browser' ) ?>
 		</div>
 		
-		<div class="col-md-6">
+		<div class="col-md-6" style="max-height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/files-editor' ) ?>
 		</div>
 		
-		<div class="col-md-3">
+		<div class="col-md-3" style="max-height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
-		</div>
-		
+		</div>			
+	</div>
+	<div class="ui-layout-south">
+		South
 	</div>
 </div>
 
