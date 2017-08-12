@@ -615,6 +615,58 @@
 	}));
 	
 	/**
+	 * [Model] Menu Item
+	 *
+	 * @var	string		type			header,action,divider,submenu,dropdown
+	 * @var string		icon			Icon class
+	 * @var string		title			Menu item title
+	 * @var	string		classes			Element classes
+	 * @var	function	callback		Click handler
+	 */
+	var MenuItem = mwp.model.set( 'mwp-studio-menu-item', CollectorModel.extend( CollectibleModel.prototype ).extend(
+	{
+		/**
+		 * Initialize
+		 *
+		 * @return	void
+		 */
+		initialize: function()
+		{
+			var self = this;
+			
+			this.set( 'type', this.get('type') || 'action' );
+			this.set( 'icon', this.get('icon') || '' );
+			this.set( 'title', this.get('title') || '' );
+			this.set( 'classes', this.get('classes') || '' );
+			this.set( 'callback', this.get('callback') || function(){} );
+			
+			/**
+			 * Collectible attributes
+			 * @var	Collections
+			 */
+			this.defineCollectibles([
+				{ attribute: 'subitems', options: { model: MenuItem } }
+			]);
+		},
+		
+		/**
+		 * Get a the html dom as a jquery object
+		 *
+		 * @return	jQuery
+		 */
+		getHtmlDom: function()
+		{
+			var type = this.get('type');
+			var template = $( studio.local.templates.menus[ type ] );
+			
+			ko.applyBindings( kb.viewModel( this ), template[0] );
+			
+			return template;
+		}
+	
+	}));
+	
+	/**
 	 * [Model] Plugin
 	 *
 	 * @var	string		name		Plugin name

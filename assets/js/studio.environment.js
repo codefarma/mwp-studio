@@ -21,6 +21,7 @@
 	var CollectorModel   = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel = mwp.model.get( 'mwp-studio-collectible' );
 	var FileTree         = mwp.model.get( 'mwp-studio-filetree' );
+	var MenuItem         = mwp.model.get( 'mwp-studio-menu-item' );
 	
 	/**
 	 * [Model] Base Framework
@@ -40,19 +41,21 @@
 			var self = this;
 
 			/**
-			 * Studio menu elements
+			 * Studio menu items
 			 */
-			this.studioMenuElements = ko.computed( function() {
+			this.studioMenuItems = ko.computed( function() {
 				var plugin = studio.viewModel.currentPlugin();
-				return plugin ? self.getStudioMenuElements( plugin.model() ) : [];
+				var items = plugin ? self.getStudioMenuItems( plugin.model() ) : [];
+				return _.map( items, function( itemData ) { return kb.viewModel( new MenuItem( itemData ) ); } );
 			});
 			
 			/**
-			 * Plugin menu elements
+			 * Plugin menu items
 			 */
-			this.pluginMenuElements = ko.computed( function() {
+			this.pluginMenuItems = ko.computed( function() {
 				var plugin = studio.viewModel.currentPlugin();
-				return plugin ? self.getPluginMenuElements( plugin.model() ) : [];
+				var items = plugin ? self.getPluginMenuItems( plugin.model() ) : [];
+				return _.map( items, function( itemData ) { return kb.viewModel( new MenuItem( itemData ) ); } );
 			});
 			
 			/**
@@ -70,9 +73,33 @@
 		 * @param	Plugin		plugin			The plugin to get menu items for
 		 * @return	array
 		 */
-		getStudioMenuElements: function( plugin )
+		getStudioMenuItems: function( plugin )
 		{
-			return [];
+			return [{
+				type: 'dropdown',
+				title: 'Studio',
+				subitems: [{
+					type: 'action',
+					title: 'Create a new plugin',
+					icon: 'fa fa-plus-circle',
+					callback: function() {
+					
+					}
+				},
+				{
+					type: 'submenu',
+					title: 'Open plugin',
+					subitems: _.map( studio.viewModel.plugins(), function( _plugin ) {
+						return {
+							type: 'action',
+							title: _plugin.name(),
+							callback: function() {
+								_plugin.model().switchToPlugin();
+							}
+						};
+					})
+				}]
+			}];
 		},
 		
 		/**
@@ -81,7 +108,7 @@
 		 * @param	Plugin		plugin			The plugin to get menu items for
 		 * @return	array
 		 */
-		getPluginMenuElements: function( plugin )
+		getPluginMenuItems: function( plugin )
 		{
 			return [{
 				title: 'Meta Information',
@@ -140,10 +167,10 @@
 		 * @param	Plugin		plugin			The plugin to get menu items for
 		 * @return	array
 		 */
-		getPluginMenuElements: function( plugin )
+		getPluginMenuItems: function( plugin )
 		{
 			var self = this;
-			var elements = MWPEnvironment.__super__.getPluginMenuElements.call( this, plugin );
+			var elements = MWPEnvironment.__super__.getPluginMenuItems.call( this, plugin );
 			
 			elements.push(
 			{
@@ -354,7 +381,7 @@
 		addClassDialog: function( plugin, namespace )
 		{
 			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentPlugin().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -380,7 +407,7 @@
 		addTemplateDialog: function( plugin, filepath )
 		{
 			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentPlugin().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -406,7 +433,7 @@
 		addCSSDialog: function( plugin, filename )
 		{
 			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentPlugin().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -432,7 +459,7 @@
 		addJSDialog: function( plugin, filename )
 		{
 			var self = this;
-			var plugin = plugin || self.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentPlugin().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -461,7 +488,7 @@
 		{
 			var self = this;
 			var dialogInteraction = $.Deferred();
-			var plugin = viewModel.plugin ? viewModel.plugin.model() : self.viewModel.currentPlugin().model();
+			var plugin = viewModel.plugin ? viewModel.plugin.model() : studio.viewModel.currentPlugin().model();
 			var dialog;
 			
 			viewModel.enterKeySubmit = function( data, event ) {

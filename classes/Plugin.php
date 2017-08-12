@@ -158,7 +158,18 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$this->useStyle( $this->mainStyle );
 		$this->useScript( $this->studioModels );
 		$this->useScript( $this->studioInterfaces );
-		$this->useScript( $this->studioController, array( 'heartbeat_interval' => 10000 ) );
+		$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
+			'heartbeat_interval' => 10000,
+			'templates' => array(
+				'menus' => array(
+					'header'   => $this->getTemplateContent( 'snippets/menus/item-header' ),
+					'action'   => $this->getTemplateContent( 'snippets/menus/item-action' ),
+					'divider'  => $this->getTemplateContent( 'snippets/menus/item-divider' ),
+					'submenu'  => $this->getTemplateContent( 'snippets/menus/item-submenu' ),
+					'dropdown' => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
+				),
+			),
+		)));
 	}
 	
 	/**

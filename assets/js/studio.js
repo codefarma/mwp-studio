@@ -282,6 +282,19 @@
 			}
 		},
 		
+		bootstrapMenu: {
+			update: function( element, valueAccessor, allBindingsAccessor ) {
+				var items = ko.utils.unwrapObservable( valueAccessor() );
+				var menu = $(element).html('');
+				
+				_.each( items, function( menuItem ) {
+					menu.append( '<!-- ko stopBinding: true -->' );
+					menu.append( menuItem.model().getHtmlDom() );
+					menu.append( '<!-- /ko -->' );
+				});
+			}
+		},
+		
 		layout: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var options = ko.utils.unwrapObservable( valueAccessor() );
