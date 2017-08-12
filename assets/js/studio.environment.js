@@ -21,6 +21,7 @@
 	var CollectorModel   = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel = mwp.model.get( 'mwp-studio-collectible' );
 	var FileTree         = mwp.model.get( 'mwp-studio-filetree' );
+	var FileTreeNode     = mwp.model.get( 'mwp-studio-filetree-node' );
 	var MenuItem         = mwp.model.get( 'mwp-studio-menu-item' );
 	
 	/**
@@ -87,8 +88,12 @@
 					}
 				},
 				{
+					type: 'divider',
+				},
+				{
 					type: 'submenu',
 					title: 'Open plugin',
+					icon: 'fa fa-folder-open',
 					subitems: _.map( studio.viewModel.plugins(), function( _plugin ) {
 						return {
 							type: 'action',
@@ -520,9 +525,9 @@
 								if ( response.success ) 
 								{
 									if ( response.plugin ) {
-										var plugin = self.plugins.add( response.plugin );
-										plugin.switchToPlugin();
-										dialogInteraction.resolve( plugin );
+										var _plugin = studio.plugins.add( response.plugin );
+										_plugin.switchToPlugin();
+										dialogInteraction.resolve( _plugin );
 										return;
 									}
 									
@@ -594,7 +599,7 @@
 		createPlugin: function( options )
 		{
 			return $.ajax({
-				url: this.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				method: 'post',
 				data: {
 					action: 'mwp_studio_create_plugin',
@@ -613,7 +618,7 @@
 		createClass: function( plugin, classname )
 		{
 			return $.ajax({
-				url: this.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: {
 					action: 'mwp_studio_add_class',
 					plugin: plugin,
@@ -632,7 +637,7 @@
 		createTemplate: function( plugin, template )
 		{
 			return $.ajax({
-				url: this.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: {
 					action: 'mwp_studio_add_template',
 					plugin: plugin,
@@ -651,7 +656,7 @@
 		createCSS: function( plugin, filename )
 		{
 			return $.ajax({
-				url: this.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: {
 					action: 'mwp_studio_add_css',
 					plugin: plugin,
@@ -670,7 +675,7 @@
 		createJS: function( plugin, filename )
 		{
 			return $.ajax({
-				url: this.local.ajaxurl,
+				url: studio.local.ajaxurl,
 				data: {
 					action: 'mwp_studio_add_js',
 					plugin: plugin,
