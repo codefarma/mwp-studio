@@ -99,8 +99,8 @@
 					if ( currentFile ) 
 					{
 						var currentNode = currentFile.model();
-
-						while( currentNode instanceof CollectibleModel && currentNode.getParent() ) {
+						
+						while( typeof currentNode.getParent == 'function' && currentNode.getParent() ) {
 							breadcrumbs.unshift( currentNode.get('text') );
 							currentNode = currentNode.getParent();
 						}

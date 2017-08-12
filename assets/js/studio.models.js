@@ -99,7 +99,7 @@
 						found = model;
 						return false;
 					}
-					if ( model instanceof CollectorModel && model[attribute] instanceof Backbone.Collection ) {
+					if ( typeof model.findChild == 'function' && model[attribute] instanceof Backbone.Collection ) {
 						found = model.findChild( attribute, test );
 						if ( found ) {
 							return false;
@@ -158,7 +158,7 @@
 								return parent;
 							}
 						}
-						if ( parent instanceof CollectibleModel ) {
+						if ( typeof parent.getParent == 'function' ) {
 							return parent.getParent( filter );
 						}
 					} else {

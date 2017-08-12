@@ -265,7 +265,7 @@
 					onClick: function( node ) {
 						var model = node.model;
 						var namespaces = [];
-						while( model.get('name') !== 'templates' && model instanceof CollectibleModel ) { 
+						while( model.get('name') !== 'templates' && typeof model.getParent == 'function' ) { 
 							namespaces.unshift( model.get('name') );
 							model = model.getParent();
 						}
