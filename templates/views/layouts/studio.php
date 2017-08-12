@@ -37,16 +37,16 @@ echo $this->getTemplateContent( 'views/styles' );
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
 	</div>
-	<div class="ui-layout-center">
-		<div class="col-md-3" style="max-height: 100%">
+	<div class="ui-layout-center" data-bind="event: { 'resize': function() { if ( activeFile() ) { setTimeout( function(){ activeFile().model().editor.resize(); }, 200 ); } } }">
+		<div class="column col-md-3" style="height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/resource-browser' ) ?>
 		</div>
 		
-		<div class="col-md-6" style="max-height: 100%">
+		<div class="column col-md-6" style="height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/files-editor' ) ?>
 		</div>
 		
-		<div class="col-md-3" style="max-height: 100%">
+		<div class="column col-md-3" style="height: 100%">
 			<?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
 		</div>			
 	</div>

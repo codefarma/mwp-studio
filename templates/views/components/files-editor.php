@@ -45,7 +45,17 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<ul class="nav nav-tabs" data-bind="foreach: openFiles" role="tablist">
 		<li role="presentation" class="">
-			<a aria-controls="files" role="tab" data-bind="attr: { href: '#' + id(), id: 'id-' + id() }, event: { 'shown.bs.tab': function(){ ko.dataFor(jQuery('#'+id())[0]).model().editor.focus(); } }" data-toggle="tab">
+			<a aria-controls="files" role="tab" data-toggle="tab" 
+				data-bind="
+					attr: { href: '#' + id(), id: 'id-' + id() }, 
+					event: { 
+						'shown.bs.tab': function() { 
+							var panel = jQuery('#'+id());
+							panel.closest('.ui-layout-pane').trigger( 'resize' );
+							ko.dataFor( panel[0] ).model().editor.focus();
+						} 
+					}
+				">
 				<i data-bind="attr: { class: icon }"></i>
 				<span>
 					<span data-bind="text: text, style: { color: model().conflicted() ? 'red' : 'inherit' }"></span>
@@ -55,9 +65,18 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</a>
 		</li>
 	</ul>
-	<div class="panel panel-default tabbed-panel" style="min-height: 500px;" data-bind="foreach: openFiles">
+	<div class="panel panel-default tabbed-panel" data-bind="fillPaneContainer: { pane: '.ui-layout-center', container: '.column' }, foreach: openFiles">
 		<div data-bind="attr: { id: id() }" role="tabpanel" class="tab-pane">
-			<div style="min-height: 500px;" class="tabbed-editor" data-bind="aceEditor: { file: $data, options: { switchTo: function() { jQuery('#id-'+id()).tab('show'); } } }"></div>
+			<div class="tabbed-editor" 
+				data-bind="
+					aceEditor: { 
+						file: $data, 
+						options: { 
+							switchTo: function() { jQuery('#id-'+id()).tab('show'); } 
+						} 
+					},
+					fillPaneContainer: { pane: '.ui-layout-center', container: '.panel' }
+				"></div>
 		</div>
 	</div>
 </div>

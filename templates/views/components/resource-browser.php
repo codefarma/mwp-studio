@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<!-- <li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
 	<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Templates</a></li> -->
 </ul>
-<div class="panel panel-default tabbed-panel" style="max-height: 500px; overflow-y: scroll;">
+<div class="panel panel-default tabbed-panel" data-bind="fillPaneContainer: { pane: '.ui-layout-center', container: '.column' }" style="overflow-y: scroll; margin-bottom: 0">
 	<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">
 		<?php echo $this->getTemplateContent( 'views/components/resource/filetree' ) ?>
 	</div>

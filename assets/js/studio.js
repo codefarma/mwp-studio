@@ -298,8 +298,25 @@
 		layout: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var options = ko.utils.unwrapObservable( valueAccessor() );
+				
+				options.center__onresize = 
+				options.north__onresize =
+				options.east__onresize =
+				options.south__onresize = 
+				options.west__onresize = function() { arguments[1].trigger( 'resize', arguments ); };
+				
 				$(element).layout( options );			
 			}
+		},
+		
+		fillPaneContainer: {
+			init: function( element, valueAccessor, allBindingsAccessor ) {
+				var options = ko.utils.unwrapObservable( valueAccessor() );
+				var container = $(element).closest(options.container);
+				var fitElement = function() { $(element).css({ height: container.innerHeight() - ( $(element).offset().top - container.offset().top ) }); };
+				$(element).closest(options.pane).on( 'resize', fitElement );
+				fitElement();
+			}		
 		}
 	});
 	
