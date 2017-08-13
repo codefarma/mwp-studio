@@ -111,7 +111,7 @@ class Agent extends Singleton
 	{
 		$data = array();
 		foreach( $this->analyzers as $analyzer ) {
-			$data = array_merge_recursive( $data, $analyzer->getData() );
+			$data = array_merge_recursive( $data, $analyzer->getAnalysis() );
 		}
 		
 		return $data;	
@@ -181,7 +181,7 @@ class Agent extends Singleton
 	 */
 	public function analyzeFile( $filepath )
 	{
-		$this->traverser->setCurrentFileInfo( array( 'file' => $filepath ) );
+		$this->traverser->setCurrentFileInfo( array( 'file' => str_replace( ABSPATH, '', $filepath ) ) );
 		
 		try {
 			$this->traverser->traverse( $this->parser->parse( file_get_contents( $filepath ) ) );

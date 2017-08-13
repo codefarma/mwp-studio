@@ -24,7 +24,7 @@ abstract class AbstractAnalyzer extends NodeVisitorAbstract
 	/**
 	 * @var array
 	 */
-	protected $data = array();
+	protected $analysis = array();
 	
 	/**
 	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
@@ -79,23 +79,23 @@ abstract class AbstractAnalyzer extends NodeVisitorAbstract
 	}
 	
 	/**
-	 * Get data
+	 * Get analysis
 	 *
 	 * @return	array
 	 */
-	public function getData()
+	public function getAnalysis()
 	{
-		return $this->data;
+		return $this->analysis;
 	}
 	 
 	/**
-	 * Reset data
+	 * Reset analysis
 	 *
 	 * @return	void
 	 */
-	public function resetData()
+	public function resetAnalysis()
 	{
-		$this->data = array();
+		$this->analysis = array();
 	}
 	
 	/**

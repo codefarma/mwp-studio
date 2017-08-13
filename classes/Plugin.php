@@ -306,9 +306,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 					'expanded' => false,
 				),
 			);
-		}
-		
-		add_filter( 'some_filter', array( $this, 'someCallback' ) );
+		}		
 	}
 	
 	/**
