@@ -307,10 +307,31 @@ class Plugin extends \Modern\Wordpress\Plugin
 				),
 			);
 		}
+		
+		add_filter( 'some_filter', array( $this, 'someCallback' ) );
 	}
 	
 	/**
-	 * Output admin page
+	 * Add the wordpress code analyzer skips
+	 *
+	 * @Wordpress\Filter( for="mwp_studio_plugin_analyzer_skips", args=2 )
+	 *
+	 * @param	array			$skips			Array of files to skip on a given level
+	 * @param	string			$slug			Slug of plugin to analyze
+	 * @return	array
+	 */
+	public function pluginAnalyzerFileSkips( $skips, $slug )
+	{
+		if ( is_file( WP_PLUGIN_DIR . '/' . $slug . '/data/plugin-meta.php' ) ) {
+			$skips[0] = ( isset( $skips[0] ) ? $skips[0] : array() ) 
+				+ array( 'vendor', 'tests', 'includes', 'framework', 'boilerplate' );
+		}
+		
+		return $skips;
+	}
+	
+	/**
+	 * Output studio
 	 *
 	 * @return	void
 	 */
