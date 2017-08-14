@@ -14,6 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
+use Modern\Wordpress\Task;
+use MWP\Studio\Models\Hook;
+use MWP\Studio\Analyzers\Agent;
+
 /**
  * Plugin Class
  */
@@ -129,47 +133,51 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function enqueueScripts()
 	{
-		// jQuery Layout
-		$this->useScript( $this->jqueryLayout );
-		
-		// Bootflat UI
-		$this->useStyle( $this->bootflatCSS );
-		$this->useScript( $this->bootflatJS1 );
-		$this->useScript( $this->bootflatJS2 );
-		$this->useScript( $this->bootflatJS3 );
-		
-		// Bootstrap Treeview
-		$this->useStyle( $this->bootstrapTreeviewCSS );
-		$this->useScript( $this->bootstrapTreeviewJS );
-		
-		// Bootstrap context menu
-		$this->useScript( $this->bootstrapContextmenuJS );
-		
-		// Bootbox (Modal Dialogs)
-		$this->useScript( $this->bootboxJS );
-		
-		// Font Awesome
-		$this->useStyle( $this->fontawesome );
-		
-		// Ace Editor
-		$this->useScript( $this->aceEditor );
-		
-		// Studio
-		$this->useStyle( $this->mainStyle );
-		$this->useScript( $this->studioModels );
-		$this->useScript( $this->studioInterfaces );
-		$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
-			'heartbeat_interval' => 10000,
-			'templates' => array(
-				'menus' => array(
-					'header'   => $this->getTemplateContent( 'snippets/menus/item-header' ),
-					'action'   => $this->getTemplateContent( 'snippets/menus/item-action' ),
-					'divider'  => $this->getTemplateContent( 'snippets/menus/item-divider' ),
-					'submenu'  => $this->getTemplateContent( 'snippets/menus/item-submenu' ),
-					'dropdown' => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
+		$screen = get_current_screen();
+		if ( $screen->id == 'dashboard_page_mwp-studio-dashboard' )
+		{			
+			// jQuery Layout
+			$this->useScript( $this->jqueryLayout );
+			
+			// Bootflat UI
+			$this->useStyle( $this->bootflatCSS );
+			$this->useScript( $this->bootflatJS1 );
+			$this->useScript( $this->bootflatJS2 );
+			$this->useScript( $this->bootflatJS3 );
+			
+			// Bootstrap Treeview
+			$this->useStyle( $this->bootstrapTreeviewCSS );
+			$this->useScript( $this->bootstrapTreeviewJS );
+			
+			// Bootstrap context menu
+			$this->useScript( $this->bootstrapContextmenuJS );
+			
+			// Bootbox (Modal Dialogs)
+			$this->useScript( $this->bootboxJS );
+			
+			// Font Awesome
+			$this->useStyle( $this->fontawesome );
+			
+			// Ace Editor
+			$this->useScript( $this->aceEditor );
+			
+			// Studio
+			$this->useStyle( $this->mainStyle );
+			$this->useScript( $this->studioModels );
+			$this->useScript( $this->studioInterfaces );
+			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
+				'heartbeat_interval' => 10000,
+				'templates' => array(
+					'menus' => array(
+						'header'   => $this->getTemplateContent( 'snippets/menus/item-header' ),
+						'action'   => $this->getTemplateContent( 'snippets/menus/item-action' ),
+						'divider'  => $this->getTemplateContent( 'snippets/menus/item-divider' ),
+						'submenu'  => $this->getTemplateContent( 'snippets/menus/item-submenu' ),
+						'dropdown' => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
+					),
 				),
-			),
-		)));
+			)));
+		}
 	}
 	
 	/**
@@ -312,20 +320,164 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Add the wordpress code analyzer skips
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_plugin_analyzer_skips", args=2 )
+	 * @Wordpress\Filter( for="mwp_studio_analyzer_skips", args=2 )
 	 *
-	 * @param	array			$skips			Array of files to skip on a given level
-	 * @param	string			$slug			Slug of plugin to analyze
+	 * @param	array			$skips			Array of existing skips
+	 * @param	string			$dirpath		Directory being analyzed
 	 * @return	array
 	 */
-	public function pluginAnalyzerFileSkips( $skips, $slug )
+	public function pluginAnalyzerFileSkips( $skips, $dirpath )
 	{
-		if ( is_file( WP_PLUGIN_DIR . '/' . $slug . '/data/plugin-meta.php' ) ) {
-			$skips[0] = ( isset( $skips[0] ) ? $skips[0] : array() ) 
-				+ array( 'vendor', 'tests', 'includes', 'framework', 'boilerplate' );
+		$skips = array_merge( $skips, array( '.git', '.svn' ) );
+		
+		if ( is_file( $dirpath . '/data/plugin-meta.php' ) ) {
+			$skips = array_merge( $skips, array( 'vendor', 'data', 'tests', 'framework', 'boilerplate', 'annotations' ) );
 		}
 		
 		return $skips;
+	}
+	
+	/**
+	 * Queue the catalog of all wordpress code
+	 * 
+	 * @return	void
+	 */
+	public function catalogEverything()
+	{
+		/**
+		 * Wordpress core
+		 */
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_catalog_directory' ),
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-includes', 'recurse' => true )
+		);
+		
+		/**
+		 * Plugin folder
+		 */
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_catalog_directory' ),
+			array( 'fullpath' => WP_PLUGIN_DIR, 'recurse' => true )
+		);
+		
+		/**
+		 * Theme folder
+		 */
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_catalog_directory' ),
+			array( 'fullpath' => get_theme_root(), 'recurse' => true )
+		);		
+	}
+	
+	/**
+	 * Catalog files from a directory (setup)
+	 *
+	 * @Wordpress\Action( for="mwp_studio_catalog_directory_setup" )
+	 *
+	 * @return	void
+	 */
+	public function catalogDirectorySetup( $task )
+	{
+		if ( $fullpath = $task->getData( 'fullpath' ) and is_dir( $fullpath ) )
+		{
+			if ( ! $task->getData( 'initialized' ) )
+			{
+				$skips = array_merge( array( '.', '..' ), apply_filters( 'mwp_studio_analyzer_skips', array(), $fullpath ) );
+				$files = array();
+				
+				$task->log( 'Analyze files in: ' . $fullpath );
+				
+				foreach( scandir( $fullpath ) as $file ) 
+				{
+					if ( in_array( $file, $skips ) ) {
+						$task->log( 'Skipping: ' . $fullpath . '/' . $file );
+						continue;
+					}
+					
+					if ( is_dir( $fullpath . '/' . $file ) )
+					{
+						if ( $task->getData( 'recurse' ) ) {
+							Task::queueTask(
+								array( 'action' => 'mwp_studio_catalog_directory' ),
+								array( 'fullpath' => $fullpath . '/' . $file, 'recurse' => true )
+							);
+							$task->log( 'Added task to catalog sub-directory: ' . $file ); 
+						}
+					}
+					else
+					{
+						$parts = explode( '.', $file );
+						$ext = array_pop( $parts );
+						if ( $ext == 'php' ) {
+							$files[] = $fullpath . '/' . $file;
+						}
+					}
+				}
+				
+				$task->setData( 'files', $files );
+				$task->setData( 'initialized', true );
+			}
+		}
+		else
+		{
+			$task->log( 'Invalid directory path: ' . $fullpath );
+			$task->abort();
+		}
+	}
+	
+	/**
+	 * Catalog files from a directory
+	 * 
+	 * @Wordpress\Action( for="mwp_studio_catalog_directory" )
+	 *
+	 * @param	Task		$task			The catalog task
+	 * @return	void
+	 */
+	public function catalogDirectory( $task )
+	{
+		$agent = Agent::instance();		
+		$files = $task->getData( 'files' );
+		
+		if ( empty( $files ) ) {
+			$task->log( 'No more files to catalog' );
+			return $task->complete();
+		}
+		
+		$file = array_shift( $files );
+		$task->setData( 'files', $files );
+		
+		$agent->analyzeFile( $file );
+		$agent->saveAnalysis();
+		
+		$task->log( 'Analyzed: ' . $file );
+	}
+	
+	/**
+	 * Save analysis data
+	 *
+	 * @Wordpress\Action( for="mwp_studio_save_analysis" )
+	 *
+	 * @param	Agent		$agent			The analysis agent
+	 * @return	void
+	 */
+	public function saveAnalysisData( $agent )
+	{
+		$data = $agent->getAnalysis();
+		
+		if ( isset( $data['hooks'] ) and ! empty( $data['hooks'] ) )
+		{
+			foreach( $agent->analyzed_files as $filename ) {
+				Hook::deleteWhere( array( 'hook_file=%s', $filename ) );
+			}
+			
+			foreach( $data['hooks'] as $hook_info ) {
+				$record = new Hook;
+				foreach( $hook_info as $key => $value ) {
+					$record->{$key} = $value;
+				}
+				$record->save();
+			}
+		}
 	}
 	
 	/**

@@ -46,6 +46,16 @@ class Agent extends Singleton
 	/**
 	 * @var	array
 	 */
+	public $analyzed_files = array();
+	
+	/**
+	 * @var array
+	 */
+	public $skipped_dirs = array();
+	
+	/**
+	 * @var	array
+	 */
 	protected $analyzers = array();
 	
 	/**
@@ -97,8 +107,11 @@ class Agent extends Singleton
 	 */
 	public function resetAnalysis()
 	{
+		$this->skipped_dirs = array();
+		$this->analyzed_files = array();
+		
 		foreach( $this->analyzers as $analyzer ) {
-			$analyzer->resetData();
+			$analyzer->resetAnalysis();
 		}		
 	}
 	
@@ -118,6 +131,16 @@ class Agent extends Singleton
 	}
 	
 	/**
+	 * Save analysis
+	 * 
+	 * @return	void
+	 */
+	public function saveAnalysis()
+	{
+		do_action( 'mwp_studio_save_analysis', $this );
+	}
+	
+	/**
 	 * Run analysis on a plugin
 	 *
 	 * @param	string		$plugin_slug		The slug of the plugin to analyze
@@ -126,7 +149,7 @@ class Agent extends Singleton
 	public function analyzePlugin( $plugin_slug )
 	{		
 		$pluginpath = WP_PLUGIN_DIR . '/' . $plugin_slug;
-		$this->analyzeDirectory( $pluginpath, true, apply_filters( 'mwp_studio_plugin_analyzer_skips', array( 'all' => array( '.git', '.svn' ) ), $plugin_slug ) );	
+		$this->analyzeDirectory( $pluginpath, true );	
 	}
 	
 	/**
@@ -134,31 +157,28 @@ class Agent extends Singleton
 	 * 
 	 * @param	string			$fullpath 			The full path to the directory to analyze
 	 * @param	bool			$recursive			If subdirectories should also be analyzed
-	 * @param	array			$skip				Filenames or directories to skip
-	 * @param	int				$depth				The depth of the analysis recursion
 	 * @return void
 	 */
-	public function analyzeDirectory( $fullpath, $recursive=TRUE, $skip=array(), $depth=0 )
+	public function analyzeDirectory( $fullpath, $recursive=TRUE )
 	{
 		if ( ! is_dir( $fullpath ) ) {
 			return array();
 		}
 		
-		$relative_path = str_replace( WP_PLUGIN_DIR, '', $fullpath );
+		$skips = array_merge( array( '.', '..' ), apply_filters( 'mwp_studio_analyzer_skips', array(), $fullpath ) );
 		
 		foreach( scandir( $fullpath ) as $file ) 
 		{
-			$all_skips = isset( $skip['any'] ) ? $skip['any'] : array();
-			$level_skips = isset( $skip[ $depth ] ) ? $skip[ $depth ] : array();
-			
-			if ( in_array( $file, array_merge( array( '.', '..' ), $all_skips, $level_skips ) ) ) {
+			if ( in_array( $file, $skips ) ) {
 				continue;
 			}
 			
 			if ( is_dir( $fullpath . '/' . $file ) )
 			{
 				if ( $recursive ) {
-					$this->analyzeDirectory( $fullpath . '/' . $file, $recursive, $skip, $depth + 1 );
+					$this->analyzeDirectory( $fullpath . '/' . $file, $recursive );
+				} else {
+					$this->skipped_dirs[] = $fullpath . '/' . $file;
 				}
 			}
 			else
@@ -181,13 +201,16 @@ class Agent extends Singleton
 	 */
 	public function analyzeFile( $filepath )
 	{
-		$this->traverser->setCurrentFileInfo( array( 'file' => str_replace( ABSPATH, '', $filepath ) ) );
+		$this->traverser->setCurrentFileInfo( array( 
+			'file' => str_replace( ABSPATH, '', $filepath ),			
+		));
 		
 		try {
 			$this->traverser->traverse( $this->parser->parse( file_get_contents( $filepath ) ) );
+			$this->analyzed_files[] = str_replace( ABSPATH, '', $filepath );
 		}
 		catch( \PhpParser\Error $e ) { 
-		
+			
 		}
 	}
 	
