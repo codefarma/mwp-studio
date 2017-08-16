@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Modern\Wordpress\Pattern\Singleton;
 use PhpParser\ParserFactory;
 use PhpParser\Node;
+use PhpParser\NodeVisitor\NameResolver;
 
 /**
  * Plugin Class
@@ -92,7 +93,7 @@ class Agent extends Singleton
 		$this->parser    = (new ParserFactory)->create( ParserFactory::PREFER_PHP7 );
 		$this->traverser = new Traverser;	
 		$this->analyzers = array_merge( array( new BaseAnalyzer ), apply_filters( 'mwp_studio_code_analyzers', array( new WpCodeAnalyzer ) ) );
-		
+		$this->traverser->addVisitor( new NameResolver );
 		
 		foreach( $this->analyzers as $analyzer ) {
 			$analyzer->setTraverser( $this->traverser );

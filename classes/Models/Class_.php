@@ -2,7 +2,7 @@
 /**
  * Plugin Class File
  *
- * Created:   August 14, 2017
+ * Created:   August 16, 2017
  *
  * @package:  Wordpress Plugin Studio
  * @author:   Kevin Carwile
@@ -14,51 +14,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Pattern\ActiveRecord;
-
 /**
- * Hook Class
+ * Class_ Class
  */
-class Hook extends ActiveRecord
+class Class_
 {
-	/**
-	 * @var	array		Multitons cache (needs to be defined in subclasses also)
-	 */
-	protected static $multitons = array();
-	
-	/**
-	 * @var	string		Table name
-	 */
-	public static $table = 'studio_hook_catalog';
-	
-	/**
-	 * @var	array		Table columns
-	 */
-	public static $columns = array(
-	    'id',
-	    'name',
-	    'type',
-	    'callback_name',
-	    'callback_class',
-	    'callback_type',
-	    'data' => array( 'format' => 'JSON' ),
-	    'file',
-	    'line',
-	    'args',
-	    'priority',
-	    'catalog_time',
-	);
-	
-	/**
-	 * @var	string		Table primary key
-	 */
-	public static $key = 'id';
-	
-	/**
-	 * @var	string		Table column prefix
-	 */
-	public static $prefix = 'hook_';
-	
 	/**
 	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
 	 */

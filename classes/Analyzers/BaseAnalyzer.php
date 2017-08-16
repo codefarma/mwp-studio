@@ -23,7 +23,7 @@ use PhpParser\Node;
 class BaseAnalyzer extends AbstractAnalyzer
 {	
 	/**
-	 * Entering a node
+	 * Before traversing
 	 *
 	 * @return	void
 	 */
@@ -43,8 +43,14 @@ class BaseAnalyzer extends AbstractAnalyzer
 			$this->getTraverser()->setCurrentNamespace( $node->name->parts );
 		}
 		
-		if ( $node instanceof Node\Stmt\Class_ ) {
+		if ( $node instanceof Node\Stmt\Class_ or $node instanceof Node\Stmt\Trait_ ) {
 			$this->getTraverser()->setCurrentClassname( $node->name );
+		}
+		
+		if ( $node instanceof Node\Stmt\TraitUse ) {
+			foreach( $node->traits as $trait ) {
+				$this->getTraverser()->addClassUses( implode( '\\', $trait->parts ) );
+			}
 		}
     }
 	
@@ -59,9 +65,21 @@ class BaseAnalyzer extends AbstractAnalyzer
 			$this->getTraverser()->setCurrentNamespace( array() );
 		}
 		
-		if ( $node instanceof Node\Stmt\Class_ ) {
-			$this->getTraverser()->setCurrentClassname( '' );
+		if ( $node instanceof Node\Stmt\Class_ or $node instanceof Node\Stmt\Trait_ ) {
+			$node->traitsUsed = $this->getTraverser()->getClassUses();
+			$this->getTraverser()->setCurrentClassname('');
 		}
+		
+		return $node;
     }
 	
+	/**
+	 * After traverse
+	 *
+	 * @return	void
+	 */
+	public function afterTraverse( array $nodes )
+	{
+
+	}
 }

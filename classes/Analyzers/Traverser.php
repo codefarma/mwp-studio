@@ -42,6 +42,16 @@ class Traverser extends NodeTraverser
 	protected $currentClassname = '';
 	
 	/**
+	 * @var	array
+	 */
+	protected $currentAliases = array();
+	
+	/**
+	 * @var	array
+	 */
+	protected $currentClassUses = array();
+	
+	/**
  	 * Get plugin
 	 *
 	 * @return	\Modern\Wordpress\Plugin
@@ -82,6 +92,7 @@ class Traverser extends NodeTraverser
 	public function setCurrentFileInfo( $info )
 	{
 		$this->currentFileInfo = $info;
+		$this->currentAliases = array();
 	}
 	
 	/**
@@ -95,6 +106,27 @@ class Traverser extends NodeTraverser
 	}
 	
 	/**
+	 * Set uses
+	 *
+	 * @param	string		$classname		The fully qualified classname
+	 * @return	void
+	 */
+	public function addClassUses( $classname )
+	{
+		$this->currentClassUses[] = $classname;
+	}
+	
+	/**
+	 * Get uses
+	 *
+	 * @return	array
+	 */
+	public function getClassUses()
+	{
+		return $this->currentClassUses;
+	}
+	
+	/**
 	 * Set current classname
 	 *
 	 * @param	string			$classname		Current classname
@@ -103,6 +135,10 @@ class Traverser extends NodeTraverser
 	public function setCurrentClassname( $classname )
 	{
 		$this->currentClassname = $classname;
+		
+		if ( empty( $classname ) ) {
+			$this->currentClassUses = array();
+		}
 	}
 	
 	/**
@@ -113,9 +149,9 @@ class Traverser extends NodeTraverser
 	 */
 	public function getCurrentClassname( $namespace=true )
 	{
-		return $namespace ? implode( '\\', array_merge( $this->getCurrentNamespace(), array( $this->currentClassname ) ) ) : $this->currentClassname;
+		return $namespace ? implode( '\\', array_filter( array_merge( $this->getCurrentNamespace(), array( $this->currentClassname ) ) ) ) : $this->currentClassname;
 	}
-	
+		
 	/**
 	 * Set current namespace
 	 *
