@@ -45,11 +45,6 @@ class Agent extends Singleton
 	protected $parser;
 	
 	/**
-	 * @var	array
-	 */
-	public $analyzed_files = array();
-	
-	/**
 	 * @var array
 	 */
 	public $skipped_dirs = array();
@@ -109,7 +104,6 @@ class Agent extends Singleton
 	public function resetAnalysis()
 	{
 		$this->skipped_dirs = array();
-		$this->analyzed_files = array();
 		
 		foreach( $this->analyzers as $analyzer ) {
 			$analyzer->resetAnalysis();
@@ -203,12 +197,11 @@ class Agent extends Singleton
 	public function analyzeFile( $filepath )
 	{
 		$this->traverser->setCurrentFileInfo( array( 
-			'file' => str_replace( ABSPATH, '', $filepath ),			
+			'file' => str_replace( ABSPATH, '', $filepath ),
 		));
 		
 		try {
 			$this->traverser->traverse( $this->parser->parse( file_get_contents( $filepath ) ) );
-			$this->analyzed_files[] = str_replace( ABSPATH, '', $filepath );
 		}
 		catch( \PhpParser\Error $e ) { 
 			

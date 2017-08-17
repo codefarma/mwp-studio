@@ -108,7 +108,7 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$basedir = WP_PLUGIN_DIR . str_replace( '../', '', $_REQUEST['plugin'] );
+		$basedir = ABSPATH . str_replace( '../', '', $_REQUEST['dirpath'] );
 		
 		if ( ! is_dir( $basedir ) ) {
 			wp_send_json( array( 'success' => false ) );
@@ -128,8 +128,8 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$file_path = str_replace( '../', '', $_REQUEST['path'] );
-		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
 		
 		if ( file_exists( $file ) and is_file( $file ) )
 		{
@@ -152,8 +152,8 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$file_path = str_replace( '../', '', $_REQUEST['path'] );
-		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
 		
 		if ( file_exists( $file ) and is_file( $file ) )
 		{
@@ -176,8 +176,8 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$file_path = str_replace( '../', '', $_REQUEST['path'] );
-		$file = WP_PLUGIN_DIR . '/' . $file_path;
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
 		
 		file_put_contents( $file, wp_unslash( $_REQUEST['content'] ) );
 

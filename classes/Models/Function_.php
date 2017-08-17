@@ -14,10 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
+use Modern\Wordpress\Pattern\ActiveRecord;
+
 /**
  * Function_ Class
  */
-class Function_
+class Function_ extends ActiveRecord
 {
 	/**
 	 * @var	array		Multitons cache (needs to be defined in subclasses also)

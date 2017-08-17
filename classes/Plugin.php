@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use Modern\Wordpress\Task;
-use MWP\Studio\Models\Hook;
+use MWP\Studio\Models;
 use MWP\Studio\Analyzers\Agent;
 
 /**
@@ -166,7 +166,8 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->studioModels );
 			$this->useScript( $this->studioInterfaces );
 			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
-				'heartbeat_interval' => 10000,
+				'cron_url' => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
+				'heartbeat_interval' => 20000,
 				'templates' => array(
 					'menus' => array(
 						'header'   => $this->getTemplateContent( 'snippets/menus/item-header' ),
@@ -192,7 +193,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		$core_data = get_plugin_data( $file );
 		$composite_data = array();		
-		$basedir = str_replace( WP_PLUGIN_DIR, '', str_replace( "/" . basename( $file ), "", $file ) );
+		$basedir = str_replace( ABSPATH, '', str_replace( "/" . basename( $file ), "", $file ) );
 		$composite_data[ 'pluginfile' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
 		$composite_data[ 'environment' ] = 'generic';
@@ -201,9 +202,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$composite_data[ strtolower( $key ) ] = $value;		
 		}
 		
-		if ( file_exists( WP_PLUGIN_DIR . $basedir  . '/data/plugin-meta.php' ) )
+		if ( file_exists( ABSPATH . $basedir  . '/data/plugin-meta.php' ) )
 		{
-			$plugin_data = json_decode( include( WP_PLUGIN_DIR . $basedir  . '/data/plugin-meta.php' ), true );
+			$plugin_data = json_decode( include( ABSPATH . $basedir  . '/data/plugin-meta.php' ), true );
 			if ( is_array( $plugin_data ) ) {
 				$composite_data[ 'environment' ] = 'mwp';
 				$composite_data = array_merge( $plugin_data, $composite_data );
@@ -224,7 +225,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public function getFileNodeInfo( $fullpath )
 	{
 		$file = basename( $fullpath );
-		$relative_path = str_replace( WP_PLUGIN_DIR, '', $fullpath );
+		$relative_path = str_replace( ABSPATH, '', $fullpath );
 		$parent_path = str_replace( '/' . $file, '', $relative_path );
 		
 		if ( is_file( $fullpath ) )
@@ -464,20 +465,59 @@ class Plugin extends \Modern\Wordpress\Plugin
 	{
 		$data = $agent->getAnalysis();
 		
-		if ( isset( $data['hooks'] ) and ! empty( $data['hooks'] ) )
+		if ( isset( $data['files'] ) and ! empty( $data['files'] ) ) 
 		{
-			foreach( $agent->analyzed_files as $filename ) {
-				Hook::deleteWhere( array( 'hook_file=%s', $filename ) );
-			}
-			
-			foreach( $data['hooks'] as $hook_info ) {
-				$record = new Hook;
-				foreach( $hook_info as $key => $value ) {
-					$record->{$key} = $value;
-				}
-				$record->save();
+			foreach( $data['files'] as $file ) {
+				Models\Hook::deleteWhere( array( 'hook_file=%s', $file['file'] ) );
+				Models\Function_::deleteWhere( array( 'function_file=%s', $file['file'] ) );
+				Models\Class_::deleteWhere( array( 'class_file=%s', $file['file'] ) );
+				
+				$_files = Models\File::loadWhere( array( 'file_file=%s', $file['file'] ) );
+				$_file = ! empty( $_files ) ? $_files[0] : new Models\File;
+				$_file->file = $file['file'];
+				$_file->type = ( strpos( $file['file'], WP_PLUGIN_DIR ) === 0 ? 'plugin' : ( strpos( $file['file'], get_theme_root() ) === 0 ? 'theme' : 'plugin' ) );
+				$_file->data = array();
+				$_file->last_analyzed = time();
+				$_file->save();
 			}
 		}
+		
+		if ( isset( $data['hooks'] ) and ! empty( $data['hooks'] ) ) {
+			$this->saveAnalysisModels( $data['hooks'], 'MWP\Studio\Models\Hook' );
+		}
+		
+		if ( isset( $data['functions'] ) and ! empty( $data['functions'] ) ) {
+			$this->saveAnalysisModels( $data['functions'], 'MWP\Studio\Models\Function_' );
+		}
+		
+		if ( isset( $data['classes'] ) and ! empty( $data['classes'] ) ) {
+			$this->saveAnalysisModels( $data['classes'], 'MWP\Studio\Models\Class_' );
+		}
+		
+	}
+	
+	/**
+	 * Save analysis models data
+	 *
+	 * @param	array			$models			An array of models
+	 * @param	string			$modelClass		The model class
+	 * @return	array
+	 */
+	public function saveAnalysisModels( $models, $modelClass )
+	{
+		$created_models = array();
+		foreach( $models as $model_info )
+		{
+			$model = new $modelClass();
+			foreach( $model_info as $key => $value )
+			{
+				$model->{$key} = $value;
+			}
+			$model->save();
+			$created_models[] = $model;
+		}
+		
+		return $created_models;
 	}
 	
 	/**

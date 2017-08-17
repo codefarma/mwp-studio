@@ -14,11 +14,43 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
+use Modern\Wordpress\Pattern\ActiveRecord;
+
 /**
  * File Class
  */
-class File
+class File extends ActiveRecord
 {
+	/**
+	 * @var	array		Multitons cache (needs to be defined in subclasses also)
+	 */
+	protected static $multitons = array();
+	
+	/**
+	 * @var	string		Table name
+	 */
+	public static $table = 'studio_file_catalog';
+	
+	/**
+	 * @var	array		Table columns
+	 */
+	public static $columns = array(
+	    'id',
+	    'file',
+	    'type',
+	    'data' => array( 'format' => 'JSON' ),
+	    'last_analyzed',
+	);
+	
+	/**
+	 * @var	string		Table primary key
+	 */
+	public static $key = 'id';
+	
+	/**
+	 * @var	string		Table column prefix
+	 */
+	public static $prefix = 'file_';
 	/**
 	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
 	 */

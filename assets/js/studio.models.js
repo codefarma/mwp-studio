@@ -359,7 +359,7 @@
 				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_get_file_content',
-					path: self.get('path')
+					filepath: self.get('path')
 				}
 			});			
 		},
@@ -380,7 +380,7 @@
 					url: studio.local.ajaxurl,
 					data: { 
 						action: 'mwp_studio_save_file_content',
-						path: self.get('path'),
+						filepath: self.get('path'),
 						content: this.editor.getValue()
 					}
 				}).done( function( response ) 
@@ -484,7 +484,7 @@
 				method: 'post',
 				data: {
 					action: 'mwp_studio_sync_file',
-					path: self.get('path')
+					filepath: self.get('path')
 				}
 			})
 			.then( function( response ) {
@@ -728,7 +728,7 @@
 				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_fetch_filetree',
-					plugin: self.get('basedir')
+					dirpath: self.get('basedir')
 				}
 			})
 			.then( function( data ) {

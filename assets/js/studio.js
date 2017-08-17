@@ -177,6 +177,7 @@
 			});
 			
 			$.when.apply( this, checkups ).done( function() {
+				$.ajax({ url: self.local.cron_url });
 				setTimeout( function() { self.heartbeat(); }, self.local.heartbeat_interval );
 			});
 		},

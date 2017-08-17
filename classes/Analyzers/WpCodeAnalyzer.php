@@ -17,11 +17,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node;
 
+function do_or_die()
+{
+}
+
 /**
  * File Class
  */
 class WpCodeAnalyzer extends AbstractAnalyzer
-{	
+{
+	/**
+	 * Before traverse
+	 */
+	public function beforeTraverse( array $nodes )
+	{
+		$this->analysis['files'][] = $this->getTraverser()->getCurrentFileInfo();
+	}
+	 
 	/**
 	 * Entering a node
 	 *
@@ -245,7 +257,7 @@ class WpCodeAnalyzer extends AbstractAnalyzer
 			(
 				$this->getTraverser()->getCurrentFileInfo(),
 				array(
-					'class' => implode( '\\', $node->namespacedName->parts ),
+					'name' => implode( '\\', $node->namespacedName->parts ),
 					'extends' => isset( $node->extends ) ? implode( '\\', $node->extends->parts ) : null,
 					'type' => $node instanceof Node\Stmt\Class_ ? 'class' : 'trait',
 					'uses' => implode( ',', $node->traitsUsed ?: array() ),
