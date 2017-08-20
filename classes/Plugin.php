@@ -71,6 +71,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public $aceEditor = 'assets/ace/src-min-noconflict/ace.js';
 	
 	/**
+	 * Activity Indicator
+	 * @Wordpress\Script( deps={"jquery"} )
+	 */
+	public $activityIndicatorJS = 'assets/js/lib/jquery.activity-indicator-1.0.0.min.js';
+	
+	/**
 	 * Bootflat JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 */
@@ -138,6 +144,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 		{			
 			// jQuery Layout
 			$this->useScript( $this->jqueryLayout );
+			
+			// Activity Indicator
+			$this->useScript( $this->activityIndicatorJS );
 			
 			// Bootflat UI
 			$this->useStyle( $this->bootflatCSS );
@@ -280,6 +289,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 				'name'       => $file,
 				'modified'   => filemtime( $fullpath ),
 				'type'       => 'file',
+				'ext'        => $ext,
 				'icon'       => $icon,
 				'selectable' => $selectable,
 				'text'       => $file,

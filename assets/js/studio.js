@@ -205,20 +205,38 @@
 		 */
 		startProcessPolling: function( process )
 		{
-			self = this;
-			
 			process_polling = true;
-			var poll = function() {
+			
+			var self = this;
+			var timeout = 1500;
+			
+			/**
+			 * Poll the backend for an update on this process
+			 *
+			 * If the status has not changed, we will progressively slow down the poll interval,
+			 * and we will keep the poll alive for as long as the process is reporting that it
+			 * is not yet complete.
+			 */
+			var poll = function() 
+			{
 				$.ajax({
 					url: self.local.ajaxurl,
 					data: { action: 'mwp_studio_process_status', process: process }
-				}).done( function( status ) {
-					self.viewModel.processStatus( status );					
-					if ( status.complete === false ) {
-						setTimeout( poll, 1500 );
-					} else {
-						process_polling = false;
+				}).done( function( status ) 
+				{
+					var current_status = self.viewModel.processStatus();
+					
+					// Progressively slow down the poll if a process hasn't changed status
+					if ( JSON.stringify( current_status ) == JSON.stringify( status ) && timeout < 60000 ) {
+						timeout = timeout + 500;
 					}
+					else
+					{
+						timeout = 1500;
+						self.viewModel.processStatus( status );
+					}
+					
+					status.complete === false ? setTimeout( poll, timeout ) : process_polling = false;
 				});
 			};
 			
@@ -253,6 +271,13 @@
 	 */
 	_.extend( ko.bindingHandlers, 
 	{
+		studioActivity: {
+			update: function( element, valueAccessor, allBindingsAccessor ) {
+				var opts = ko.utils.unwrapObservable( valueAccessor() );				
+				$(element).studioActivity(opts);
+			}
+		},
+		
 		treeView: {
 			update: function( element, valueAccessor, allBindingsAccessor )	{
 				if ( $.fn.treeview != undefined ) {

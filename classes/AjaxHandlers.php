@@ -358,13 +358,48 @@ class AjaxHandlers extends Singleton
 		if ( $monitor ) {
 			$status = $monitor->data;
 			$status['complete'] = ( $monitor->completed > 0 );
-			$status['monitor'] = print_r( $monitor, true );
 			
 			$completed_count = $status['files_count'] - $status['files_left'];
 			$complete_pct = $status['files_count'] ? round( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
-			$status['status'] = "Analyzing files ({$complete_pct}%): " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " complete.";
+			$status['status'] = "Indexing files ({$complete_pct}%): " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " complete.";
 		}
 		
 		wp_send_json( $status );
-	}	
+	}
+	
+	/**
+	 * Rebuild catalog
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_rebuild_catalog", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function rebuildCatalog()
+	{
+		$this->authorize();
+		
+		$path = $_REQUEST['path'];
+		
+		if ( $path == 'all' ) {
+			$this->getPlugin()->catalogEverything();
+			wp_send_json( array( 'success' => true, 'background' => true ) );
+		}
+		else if ( is_dir( ABSPATH . $path ) ) {
+			\Modern\Wordpress\Task::queueTask(
+				array( 'action' => 'mwp_studio_catalog_directory' ),
+				array( 'fullpath' => ABSPATH . $path, 'recurse' => true )
+			);			
+			wp_send_json( array( 'success' => true, 'background' => true ) );
+		}
+		else if ( is_file( ABSPATH . $path ) ) {
+			$parts = explode( '.', $path );
+			$ext = array_pop( $parts );
+			if ( $ext == 'php' ) {
+				$agent = \MWP\Studio\Analyzers\Agent::instance();
+				$agent->analyzeFile( ABSPATH . $path );
+				$agent->saveAnalysis();
+			}
+			wp_send_json( array( 'success' => true, 'background' => false ) );
+		}
+	}
 }

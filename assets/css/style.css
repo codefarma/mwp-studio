@@ -11,8 +11,8 @@
 	padding-bottom: 0px; 
 }
 
-.ui-layout-pane-north { border-bottom: 0px !important; z-index: 1 !important; overflow: visible !important; }
-.ui-layout-pane-center { border-top: 0px !important; overflow: hidden !important; }
+.ui-layout-pane-north { border-bottom: 0 !important; z-index: 1 !important; overflow: visible !important; }
+.ui-layout-pane-center { border-top: 0 !important; overflow: hidden !important; }
 .ui-layout-pane-south { padding-bottom: 30px !important }
 .ui-layout-statusbar {
 	overflow: hidden;
@@ -20,6 +20,11 @@
 	position: absolute;
 	bottom: 5px;
 	width: 100%;
+}
+
+/* Activity Indicator */
+.activity-indicator {
+	z-index: 1;
 }
 
 /* Navbar */

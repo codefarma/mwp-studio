@@ -234,6 +234,7 @@
 			]);
 			
 			this.filenodes = ko.observable( this.toJSON().nodes );
+			this.loading = ko.observable( false );
 			this.on( 'updated', function(){ self.filenodes( self.toJSON().nodes ); } );
 		}
 	}));
@@ -465,6 +466,20 @@
 					closeit();
 				}
 			}
+		},
+		
+		/**
+		 * Reindex file
+		 *
+		 * @return	$.Deferred
+		 */
+		reindex: function()
+		{
+			var self = this;
+			return $.ajax({
+				url: studio.local.ajaxurl,
+				data: { action: 'mwp_studio_rebuild_catalog', path: self.get('path') }
+			});
 		},
 		
 		/**
@@ -723,6 +738,8 @@
 		{
 			var self = this;
 			
+			this.fileTree.loading( true );
+			
 			return $.ajax({
 				method: 'post',
 				url: studio.local.ajaxurl,
@@ -749,6 +766,8 @@
 							parent.nodes.add( file.model() );
 						}
 					});
+					
+					self.fileTree.loading( false );
 				}
 			});
 		}

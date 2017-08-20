@@ -33,8 +33,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 		},
 		south: { 
 			size: localStorage.getItem( 'mwp-studio-south-size' ) || 250, 
-			onresize: function( key, pane ) { 
-				localStorage.setItem( 'mwp-studio-south-size', pane.height() );
+			onresize: function( key, pane ) {
+				localStorage.setItem( 'mwp-studio-south-size', pane.outerHeight() );
 			} 
 		}
 	}">

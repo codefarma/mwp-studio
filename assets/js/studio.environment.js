@@ -103,6 +103,21 @@
 							}
 						};
 					})
+				},
+				{
+					type: 'action',
+					title: 'Rebuild catalog',
+					icon: 'fa fa-database',
+					callback: function() {
+						$.ajax({
+							url: studio.local.ajaxurl,
+							data: { action: 'mwp_studio_rebuild_catalog', path: 'all' }
+						}).done( function( response ) {
+							if ( response.success ) {
+								bootbox.alert({ title: 'Notice', message: 'Success. Processing will execute as a background process.' });
+							}
+						});
+					}
 				}]
 			}];
 		},
@@ -149,6 +164,28 @@
 					},
 					isShown: function( node ) {
 						return node.selectable;
+					}
+				},
+				
+				/**
+				 * Reindex the directory
+				 */
+				reindexDirectory: {
+					name: 'Scan & Catalog',
+					iconClass: 'fa-file-code-o',
+					onClick: function( node ) {
+						$.when( node.model.reindex() ).done( function( response ) {
+							if ( response.success ) {
+								if ( response.background ) {
+									bootbox.alert({ title: 'Notice', message: 'Success. Processing will execute as a background process.' });
+								} else {
+									bootbox.alert({ title: 'Notice', message: 'Success. Processing complete.' });
+								}
+							}
+						});
+					},
+					isShown: function( node ) {
+						return node.model.get('type') == 'dir' || node.model.get('ext') == 'php';
 					}
 				}
 			};
