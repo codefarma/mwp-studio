@@ -27,6 +27,8 @@
 	var Plugin            = mwp.model.get( 'mwp-studio-plugin' );
 	var GenericInterface  = mwp.model.get( 'mwp-studio-generic-interface' );
 	
+	var process_polling = false;
+	
 	/**
 	 * Main Controller
 	 *
@@ -72,14 +74,14 @@
 			 */
 			this.viewModel = 
 			{
-				_controller: this,
-				plugins: kb.collectionObservable( this.plugins ),
+				_controller:   this,
+				plugins:       kb.collectionObservable( this.plugins ),
 				currentPlugin: ko.observable(),
-				openFiles: ko.observableArray(),
-				activeFile: ko.observable(),
-				env: function() {
-					return self.env();
-				}
+				openFiles:     ko.observableArray(),
+				activeFile:    ko.observable(),
+				env:           function() { return self.env(); },
+				statustext:    ko.observable(''),
+				processStatus: ko.observable(),
 			};
 			
 			/**
@@ -167,19 +169,60 @@
 		 */
 		heartbeat: function() 
 		{
-			var self = this;
-			
+			var self = this;			
 			var checkups = [];
+			
+			/* Check on open files */
 			_.each( this.viewModel.openFiles(), function( fileview ) {
 				if ( ! fileview.model().conflicted() ) {
 					checkups.push( fileview.model().checkSync() );
 				}
 			});
 			
-			$.when.apply( this, checkups ).done( function() {
+			/* Tick Tock. */
+			$.when.apply( this, checkups ).done( function() 
+			{
 				$.ajax({ url: self.local.cron_url });
+				$.ajax({ url: self.local.ajaxurl, data: { action: 'mwp_studio_statuscheck' } }).done( function( status ) 
+				{
+					if ( status.statustext ) {
+						self.viewModel.statustext( status.statustext );
+					}
+					
+					if ( status.processing && ! process_polling ) {
+						self.startProcessPolling( status.processing );
+					}
+				});
 				setTimeout( function() { self.heartbeat(); }, self.local.heartbeat_interval );
 			});
+		},
+		
+		/**
+		 * Status watch
+		 * 
+		 * @param	object			process				The process info provided from the backend
+		 * @return	void
+		 */
+		startProcessPolling: function( process )
+		{
+			self = this;
+			
+			process_polling = true;
+			var poll = function() {
+				$.ajax({
+					url: self.local.ajaxurl,
+					data: { action: 'mwp_studio_process_status', process: process }
+				}).done( function( status ) {
+					self.viewModel.processStatus( status );					
+					if ( status.complete === false ) {
+						setTimeout( poll, 1500 );
+					} else {
+						process_polling = false;
+					}
+				});
+			};
+			
+			poll();
 		},
 		
 		/**
@@ -304,7 +347,13 @@
 				options.north__onresize =
 				options.east__onresize =
 				options.south__onresize = 
-				options.west__onresize = function() { arguments[1].trigger( 'resize', arguments ); };
+				options.west__onresize = function( pane_key, pane ) 
+				{
+					pane.trigger( 'resize', arguments );
+					if ( pane_key in options && typeof options[ pane_key ].onresize == 'function' ) {
+						options[ pane_key ].onresize.apply( this, arguments );
+					}
+				};
 				
 				$(element).layout( options );			
 			}

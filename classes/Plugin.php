@@ -371,6 +371,38 @@ class Plugin extends \Modern\Wordpress\Plugin
 	}
 	
 	/**
+	 * Finds or creates a task monitor
+	 *
+	 * @param	string			$type				The monitor type
+	 * @param	bool			$create				Whether an active monitor should be created if not found
+	 * @return	Task|null
+	 */
+	public function getActiveMonitor( $type, $create=true )
+	{
+		foreach( $this->getMonitors() as $monitor ) {
+			if ( $monitor->action == 'mwp_studio_' . $type . '_monitor' and $monitor->completed == 0 and $monitor->fails < 3 ) {
+				return $monitor;
+			}
+		}
+		
+		if ( $create ) {
+			return Task::queueTask( array( 'action' => 'mwp_studio_' . $type . '_monitor', 'tag' => 'mwp_studio_monitor' ), array() );
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Get all current monitors
+	 *
+	 * @return	array
+	 */
+	public function getMonitors()
+	{
+		return Task::loadWhere( array( 'task_tag=%s', 'mwp_studio_monitor' ) );
+	}
+	
+	/**
 	 * Catalog files from a directory (setup)
 	 *
 	 * @Wordpress\Action( for="mwp_studio_catalog_directory_setup" )
@@ -382,7 +414,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		if ( $fullpath = $task->getData( 'fullpath' ) and is_dir( $fullpath ) )
 		{
 			if ( ! $task->getData( 'initialized' ) )
-			{
+			{			
 				$skips = array_merge( array( '.', '..' ), apply_filters( 'mwp_studio_analyzer_skips', array(), $fullpath ) );
 				$files = array();
 				
@@ -402,7 +434,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 								array( 'action' => 'mwp_studio_catalog_directory' ),
 								array( 'fullpath' => $fullpath . '/' . $file, 'recurse' => true )
 							);
-							$task->log( 'Added task to catalog sub-directory: ' . $file ); 
+							$task->log( 'Added task to catalog sub-directory: ' . $file );
 						}
 					}
 					else
@@ -415,8 +447,17 @@ class Plugin extends \Modern\Wordpress\Plugin
 					}
 				}
 				
+				$monitor = $this->getActiveMonitor( 'catalog' );
+				$db      = \Modern\Wordpress\Framework::instance()->db();
+				$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
+				$monitor->setData( 'files_count', $data['files_count'] + count( $files ) );
+				$monitor->setData( 'files_left', $data['files_left'] + count( $files ) );
+				$monitor->save();
+				
 				$task->setData( 'files', $files );
 				$task->setData( 'initialized', true );
+				$task->priority = 4;
+				$task->next_start = time() + 10;
 			}
 		}
 		else
@@ -450,7 +491,34 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$agent->analyzeFile( $file );
 		$agent->saveAnalysis();
 		
+		$db      = \Modern\Wordpress\Framework::instance()->db();
+		$monitor = $this->getActiveMonitor( 'catalog' );
+		$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
+		$monitor->setData( 'files_left', $data['files_left'] - 1 );
+		$monitor->save();
+		
 		$task->log( 'Analyzed: ' . $file );
+	}
+	
+	/**
+	 * A task that will monitor all other catalog tasks
+	 *
+	 * @Wordpress\Action( for="mwp_studio_catalog_monitor" )
+	 *
+	 * @param	Task		$task			The task
+	 * @return	void
+	 */
+	public function catalogMonitor( $task )
+	{
+		$criteria = array( 'task_action=%s AND task_completed=0 AND task_fails<3', 'mwp_studio_catalog_directory' );
+
+		if ( ! Task::countWhere( $criteria ) ) {
+			$task->complete();
+		}
+		else
+		{
+			$task->next_start = time() + 60;
+		}
 	}
 	
 	/**
@@ -475,7 +543,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 				$_files = Models\File::loadWhere( array( 'file_file=%s', $file['file'] ) );
 				$_file = ! empty( $_files ) ? $_files[0] : new Models\File;
 				$_file->file = $file['file'];
-				$_file->type = ( strpos( $file['file'], WP_PLUGIN_DIR ) === 0 ? 'plugin' : ( strpos( $file['file'], get_theme_root() ) === 0 ? 'theme' : 'plugin' ) );
+				$_file->type = ( strpos( $file['file'], str_replace( ABSPATH, '', WP_PLUGIN_DIR ) ) === 0 ? 'plugin' : ( strpos( $file['file'], str_replace( ABSPATH, '', get_theme_root() ) ) === 0 ? 'theme' : 'core' ) );
 				$_file->data = array();
 				$_file->last_analyzed = time();
 				$_file->save();

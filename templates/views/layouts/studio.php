@@ -21,18 +21,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-echo $this->getTemplateContent( 'views/styles' );
 ?>
 
 <div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" 
 	data-bind="layout: { 
 		applyDefaultStyles: true, 
-		south: { size: 200 }, 
 		north: { 
 			resizable: false, 
 			closable: false, 
 			spacing_open: 0 
-		} 
+		},
+		south: { 
+			size: localStorage.getItem( 'mwp-studio-south-size' ) || 250, 
+			onresize: function( key, pane ) { 
+				localStorage.setItem( 'mwp-studio-south-size', pane.height() );
+			} 
+		}
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
@@ -51,11 +55,13 @@ echo $this->getTemplateContent( 'views/styles' );
 		</div>			
 	</div>
 	<div class="ui-layout-south">
-		South
+		<?php echo $this->getTemplateContent( 'views/components/south-pane' ) ?>
+		<?php echo $this->getTemplateContent( 'views/components/south-pane/statusbar' ) ?>
 	</div>
 </div>
 
 <?php 
+	/* Templates */
 	echo $this->getTemplateContent( 'dialogs/class-form' );
 	echo $this->getTemplateContent( 'dialogs/template-form' );
 	echo $this->getTemplateContent( 'dialogs/stylesheet-form' );

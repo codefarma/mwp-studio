@@ -317,5 +317,54 @@ class AjaxHandlers extends Singleton
 			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
 		}
 		
+	}
+
+	/**
+	 * Check the status of the backend
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_statuscheck", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function statusCheck()
+	{
+		$this->authorize();
+		
+		$status = array();
+		$monitor = $this->getPlugin()->getActiveMonitor( 'catalog', false );
+		
+		if ( $monitor ) {
+			$status[ 'processing' ] = array( 'name' => 'catalog' );
+		}
+		
+		wp_send_json( $status );
+	}
+
+	/**
+	 * Check the status of a backend process
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_process_status", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function processStatus()
+	{
+		$this->authorize();
+		
+		$status = array();
+		$process_name = isset( $_REQUEST['process']['name'] ) ? $_REQUEST['process']['name'] : null;
+		$monitor = $this->getPlugin()->getActiveMonitor( $process_name, false );
+		
+		if ( $monitor ) {
+			$status = $monitor->data;
+			$status['complete'] = ( $monitor->completed > 0 );
+			$status['monitor'] = print_r( $monitor, true );
+			
+			$completed_count = $status['files_count'] - $status['files_left'];
+			$complete_pct = $status['files_count'] ? round( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
+			$status['status'] = "Analyzing files ({$complete_pct}%): " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " complete.";
+		}
+		
+		wp_send_json( $status );
 	}	
 }
