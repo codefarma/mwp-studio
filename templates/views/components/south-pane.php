@@ -25,37 +25,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="column" style="height: 100%">
 
-	<ul class="nav nav-tabs" role="tablist">
-		<li role="presentation" class="active"><a href="#hooked-actions" aria-controls="tasks" role="tab" data-toggle="tab">Hooked Actions</a></li>
-		<li role="presentation"><a href="#hooked-filters" aria-controls="tasks" role="tab" data-toggle="tab">Hooked Filters</a></li>
-		<li role="presentation"><a href="#shortcodes" aria-controls="tasks" role="tab" data-toggle="tab">Shortcodes</a></li>
-		<li role="presentation"><a href="#post-types" aria-controls="tasks" role="tab" data-toggle="tab">Post Types</a></li>
-		<li role="presentation"><a href="#meta-boxes" aria-controls="tasks" role="tab" data-toggle="tab">Meta Boxes</a></li>
-		<li role="presentation"><a href="#ajax-handlers" aria-controls="tasks" role="tab" data-toggle="tab">Ajax Handlers</a></li>
-		<li role="presentation"><a href="#api-endpoints" aria-controls="tasks" role="tab" data-toggle="tab">API Endpoints</a></li>
+	<ul class="nav nav-tabs" role="tablist" data-bind="foreach: { data: env().studioPaneTabs, afterRender: function() { jQuery('.ui-layout-south').trigger('resize'); } }">
+		<li role="presentation" data-bind="css: { active: $index() == 0 }"><a href="#hooked-filters" data-bind="attr: { href: '#' + id }, text: title" role="tab" data-toggle="tab"></a></li>
 	</ul>
 
 	<div class="panel panel-default tabbed-panel" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="overflow-y: scroll; margin-bottom: 0">
-		<div id="hooked-actions" role="tabpanel" class="tab-pane active">
-			<?php echo $this->getTemplateContent( 'views/components/south-pane/actionlist' ) ?>
-		</div>
-		<div id="hooked-filters" role="tabpanel" class="tab-pane">
-
-		</div>
-		<div id="shortcodes" role="tabpanel" class="tab-pane">
-
-		</div>
-		<div id="post-types" role="tabpanel" class="tab-pane">
-
-		</div>
-		<div id="meta-boxes" role="tabpanel" class="tab-pane">
-
-		</div>
-		<div id="ajax-handlers" role="tabpanel" class="tab-pane">
-
-		</div>
-		<div id="api-endpoints" role="tabpanel" class="tab-pane">
-
+		<div data-bind="foreach: env().studioPaneTabs">
+			<div data-bind="attr: { id: id }, css: { active: $index() == 0 }, template: { nodes: template, data: viewModel }" role="tabpanel" class="tab-pane"></div>
 		</div>
 	</div>
 </div>

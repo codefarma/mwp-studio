@@ -22,8 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<script type="text/template" id="studio-tmpl-create-plugin-form">
-  <div>
+<div>
 	<div class="form-group">
 		<label for="name">Plugin Name</label>
 		<input type="text" class="form-control" data-bind="textInput: name" id="name" />
@@ -56,5 +55,4 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<label for="namespace">Namespace</label>
 		<input type="text" class="form-control" data-bind="textInput: namespace" id="namespace" />
 	</div>
-  </div>
-</script>
+</div>

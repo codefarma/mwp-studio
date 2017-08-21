@@ -22,14 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<script type="text/template" id="studio-tmpl-class-form">
-  <div>
-    <div class="form-group">
-	  <label for="classname">Class Name</label>
-	  <div class="input-group">
-	    <div class="input-group-addon" data-bind="text: plugin.namespace() + '\\'"></div>
-		<input type="text" class="form-control" placeholder="Class\Name" data-bind="textInput: classname, event:{ keypress: enterKeySubmit }" id="classname" />
-	  </div>
-	</div>
+
+<div class="form-group">
+  <label for="classname">Class Name</label>
+  <div class="input-group">
+	<div class="input-group-addon" data-bind="text: plugin.namespace() + '\\'"></div>
+	<input type="text" class="form-control" placeholder="Class\Name" data-bind="textInput: classname, event:{ keypress: enterKeySubmit }" id="classname" />
   </div>
-</script>
+</div>

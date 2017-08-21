@@ -59,12 +59,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<?php echo $this->getTemplateContent( 'views/components/south-pane/statusbar' ) ?>
 	</div>
 </div>
-
-<?php 
-	/* Templates */
-	echo $this->getTemplateContent( 'dialogs/class-form' );
-	echo $this->getTemplateContent( 'dialogs/template-form' );
-	echo $this->getTemplateContent( 'dialogs/stylesheet-form' );
-	echo $this->getTemplateContent( 'dialogs/javascript-form' );
-	echo $this->getTemplateContent( 'dialogs/create-plugin-form' );
-?>

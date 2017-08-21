@@ -66,6 +66,15 @@
 				var plugin = studio.viewModel.currentPlugin();
 				return plugin ? self.getFileContextActions( plugin.model() ) : [];
 			});
+			
+			/**
+			 * Studio pane tabs
+			 */
+			this.studioPaneTabs = ko.computed( function() {
+				var plugin = studio.viewModel.currentPlugin();
+				return plugin ? self.getStudioPaneTabs( plugin.model() ) : [];
+			});
+			
 		},
 		
 		/**
@@ -189,6 +198,22 @@
 					}
 				}
 			};
+		},
+		
+		/**
+		 * Get studio pane tabs
+		 *
+		 * @param	Plugin		plugin			The plugin to get file context menus for
+		 * @return	array
+		 */
+		getStudioPaneTabs: function()
+		{
+			return[{
+				id: 'hooked-actions',
+				title: 'Hooked Actions',
+				viewModel: studio.viewModel,
+				template: $(studio.local.templates.panetabs['hooked-actions'])
+			}];
 		}
 
 	}));
@@ -312,7 +337,6 @@
 							model = model.getParent();
 						}
 						
-						console.log( namespaces );
 						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
 						self.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
 					},
@@ -386,8 +410,7 @@
 				namespace:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-namespace' ) || '' )
 			};
 			
-			var dialogTemplate = $('#studio-tmpl-create-plugin-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-plugin'] ).wrap( '<div>' ).parent();
 			
 			return this.createDialog( 'Plugin', dialogContent, viewModel, function() 
 			{ 
@@ -430,8 +453,7 @@
 				classname: ko.observable( namespace )
 			};
 			
-			var dialogTemplate = $('#studio-tmpl-class-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-class'] ).wrap( '<div>' ).parent();
 			
 			return this.createDialog( 'Class', dialogContent, viewModel, function() { 
 				if ( ! viewModel.classname() ) { return false; }
@@ -456,8 +478,7 @@
 				filepath: ko.observable( filepath )
 			};
 			
-			var dialogTemplate = $('#studio-tmpl-template-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-template'] ).wrap( '<div>' ).parent();
 			
 			return this.createDialog( 'Template', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filepath() ) { return false; }
@@ -482,8 +503,7 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogTemplate = $('#studio-tmpl-stylesheet-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-stylesheet'] ).wrap( '<div>' ).parent();
 			
 			return this.createDialog( 'Stylesheet File', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }
@@ -508,8 +528,7 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogTemplate = $('#studio-tmpl-javascript-form').html();
-			var dialogContent = $( dialogTemplate ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-javascript'] ).wrap( '<div>' ).parent();
 			
 			return this.createDialog( 'Javascript Module', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }

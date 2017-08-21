@@ -177,13 +177,24 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
 				'cron_url' => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
 				'heartbeat_interval' => 20000,
-				'templates' => array(
+				'templates' => array
+				(
 					'menus' => array(
-						'header'   => $this->getTemplateContent( 'snippets/menus/item-header' ),
-						'action'   => $this->getTemplateContent( 'snippets/menus/item-action' ),
-						'divider'  => $this->getTemplateContent( 'snippets/menus/item-divider' ),
-						'submenu'  => $this->getTemplateContent( 'snippets/menus/item-submenu' ),
-						'dropdown' => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
+						'header'            => $this->getTemplateContent( 'snippets/menus/item-header' ),
+						'action'            => $this->getTemplateContent( 'snippets/menus/item-action' ),
+						'divider'           => $this->getTemplateContent( 'snippets/menus/item-divider' ),
+						'submenu'           => $this->getTemplateContent( 'snippets/menus/item-submenu' ),
+						'dropdown'          => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
+					),
+					'dialogs' => array(
+						'create-plugin'     => $this->getTemplateContent( 'dialogs/create-plugin' ),
+						'create-class'      => $this->getTemplateContent( 'dialogs/create-class' ),
+						'create-javascript' => $this->getTemplateContent( 'dialogs/create-javascript' ),
+						'create-stylesheet' => $this->getTemplateContent( 'dialogs/create-stylesheet' ),
+						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
+					),
+					'panetabs' => array(
+						'hooked-actions'    => $this->getTemplateContent( 'panetabs/hooked-actions' ),
 					),
 				),
 			)));

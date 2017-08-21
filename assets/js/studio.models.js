@@ -696,12 +696,28 @@
 		 */
 		initialize: function()
 		{
-			/**
-			 * @var	Tree
-			 */
+			var self = this;
+			
+			this.env = studio.environments.get( this.get('environment') ) || 
+				studio.environments.get('generic');
+			
 			this.fileTree = new FileTree();
 			this.fileTree.plugin = this;
-			this.env = studio.environments.get( this.get('environment') ) || studio.environments.get('generic');
+			this.hooks = ko.observableArray([]);
+			this.shortcodes = ko.observableArray([]);
+			this.posttypes = ko.observableArray([]);
+			
+			this.set( 'actions', ko.computed( function() {
+				_.map( self.hooks(), function( hook ) {
+					return hook.type == 'add_action' || hook.type == 'do_action';
+				});
+			}));
+			
+			this.set( 'filters', ko.computed( function() {
+				_.map( self.hooks, function( hook ) {
+					return hook.type == 'add_filter' || hook.type == 'apply_filters';
+				});
+			}));
 			
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
 			this.set( 'filenodes', this.fileTree.filenodes );
@@ -727,6 +743,7 @@
 		{
 			// Load the most current file tree
 			this.fetchFileTree();
+			
 		},
 		
 		/**
