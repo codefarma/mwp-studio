@@ -395,6 +395,92 @@
 		}
 	});
 	
+	/**
+	 * Custom knockout extenders
+	 */
+	_.extend( ko.extenders, 
+	{
+		progressiveFilter: function(target, args) 
+		{
+			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { setTimeout(callback, args.timeout || 200); },
+				currentCount = 0,
+				props = {};
+
+			args = args || {};
+			target.progressiveFilter = props;
+
+			props.unfilteredCollection = [];
+			props.unfilteredCollectionIndex = 0;
+			props.isFiltering = ko.observable(false);
+			props.filterFunction = args.filterFunction;
+			props.batchSize = Math.max(parseInt(args.batchSize, 10), 1);
+
+			props.add = args.addFunction || function(item) { target.peek().push(item); };
+			props.clear = args.clearFunction || function() { target([]); };
+
+			target.isFiltered = function(item) {
+				return !props.filterFunction || props.filterFunction(item);
+			};
+
+			target.filter = function(unfilteredCollection) {
+				var filteredCollection = [],
+					i;
+				for (i = 0; i < unfilteredCollection.length; i++) {
+					if (target.isFiltered(unfilteredCollection[i])) {
+						filteredCollection.push(unfilteredCollection[i]);
+					}
+				}
+				props.clear();
+				target(filteredCollection);
+			};
+
+			target.filterProgressive = function(unfilteredCollection) {
+				props.unfilteredCollection = unfilteredCollection.slice(0);
+				props.unfilteredCollectionIndex = 0;
+				currentCount = 0;
+				props.clear();
+				if (!props.isFiltering.peek()) {
+					props.isFiltering(true);
+					requestAnimationFrame(doFilter);
+				}
+			};
+
+			function doFilter() {
+				var item;
+
+				for (props.unfilteredCollectionIndex; props.unfilteredCollectionIndex < props.unfilteredCollection.length; props.unfilteredCollectionIndex++) {
+					item = props.unfilteredCollection[props.unfilteredCollectionIndex];
+					if (item && target.isFiltered(item)) {
+						props.add(item);
+						break;
+					}
+				}
+
+				currentCount++;
+				props.unfilteredCollectionIndex++;
+
+				if (props.unfilteredCollectionIndex < props.unfilteredCollection.length) {
+					if (currentCount >= props.batchSize) {
+						target.valueHasMutated();
+						currentCount = 0;
+						requestAnimationFrame(doFilter);
+					}
+					else {
+						currentCount++;
+						doFilter();
+					}
+					return;
+				}
+				else {
+					target.valueHasMutated();
+					currentCount = 0;
+					props.unfilteredCollectionIndex = 0;
+					props.isFiltering(false);
+				}
+			}
+		}	
+	});
+	
 	$(document).ready( function() {
 		$(window).resize( function() {
 			$('#mwp-studio-container').css({height: $(window).height() - 32});

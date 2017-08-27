@@ -11,7 +11,7 @@
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:
  * ```
- * $content = $plugin->getTemplateContent( 'views/components/resource-browser' ); 
+ * $content = $plugin->getTemplateContent( 'views/components/resource/browser' ); 
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
@@ -41,8 +41,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <ul class="nav nav-tabs" role="tablist">
 	<li role="presentation" class="active"><a href="#files" aria-controls="files" role="tab" data-toggle="tab">Files</a></li>
-	<!-- <li role="presentation"><a href="#classes" aria-controls="files" role="tab" data-toggle="tab">Classes</a></li>
-	<li role="presentation"><a href="#views" aria-controls="files" role="tab" data-toggle="tab">Templates</a></li> -->
 </ul>
 <div class="panel panel-default tabbed-panel" 
 	data-bind="

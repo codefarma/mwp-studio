@@ -194,7 +194,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
 					),
 					'panetabs' => array(
-						'hooked-actions'    => $this->getTemplateContent( 'panetabs/hooked-actions' ),
+						'hooked-actions'    => $this->getTemplateContent( 'views/components/panetabs/hooked-actions' ),
 					),
 				),
 			)));

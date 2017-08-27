@@ -31,31 +31,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 			closable: false, 
 			spacing_open: 0 
 		},
-		south: { 
-			size: localStorage.getItem( 'mwp-studio-south-size' ) || 250, 
-			onresize: function( key, pane ) {
-				localStorage.setItem( 'mwp-studio-south-size', pane.outerHeight() );
-			} 
+		east: {
+			slidable: true,
+			resizable: true,
+			initClosed: true
 		}
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
 	</div>
-	<div class="ui-layout-center" data-bind="event: { 'resize': function() { if ( activeFile() ) { setTimeout( function(){ activeFile().model().editor.resize(); }, 200 ); } } }">
-		<div class="column col-md-3" style="height: 100%">
-			<?php echo $this->getTemplateContent( 'views/components/resource-browser' ) ?>
-		</div>
-		
-		<div class="column col-md-6" style="height: 100%">
-			<?php echo $this->getTemplateContent( 'views/components/files-editor' ) ?>
-		</div>
-		
-		<div class="column col-md-3" style="height: 100%">
-			<?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
-		</div>			
+	<div class="ui-layout-east">
+		<?php echo $this->getTemplateContent( 'views/components/east-pane' ) ?>
 	</div>
-	<div class="ui-layout-south">
-		<?php echo $this->getTemplateContent( 'views/components/south-pane' ) ?>
-		<?php echo $this->getTemplateContent( 'views/components/south-pane/statusbar' ) ?>
+	<div class="ui-layout-center padding-0"
+		data-bind="event: { 
+			'resize': function() { 
+				if ( activeFile() ) { setTimeout( function(){ activeFile().model().editor.resize(); }, 200 ); } 
+			} 
+		},
+		layout: {
+			applyDefaultStyles: true,
+			south: { 
+				size: localStorage.getItem( 'mwp-studio-south-size' ) || 250, 
+				onresize: function( key, pane ) {
+					localStorage.setItem( 'mwp-studio-south-size', pane.outerHeight() );
+				}
+			}
+		}">
+			<div class="ui-layout-center inner-center">
+				<?php echo $this->getTemplateContent( 'views/components/center-pane' ) ?>
+			</div>
+			<div class="ui-layout-south inner-south overflow-hidden">
+				<?php echo $this->getTemplateContent( 'views/components/south-pane' ) ?>
+				<?php echo $this->getTemplateContent( 'views/components/statusbar' ) ?>
+			</div>
+
 	</div>
 </div>

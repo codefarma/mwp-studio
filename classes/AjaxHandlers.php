@@ -318,6 +318,51 @@ class AjaxHandlers extends Singleton
 		}
 		
 	}
+	
+	/**
+	 * Load items from the catalog
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_load_catalog_items", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function loadFromCatalog()
+	{
+		$this->authorize();
+		
+		$datatype = $_REQUEST['datatype'];
+		$basepath = $_REQUEST['basepath'];
+		$results = array();
+		
+		switch( $datatype ) 
+		{
+			case 'actions':
+				
+				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_action','do_action')", $basepath . '%' ) ) as $hook ) {
+					$data = $hook->dataArray();
+					$data['data'] = json_decode( $data['data'], true );
+					$results[] = $data;
+				}
+				break;
+
+			case 'filters':
+
+				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_filter','apply_filters')", $basepath . '%' ) ) as $hook ) {
+					$data = $hook->dataArray();
+					$data['data'] = json_decode( $data['data'], true );
+					$results[] = $data;
+				}
+				break;
+			
+		}
+		
+		wp_send_json( array( 
+			'success' => true, 
+			'datatype' => $datatype,
+			'basepath' => $basepath,
+			'results' => apply_filters( 'mwp_studio_load_catalog_items', $results ),
+		));
+	}
 
 	/**
 	 * Check the status of the backend

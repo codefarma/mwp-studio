@@ -306,7 +306,7 @@
 			 * @return	void
 			 */
 			this.on( 'nodeSelected', function( event, tree, node ) {
-				$.when( node.model.switchTo() ).then( function() {
+				$.when( node.model.switchTo() ).done( function() {
 					setTimeout( function() {
 						tree.treeview(true).unselectNode( node.nodeId );
 					}, 500 );
@@ -514,6 +514,8 @@
 						check.resolve( true );
 					}
 				}
+				
+				return response;
 			});
 			
 			return check.promise();
@@ -570,6 +572,8 @@
 						self.edited( false );
 					}
 				}
+				
+				return response;
 			});
 		},
 		
@@ -582,7 +586,7 @@
 		switchTo: function( reveal )
 		{
 			var self = this;
-			return $.when( this.openFile() ).then( function( editor, options ) {
+			return $.when( this.openFile() ).done( function( editor, options ) {
 				if ( typeof options.switchTo == 'function' ) {
 					options.switchTo(); 
 				}
@@ -703,21 +707,13 @@
 			
 			this.fileTree = new FileTree();
 			this.fileTree.plugin = this;
-			this.hooks = ko.observableArray([]);
+			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 30 } });
+			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 30 } });
 			this.shortcodes = ko.observableArray([]);
 			this.posttypes = ko.observableArray([]);
 			
-			this.set( 'actions', ko.computed( function() {
-				_.map( self.hooks(), function( hook ) {
-					return hook.type == 'add_action' || hook.type == 'do_action';
-				});
-			}));
-			
-			this.set( 'filters', ko.computed( function() {
-				_.map( self.hooks, function( hook ) {
-					return hook.type == 'add_filter' || hook.type == 'apply_filters';
-				});
-			}));
+			this.actions.loading = ko.observable(false);
+			this.filters.loading = ko.observable(false);
 			
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
 			this.set( 'filenodes', this.fileTree.filenodes );
@@ -765,7 +761,7 @@
 					dirpath: self.get('basedir')
 				}
 			})
-			.then( function( data ) {
+			.done( function( data ) {
 				if ( data.nodes ) {
 					self.fileTree.nodes.reset();
 					self.fileTree.nodes.set( data.nodes );
@@ -785,6 +781,47 @@
 					});
 					
 					self.fileTree.loading( false );
+				}
+			});
+		},
+		
+		/**
+		 * Fetch items from the catalog
+		 *
+		 * @param	string		datatype			The type of items to fetch
+		 * @return	$.Deferred
+		 */
+		fetchCatalogItems: function( datatype )
+		{
+			var self = this;
+			
+			switch( datatype ) {
+				case 'actions':	this.actions.loading(true); break;
+				case 'filters': this.filters.loading(true); break;
+			}
+			
+			return $.ajax({
+				method: 'post',
+				url: studio.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_load_catalog_items',
+					basepath: self.get('basedir'),
+					datatype: datatype
+				}
+			})
+			.done( function( response ) {
+				if ( response.success ) {
+					switch( datatype ) {
+						case 'actions':
+							self.actions.loading(false);
+							self.actions.filterProgressive( response.results );
+							break;
+							
+						case 'filters':
+							self.filters.loading(false);
+							self.filters.filterProgressive( response.results );
+							break;
+					}
 				}
 			});
 		}

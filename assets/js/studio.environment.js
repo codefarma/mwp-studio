@@ -213,6 +213,12 @@
 				title: 'Hooked Actions',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-actions'])
+			},
+			{
+				id: 'hooked-filters',
+				title: 'Hooked Filters',
+				viewModel: studio.viewModel,
+				template: $(studio.local.templates.panetabs['hooked-filters'])
 			}];
 		}
 

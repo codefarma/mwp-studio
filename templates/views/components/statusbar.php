@@ -11,7 +11,7 @@
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:
  * ```
- * $content = $plugin->getTemplateContent( 'views/components/south-pane/statusbar' ); 
+ * $content = $plugin->getTemplateContent( 'views/components/statusbar' ); 
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
