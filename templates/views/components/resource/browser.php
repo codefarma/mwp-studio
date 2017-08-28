@@ -44,7 +44,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 </ul>
 <div class="panel panel-default tabbed-panel" 
 	data-bind="
-		fillPaneContainer: { pane: '.ui-layout-center', container: '.column' },
+		fillPaneContainer: { pane: '.ui-layout-pane', container: '.column' },
 		studioActivity: ( ! currentPlugin() ? false : { active: currentPlugin().model().fileTree.loading() } )
 	" style="overflow-y: scroll; margin-bottom: 0">
 	<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">

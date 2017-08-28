@@ -2,7 +2,7 @@
 /**
  * Plugin HTML Template
  *
- * Created:  August 26, 2017
+ * Created:  August 27, 2017
  *
  * @package  Wordpress Plugin Studio
  * @author   Kevin Carwile
@@ -11,10 +11,13 @@
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:
  * ```
- * $content = $plugin->getTemplateContent( 'views/components/east-pane' ); 
+ * $content = $plugin->getTemplateContent( 'views/components/west-pane' ); 
  * ```
  * 
  * @param	Plugin		$this		The plugin instance which is loading this template
+ *
+ * @param	string		$title		The provided title
+ * @param	string		$content	The provided content
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,4 +26,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
+<div class="column full-height"> 
+	<?php echo $this->getTemplateContent( 'views/components/resource/browser' ) ?>
+</div>

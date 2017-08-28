@@ -1,4 +1,4 @@
-/* Studio */
+/* Wordpress overrides */
 #wpfooter, .updated, .notice, .update-nag { 
 	display: none; 
 }
@@ -11,6 +11,11 @@
 	padding-bottom: 0px; 
 }
 
+body.folded #wpcontent, body.folded #wpfooter {
+	margin-left: 16px;
+}
+
+/* Layouts */
 .mwp-studio .ui-layout-pane-north { 
 	border-bottom: 0 !important; 
 	z-index: 1 !important; 
@@ -34,11 +39,27 @@
 	width: 100%;
 }
 
-.mwp-studio .inner-north,
-.mwp-studio .inner-south,
 .mwp-studio .inner-center {
 	border-right: 0px !important;
 	border-left: 0px !important;
+}
+
+.mwp-studio .inner-south {
+	border-right: 0px !important;
+	border-left: 0px !important;
+}
+
+.mwp-studio .inner-west {
+	border-left: 0px !important;
+	border-top: 0px !important;
+}
+
+.mwp-studio .outer-east {
+	border-top: 0px !important;
+}
+
+.mwp-studio .outer-west {
+	border-top: 0px !important;
 }
 
 .mwp-studio .full-height {

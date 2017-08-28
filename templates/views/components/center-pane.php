@@ -23,14 +23,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div class="column col-md-3" style="height: 100%">
-	<?php echo $this->getTemplateContent( 'views/components/resource/browser' ) ?>
-</div>
-
-<div class="column col-md-6" style="height: 100%">
+<div class="column full-height">
 	<?php echo $this->getTemplateContent( 'views/components/files-editor' ) ?>
 </div>
-
-<div class="column col-md-3" style="height: 100%">
-	<?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
-</div>			

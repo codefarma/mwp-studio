@@ -19,6 +19,9 @@
 	"use strict";
 	
 	$('html').addClass('mwp-bootstrap');
+	$(document).on( 'click', '#collapse-menu', function() {
+		$(window).resize();
+	});
 
 	var CollectorModel    = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel  = mwp.model.get( 'mwp-studio-collectible' );
@@ -27,6 +30,9 @@
 	var Plugin            = mwp.model.get( 'mwp-studio-plugin' );
 	var GenericInterface  = mwp.model.get( 'mwp-studio-generic-interface' );
 	
+	/**
+	 * @var	bool		Flag indicating if a process polling is active
+	 */
 	var process_polling = false;
 	
 	/**
@@ -82,6 +88,24 @@
 				env:           function() { return self.env(); },
 				statustext:    ko.observable(''),
 				processStatus: ko.observable(),
+				searchPhrase:  ko.searchObservable( function( phrase ) {
+					return $.ajax({
+						url: self.local.ajaxurl,
+						data: {
+							action: 'mwp_studio_search',
+							phrase: phrase
+						}
+					});
+				}),
+				hookSearch:    ko.searchObservable( function( hook_name ) {
+					return $.ajax({
+						url: self.local.ajaxurl,
+						data: {
+							action: 'mwp_studio_hook_results',
+							search: hook_name
+						}
+					});
+				})
 			};
 			
 			/**
@@ -113,7 +137,12 @@
 					}
 					
 					return breadcrumbs.length ? breadcrumbs : [ 'No file open' ];
-				})			
+				}),
+				
+				fuzzySearchResults: ko.computed( function()
+				{
+					
+				})
 			});
 			
 			// Load available plugins and select the last active one, or the first if not
@@ -479,6 +508,45 @@
 				}
 			}
 		}	
+	});
+	
+	/**
+	 * Extend Knockout.js
+	 */
+	_.extend( ko, 
+	{
+		/**
+		 * Create a search observable
+		 *
+		 * @param	function		search				The search function (should return a deferred object)
+		 * @param	function		interval			The debounce wait period
+		 * @return	observable
+		 */
+		searchObservable: function( search, interval )
+		{
+			var observable = _.extend( ko.observable(''), {
+				loading: ko.observable(false),
+				results: ko.observable([])
+			});
+			
+			// Keep track of the most recent search. Only update results for the latest request.
+			var latestSearch;
+			
+			observable.subscribe( _.debounce( function( value ) {
+				observable.loading(true);
+				var currentSearch = latestSearch = search( value );
+				$.when( currentSearch ).done( function( results ) {
+					if ( currentSearch === latestSearch ) {
+						if ( typeof results !== 'undefined' ) {
+							observable.results( results );
+						}
+						observable.loading(false);
+					}
+				});
+			}, interval || 500 ));
+			
+			return observable;
+		}
 	});
 	
 	$(document).ready( function() {

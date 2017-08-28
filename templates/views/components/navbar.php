@@ -24,6 +24,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <nav class="navbar navbar-default" role="navigation" data-view-model="mwp-studio" style="margin-bottom: 0">
   <div class="container-fluid">
+	<div class="navbar-form navbar-right" style="margin-right:5px">
+		<div class="form-group"> 
+			<input class="form-control" placeholder="Search" style="border-radius:30px" data-bind="textInput: searchPhrase">
+		</div>
+	</div>
 	<div class="navbar-header">
 	  <span class="navbar-brand">
 		<i class="fa fa-wordpress fa-lg"></i>

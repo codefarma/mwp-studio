@@ -32,20 +32,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 			spacing_open: 0 
 		},
 		east: {
-			slidable: true,
-			resizable: true,
-			initClosed: true
+			size: localStorage.getItem( 'mwp-studio-east-size' ) || '20%',
+			onresize: function( key, pane ) {
+				localStorage.setItem( 'mwp-studio-east-size', pane.outerWidth() );
+			}
+		},
+		west: {
+			size: localStorage.getItem( 'mwp-studio-west-size' ) || '20%',
+			onresize: function( key, pane ) {
+				localStorage.setItem( 'mwp-studio-west-size', pane.outerWidth() );
+			}
 		}
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>
 	</div>
-	<div class="ui-layout-east">
+	<div class="ui-layout-east outer-east">
 		<?php echo $this->getTemplateContent( 'views/components/east-pane' ) ?>
 	</div>
 	<div class="ui-layout-center padding-0"
 		data-bind="event: { 
-			'resize': function() { 
+			resize: function() { 
 				if ( activeFile() ) { setTimeout( function(){ activeFile().model().editor.resize(); }, 200 ); } 
 			} 
 		},
@@ -58,13 +65,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 				}
 			}
 		}">
-			<div class="ui-layout-center inner-center">
-				<?php echo $this->getTemplateContent( 'views/components/center-pane' ) ?>
-			</div>
-			<div class="ui-layout-south inner-south overflow-hidden">
-				<?php echo $this->getTemplateContent( 'views/components/south-pane' ) ?>
-				<?php echo $this->getTemplateContent( 'views/components/statusbar' ) ?>
-			</div>
-
+		<div class="ui-layout-center inner-center">
+			<?php echo $this->getTemplateContent( 'views/components/center-pane' ) ?>
+		</div>
+		<div class="ui-layout-south inner-south overflow-hidden">
+			<?php echo $this->getTemplateContent( 'views/components/south-pane' ) ?>
+			<?php echo $this->getTemplateContent( 'views/components/statusbar' ) ?>
+		</div>
+	</div>
+	<div class="ui-layout-west outer-west overflow-hidden">
+		<?php echo $this->getTemplateContent( 'views/components/west-pane' ) ?>
 	</div>
 </div>

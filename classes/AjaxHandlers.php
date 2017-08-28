@@ -421,8 +421,7 @@ class AjaxHandlers extends Singleton
 	 */
 	public function rebuildCatalog()
 	{
-		$this->authorize();
-		
+		$this->authorize();		
 		$path = $_REQUEST['path'];
 		
 		if ( $path == 'all' ) {
@@ -446,5 +445,55 @@ class AjaxHandlers extends Singleton
 			}
 			wp_send_json( array( 'success' => true, 'background' => false ) );
 		}
+	}
+	
+	/**
+	 * Get results for a hook
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_hook_results", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function hookResults()
+	{
+		$this->authorize();		
+		
+		$search = $_REQUEST['search'];
+		$db = \Modern\Wordpress\Framework::instance()->db();
+		$results = array();
+		$hooks = \MWP\Studio\Models\Hook::loadWhere( array( 'hook_name=%s', $search ) );
+		
+		foreach( $hooks as $hook ) {
+			$results[ $hook->type ][] = $hook->dataArray();
+		}
+		
+		wp_send_json( array( 'results' => $results ) );
+	}
+	
+	/**
+	 * Do a fuzzy search
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_search", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function search()
+	{
+		$this->authorize();		
+		
+		$search = strtolower( $_REQUEST['phrase'] );
+		$db = \Modern\Wordpress\Framework::instance()->db();
+		$results = array(
+			'hooks' => array(),
+		);
+		
+		if ( $search ) {
+			$words = array_filter( explode( ' ', $search ) );
+			$hooks_like = array_map( function( $word ) { return "hook_names.hook_name LIKE '%" . mysql_real_escape_string( $word ) . "%'"; }, $words );
+			
+			$results['hooks'] = $db->get_results( "SELECT * FROM ( SELECT DISTINCT(hook_name) FROM {$db->base_prefix}studio_hook_catalog WHERE 1 ) AS hook_names WHERE " . implode( ' AND ', $hooks_like ) );
+		}
+		
+		wp_send_json( array( 'results' => $results ) );
 	}
 }
