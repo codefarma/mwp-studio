@@ -27,25 +27,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="full-height" data-bind="with: currentPlugin()">
   <div class="full-height" data-bind="studioActivity: model().actions.loading() || model().actions.progressiveFilter.isFiltering()">
-	<table class="table">
+	<table class="table table-striped">
 		<thead>
 			<tr>
-				<td>Action</td>
-				<td>Callback</td>
-				<td>Args</td>
-				<td>Priority</td>
-				<td>File</td>
-				<td>Line</td>
+				<th>Action</th>
+				<th>Callback</th>
+				<th>File</th>
 			</tr>
 		</thead>
 		<tbody data-bind="foreach: model().actions">
 			<tr>
-				<td data-bind="text: hook_name"></td>
+				<td><a href="#" data-bind="click: function() { $root.hookSearch( hook_name ); }, text: hook_name"></a></td>
 				<td data-bind="text: hook_callback_name"></td>
-				<td data-bind="text: hook_args"></td>
-				<td data-bind="text: hook_priority"></td>
-				<td data-bind="text: hook_file"></td>
-				<td data-bind="text: hook_line"></td>
+				<td>
+					<a href="#" 
+						data-bind="attr: { title: hook_file }, text: hook_file.split('/').pop(),
+						click: function() {
+							var file = $parent.model().fileTree.findChild( 'nodes', function( node ) {
+								return node.get('path') == hook_file;
+							});
+							if ( file ) {
+								file.switchTo().done( function( editor ) {
+									editor.gotoLine( hook_line );
+									setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
+								});
+							}
+						}
+					"></a>
+				</td>
 			</tr>
 		</tbody>
 	</table>

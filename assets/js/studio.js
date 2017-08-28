@@ -137,13 +137,13 @@
 					}
 					
 					return breadcrumbs.length ? breadcrumbs : [ 'No file open' ];
-				}),
-				
-				fuzzySearchResults: ko.computed( function()
-				{
-					
 				})
 			});
+			
+			// Custom ace editor token actions
+			$(document).on( 'click', '.ace_wp_hook_name', function() {
+				self.viewModel.hookSearch( $(this).text() );
+			});			
 			
 			// Load available plugins and select the last active one, or the first if not
 			this.loadPlugins().done( function() 

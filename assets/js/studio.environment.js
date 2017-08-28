@@ -210,13 +210,13 @@
 		{
 			return[{
 				id: 'hooked-actions',
-				title: 'Hooked Actions',
+				title: 'Actions',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-actions'])
 			},
 			{
 				id: 'hooked-filters',
-				title: 'Hooked Filters',
+				title: 'Filters',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-filters'])
 			}];

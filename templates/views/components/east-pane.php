@@ -24,3 +24,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
+
+<pre data-bind="text: JSON.stringify( hookSearch.results(), null, 2)"></pre>

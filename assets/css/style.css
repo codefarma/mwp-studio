@@ -156,6 +156,15 @@ body.folded #wpcontent, body.folded #wpfooter {
 	display:none;
 }
 
+.ace_wp_hook_name {
+	color: purple;
+	pointer-events: auto !important;
+}
+
+.ace_wp_hook_name:hover {
+	border-bottom: 1px solid;
+	cursor: pointer;
+}
 
 /* Buttons */
 .mwp-bootstrap .btn-xxs, .mwp-bootstrap .btn-group-xxs > .btn {

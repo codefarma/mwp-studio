@@ -739,7 +739,7 @@
 		{
 			// Load the most current file tree
 			this.fetchFileTree();
-			
+			this.fetchCatalogItems('actions');
 		},
 		
 		/**
