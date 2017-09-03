@@ -24,6 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div data-view-model="mwp-studio" class="mwp-studio-toolbox">
 	<div class="breadcrumb">
-		<h6 style="margin:9px 0">Toolbox</h5>
+		<h4 style="margin:9px 0; font-weight: normal;">Toolbox</h4>
 	</div>
 </div>

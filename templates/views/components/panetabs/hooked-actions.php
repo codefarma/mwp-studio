@@ -30,6 +30,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<table class="table table-striped">
 		<thead>
 			<tr>
+				<th>Type</th>
 				<th>Action</th>
 				<th>Callback</th>
 				<th>File</th>
@@ -37,6 +38,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</thead>
 		<tbody data-bind="foreach: model().actions">
 			<tr>
+				<td><span data-bind="text: hook_type" style="padding-right:15px"></span></td>
 				<td><a href="#" data-bind="click: function() { $root.hookSearch( hook_name ); }, text: hook_name"></a></td>
 				<td data-bind="text: hook_callback_name"></td>
 				<td>
