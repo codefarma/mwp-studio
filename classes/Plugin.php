@@ -149,10 +149,10 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->activityIndicatorJS );
 			
 			// Bootflat UI
-			$this->useStyle( $this->bootflatCSS );
-			$this->useScript( $this->bootflatJS1 );
-			$this->useScript( $this->bootflatJS2 );
-			$this->useScript( $this->bootflatJS3 );
+			//$this->useStyle( $this->bootflatCSS );
+			//$this->useScript( $this->bootflatJS1 );
+			//$this->useScript( $this->bootflatJS2 );
+			//$this->useScript( $this->bootflatJS3 );
 			
 			// Bootstrap Treeview
 			$this->useStyle( $this->bootstrapTreeviewCSS );
