@@ -156,9 +156,15 @@
 			});
 			
 			// Refresh plugins when they become active
-			this.viewModel.currentPlugin.subscribe( function( plugin ) {
-				plugin.model().refreshStudio();			
-				localStorage.setItem( 'mwp-studio-current-plugin', plugin.id() );
+			this.viewModel.currentPlugin.subscribe( function( pluginView ) 
+			{
+				var plugin = pluginView.model();
+				
+				if ( ! plugin.fileTree.initialized() ) {
+					plugin.fetchFileTree();
+				}
+				
+				localStorage.setItem( 'mwp-studio-current-plugin', plugin.get('id') );
 			});	
 
 			// Start the ticker
