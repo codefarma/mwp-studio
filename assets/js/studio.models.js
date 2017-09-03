@@ -32,6 +32,39 @@
 		_collectibles: [],
 		
 		/**
+		 * Set collections directly when using the set method on collectibles
+		 *
+		 * @param	object|string		attributes			An attribute name or hash of attributes to set
+		 * @param	mixed				options				The attribute value if providing attribute name as string
+		 * @return	void
+		 */
+		set: function( attributes, options ) 
+		{
+			var self = this;
+			var collectibleAttributes = _.map( this._collectibles, function( collectible ) { return collectible.attribute; } );
+			
+			// Set any collections and remove the attribute
+			if ( typeof attributes == 'object' ) 
+			{
+				$.each( attributes, function( key, value ) {
+					if ( _.contains( collectibleAttributes, key ) ) {
+						self[ key ].set( value );
+						delete attributes[ key ];
+					}
+				});
+			}
+			else
+			{
+				if ( _.contains( collectibleAttributes, attributes ) ) {
+					self[ attributes ].set( options );
+					return;
+				}
+			}
+
+			return Backbone.Model.prototype.set.call( this, attributes, options );
+		},
+
+		/**
 		 * Define the collectible properties for this model
 		 *
 		 * @param	array		collectibles			An array of attributes to make collectible
@@ -46,9 +79,9 @@
 			{
 				var items = self.get( collectible.attribute );
 				var collection = self.createCollection( items, collectible.options );
-				var observable = kb.collectionObservable( collection );			
+				var observableCollection = kb.collectionObservable( collection );			
 				self[ collectible.attribute ] = collection;
-				self.set( collectible.attribute, observable );
+				self.attributes[ collectible.attribute ] = observableCollection;
 			});
 		},
 		
@@ -250,6 +283,25 @@
 		 * @var	object	Ace Editor
 		 */
 		editor: null,
+		
+		/**
+		 * Constructor
+		 *
+		 * @return	object
+		 */
+		constructor: function( attributes )
+		{
+			if ( attributes && attributes.id ) {
+				var node = FileTreeNode.cache.get( attributes.id );
+				if ( node ) {
+					node.set( attributes );
+					return node;
+				}
+			}
+			
+			Backbone.Model.apply( this, arguments );
+			FileTreeNode.cache.add( this );
+		},
 		
 		/**
 		 * Initialize
@@ -631,6 +683,12 @@
 			
 			return json;
 		}
+	},
+	{
+		/**
+		 * Multiton Cache
+		 */
+		cache: new Backbone.Collection()
 	}));
 	
 	/**
@@ -705,10 +763,13 @@
 			this.env = studio.environments.get( this.get('environment') ) || 
 				studio.environments.get('generic');
 			
-			this.fileTree = new FileTree();
-			this.fileTree.plugin = this;
-			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 30 } });
-			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 30 } });
+			this.fileTree = _.extend( new FileTree(), {
+				plugin: this,
+				initialized: ko.observable(false)
+			});
+
+			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
+			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
 			this.shortcodes = ko.observableArray([]);
 			this.posttypes = ko.observableArray([]);
 			
@@ -765,21 +826,7 @@
 				if ( data.nodes ) {
 					self.fileTree.nodes.reset();
 					self.fileTree.nodes.set( data.nodes );
-					
-					// Merge in open files
-					_.each( studio.viewModel.openFiles(), function( file ) 
-					{
-						var parent = self.fileTree.findChild( 'nodes', function( node ) { 
-							return node.get('id') == file.parent_id(); 
-						});
-						
-						if ( parent ) {
-							file.model().collection = undefined;
-							parent.nodes.remove( file.id() );
-							parent.nodes.add( file.model() );
-						}
-					});
-					
+					self.fileTree.initialized( true );					
 					self.fileTree.loading( false );
 				}
 			});
@@ -791,7 +838,7 @@
 		 * @param	string		datatype			The type of items to fetch
 		 * @return	$.Deferred
 		 */
-		fetchCatalogItems: function( datatype )
+		fetchItemCatalog: function( datatype )
 		{
 			var self = this;
 			
