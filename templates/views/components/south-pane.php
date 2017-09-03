@@ -25,8 +25,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="column" style="height: 100%">
 
-	<ul class="nav nav-tabs" role="tablist" data-bind="foreach: { data: env().studioPaneTabs, afterRender: function() { jQuery('.ui-layout-south').trigger('resize'); } }">
-		<li role="presentation" data-bind="css: { active: $index() == 0 }"><a data-bind="attr: { href: '#' + id }, text: title" role="tab" data-toggle="tab"></a></li>
+	<ul class="nav nav-tabs" role="tablist" data-bind="
+		foreach: { 
+			data: env().studioPaneTabs, 
+			afterRender: function(elements, tab) { 
+				jQuery('.ui-layout-south').trigger('resize');
+				if( jQuery( elements[1] ).is( 'li.active' ) ) {
+					tab.refreshContent();
+					tab.initialized = true;
+				}				
+			}
+		}">
+		<li role="presentation" data-bind="css: { active: $index() == 0 }">
+			<a role="tab" data-toggle="tab" data-bind="
+				text: title,
+				attr: { href: '#' + id },
+				event: {
+					'shown.bs.tab': function() {
+						var tab = this;
+						if ( ! tab.initialized ) {
+							tab.refreshContent();
+							tab.initialized = true;
+						}
+					}
+				}
+				">
+			</a>
+		</li>
 	</ul>
 
 	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="overflow-y: scroll; margin-bottom: 0">

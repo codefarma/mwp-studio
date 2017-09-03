@@ -212,13 +212,25 @@
 				id: 'hooked-actions',
 				title: 'Actions',
 				viewModel: studio.viewModel,
-				template: $(studio.local.templates.panetabs['hooked-actions'])
+				template: $(studio.local.templates.panetabs['hooked-actions']),
+				refreshContent: function() {
+					var pluginView = studio.viewModel.currentPlugin();
+					if ( pluginView ) {
+						pluginView.model().fetchItemCatalog( 'actions' );
+					}
+				}
 			},
 			{
 				id: 'hooked-filters',
 				title: 'Filters',
 				viewModel: studio.viewModel,
-				template: $(studio.local.templates.panetabs['hooked-filters'])
+				template: $(studio.local.templates.panetabs['hooked-filters']),
+				refreshContent: function() {
+					var pluginView = studio.viewModel.currentPlugin();
+					if ( pluginView ) {
+						pluginView.model().fetchItemCatalog( 'actions' );
+					}
+				}
 			}];
 		}
 
