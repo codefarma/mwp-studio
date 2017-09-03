@@ -121,12 +121,14 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Bootstrap Context Menu JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @see: https://github.com/dgoguerra/bootstrap-menu
 	 */
 	public $bootstrapContextmenuJS = 'assets/js/lib/bootstrap-contextmenu.min.js';
 	
 	/**
 	 * Bootbox JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @see: http://bootboxjs.com
 	 */
 	public $bootboxJS = 'assets/js/lib/bootstrap-bootbox.min.js';
 	
@@ -147,12 +149,6 @@ class Plugin extends \Modern\Wordpress\Plugin
 			
 			// Activity Indicator
 			$this->useScript( $this->activityIndicatorJS );
-			
-			// Bootflat UI
-			//$this->useStyle( $this->bootflatCSS );
-			//$this->useScript( $this->bootflatJS1 );
-			//$this->useScript( $this->bootflatJS2 );
-			//$this->useScript( $this->bootflatJS3 );
 			
 			// Bootstrap Treeview
 			$this->useStyle( $this->bootstrapTreeviewCSS );
@@ -194,7 +190,8 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
 					),
 					'panetabs' => array(
-						'hooked-actions'    => $this->getTemplateContent( 'views/components/panetabs/hooked-actions' ),
+						'hooked-actions'    => $this->getTemplateContent( 'views/components/panetabs/hooks', array( 'hook_type' => 'actions' ) ),
+						'hooked-filters'    => $this->getTemplateContent( 'views/components/panetabs/hooks', array( 'hook_type' => 'filters' ) ),
 					),
 				),
 			)));

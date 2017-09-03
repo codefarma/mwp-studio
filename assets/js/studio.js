@@ -71,7 +71,7 @@
 			var self = this;
 			
 			/**
-			 * @var	Collection
+			 * @var	Collection		Plugins list
 			 */
 			this.plugins = new Backbone.Collection( [], { model: Plugin } );
 			
@@ -140,14 +140,16 @@
 				})
 			});
 			
-			// Custom ace editor token actions
-			$(document).on( 'click', '.ace_wp_hook_name', function() {
-				self.viewModel.hookSearch( $(this).text() );
-			});			
+			// Custom ace editor handlers
+			this.initAceHandlers( $(document) );	
 			
-			// Load available plugins and select the last active one, or the first if not
-			this.loadPlugins().done( function() 
-			{
+			/**
+			 * Load plugins
+			 *
+			 * - Select last active plugin after initial load -or-
+			 * - Select first plugin in the list
+			 */
+			this.loadPlugins().done( function() {
 				var plugin_id = localStorage.getItem( 'mwp-studio-current-plugin' );
 				var index = self.plugins.indexOf( self.plugins.get( plugin_id ) );
 				
@@ -155,20 +157,40 @@
 				self.viewModel.currentPlugin( self.viewModel.plugins()[index] );
 			});
 			
-			// Refresh plugins when they become active
+			/**
+			 * Lazy load plugin resources only after it becomes active
+			 *
+			 */
 			this.viewModel.currentPlugin.subscribe( function( pluginView ) 
 			{
 				var plugin = pluginView.model();
 				
-				if ( ! plugin.fileTree.initialized() ) {
+				if ( ! plugin.fileTree.initialized ) {
 					plugin.fetchFileTree();
 				}
 				
+				// Remember last active plugin
 				localStorage.setItem( 'mwp-studio-current-plugin', plugin.get('id') );
 			});	
 
-			// Start the ticker
+			// Start our ticker
 			this.heartbeat();
+		},
+		
+		/**
+		 * Initialize ace editor custom handlers
+		 *
+		 * @param	jQuery		scope			The scope on which to listen for events
+		 * @return	void
+		 */
+		initAceHandlers: function( scope )
+		{
+			var self = this;
+			
+			// Hook name is clicked
+			scope.on( 'click', '.ace_wp_hook_name', function() {
+				self.viewModel.hookSearch( $(this).text() );
+			});	
 		},
 		
 		/**
@@ -306,6 +328,11 @@
 	 */
 	_.extend( ko.bindingHandlers, 
 	{
+		/**
+		 * NetEye Activity Indicator
+		 * 
+		 * @see: https://github.com/live627/jquery-plugins-1/tree/master/activity-indicator
+		 */
 		studioActivity: {
 			update: function( element, valueAccessor, allBindingsAccessor ) {
 				var opts = ko.utils.unwrapObservable( valueAccessor() );				
@@ -313,6 +340,11 @@
 			}
 		},
 		
+		/**
+		 * Bootstrap Treeview
+		 *
+		 * @see: https://github.com/jonmiles/bootstrap-treeview
+		 */
 		treeView: {
 			update: function( element, valueAccessor, allBindingsAccessor )	{
 				if ( $.fn.treeview != undefined ) {
@@ -328,6 +360,11 @@
 			}
 		},
 		
+		/**
+		 * Ace Editor
+		 *
+		 * @see: https://ace.c9.io/
+		 */
 		aceEditor: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				if ( typeof ace != 'undefined' ) {
@@ -373,6 +410,11 @@
 			}
 		},
 		
+		/**
+		 * Bootstrap Context Menu
+		 *
+		 * @see: https://github.com/dgoguerra/bootstrap-menu
+		 */
 		contextMenu: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var options = ko.utils.unwrapObservable( valueAccessor() );
@@ -386,6 +428,11 @@
 			}
 		},
 		
+		/**
+		 * Render a bootstrap menu given an array of [MenuItem]
+		 *
+		 * 
+		 */
 		bootstrapMenu: {
 			update: function( element, valueAccessor, allBindingsAccessor ) {
 				var items = ko.utils.unwrapObservable( valueAccessor() );
@@ -399,6 +446,11 @@
 			}
 		},
 		
+		/**
+		 * jQuery UI Layout
+		 *
+		 * @see: http://layout.jquery-dev.com
+		 */
 		layout: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var options = ko.utils.unwrapObservable( valueAccessor() );
@@ -419,6 +471,11 @@
 			}
 		},
 		
+		/**
+		 * Make an element size to fill out the remaining height inside a pane container
+		 *
+		 * @example: <div data-bind="fillPaneContainer: { 'pane': 'ui-layout-pane', container: '.column' }"></div>
+		 */
 		fillPaneContainer: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var options = ko.utils.unwrapObservable( valueAccessor() );
@@ -435,6 +492,12 @@
 	 */
 	_.extend( ko.extenders, 
 	{
+		/**
+		 * Fill up an observable array incrementally with a timeout delay so that the
+		 * operation can be performed with minimized blocking
+		 *
+		 * @see: https://github.com/thinkloop/knockout-js-progressive-filter
+		 */
 		progressiveFilter: function(target, args) 
 		{
 			var requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) { setTimeout(callback, args.timeout || 200); },
@@ -522,7 +585,7 @@
 	_.extend( ko, 
 	{
 		/**
-		 * Create a search observable
+		 * Create a search observable with a search function that returns search results
 		 *
 		 * @param	function		search				The search function (should return a deferred object)
 		 * @param	function		interval			The debounce wait period
@@ -555,6 +618,9 @@
 		}
 	});
 	
+	/**
+	 * Fit the studio to the window when page is loaded
+	 */
 	$(document).ready( function() {
 		$(window).resize( function() {
 			$('#mwp-studio-container').css({height: $(window).height() - 32});
