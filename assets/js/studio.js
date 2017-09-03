@@ -316,7 +316,7 @@
 		treeView: {
 			update: function( element, valueAccessor, allBindingsAccessor )	{
 				if ( $.fn.treeview != undefined ) {
-					var treenodes = ko.utils.unwrapObservable( valueAccessor() );				
+					var treenodes = ko.utils.unwrapObservable( valueAccessor() );
 					var tree = $(element).treeview( { data: treenodes } );
 					tree.on( 'nodeChecked nodeCollapsed nodeDisabled nodeEnabled nodeExpanded nodeSelected nodeUnchecked nodeUnselected', function( event, node ) {
 						if ( node.model instanceof Backbone.Model ) {

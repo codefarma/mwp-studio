@@ -313,11 +313,6 @@
 			var self = this;
 			
 			/**
-			 * @var	kb.viewModel
-			 */
-			this.fileViewModel = kb.viewModel( self );
-
-			/**
 			 * @var	bool		File open for editing?
 			 */
 			this.open = ko.observable( false );
@@ -381,6 +376,20 @@
 		},
 		
 		/**
+		 * Lazy create file view models to improve performance and memory footprint
+		 *
+		 * @return	kb.viewModel
+		 */
+		getFileViewModel: function()
+		{
+			if ( this.fileViewModel === undefined ) {
+				this.fileViewModel = kb.viewModel( this );
+			}
+			
+			return this.fileViewModel;
+		},
+		
+		/**
 		 * Open file in editor
 		 *
 		 * @return	$.Deferred
@@ -390,7 +399,7 @@
 			if ( ! this.open() ) 
 			{
 				// Pushing onto open files causes editor to open the file
-				studio.viewModel.openFiles.push( this.fileViewModel );
+				studio.viewModel.openFiles.push( this.getFileViewModel() );
 				this.open(true);
 			}
 			
@@ -462,29 +471,28 @@
 			{
 				var closeit = function() 
 				{
-					var viewModel = studio.viewModel;
 					var tabindex = viewModel.openFiles.indexOf( self.fileViewModel );
 					self.editorReady = $.Deferred();
 					self.editor.destroy();
 					self.editor = null;
-					viewModel.openFiles.remove( self.fileViewModel );
+					studio.viewModel.openFiles.remove( self.fileViewModel );
 					self.open(false);
 					self.conflicted(false);
 					self.edited(false);
 					
 					// If we're closing the active file, we need to pick a new active file
-					if ( viewModel.activeFile() === self.fileViewModel )
+					if ( studio.viewModel.activeFile() === self.fileViewModel )
 					{
-						var openFileCount = viewModel.openFiles().length;
+						var openFileCount = studio.viewModel.openFiles().length;
 						
 						if ( openFileCount == 0 ) {
-							viewModel.activeFile( null );
+							studio.viewModel.activeFile( null );
 						}
 						else
 						{
 							// pick the new file in the same index position, or the last file
 							tabindex = tabindex >= openFileCount ? openFileCount - 1 : tabindex;
-							viewModel.openFiles()[tabindex].model().switchTo();
+							studio.viewModel.openFiles()[tabindex].model().switchTo();
 						}
 					}
 				};
