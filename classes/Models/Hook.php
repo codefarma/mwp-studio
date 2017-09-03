@@ -95,4 +95,40 @@ class Hook extends ActiveRecord
 	{
 		$this->setPlugin( $plugin ?: \MWP\Studio\Plugin::instance() );
 	}
+	
+	/**
+	 * @var		Callback function
+	 */
+	protected $callback;
+	
+	/**
+	 * Get the callback function
+	 *
+	 * @return	Function_
+	 */
+	public function getCallback()
+	{
+		if ( ! $this->callback_name and ! $this->callback_class ) {
+			return false;
+		}
+		
+		if ( isset( $this->callback ) ) {
+			return $this->callback;
+		}
+		
+		$where = $this->callback_class ? array( 'function_name=%s AND function_class=%s', $this->callback_name, $this->callback_class ) : array( 'function_name=%s AND function_class IS NULL', $this->callback_name );
+		$functions = \MWP\Studio\Models\Function_::loadWhere( $where );
+		
+		if ( count( $functions ) ) {
+			$this->callback = $functions[0];
+		}
+		else
+		{
+			$this->callback = false;
+		}
+		
+		return $this->callback;
+	}
+	
+	
 }
