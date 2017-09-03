@@ -228,7 +228,7 @@
 				refreshContent: function() {
 					var pluginView = studio.viewModel.currentPlugin();
 					if ( pluginView ) {
-						pluginView.model().fetchItemCatalog( 'actions' );
+						pluginView.model().fetchItemCatalog( 'filters' );
 					}
 				}
 			}];

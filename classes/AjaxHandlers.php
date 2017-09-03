@@ -118,6 +118,46 @@ class AjaxHandlers extends Singleton
 	}
 	
 	/**
+	 * Fetch the files contained within a plugin
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_load_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function fetchFile()
+	{
+		$this->authorize();
+		
+		$filepath = ABSPATH . str_replace( '../', '', $_REQUEST['filepath'] );
+		
+		if ( ! is_file( $filepath ) ) {
+			wp_send_json( array( 'success' => false ) );
+		}
+		
+		wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $filepath ) ) );
+	}
+
+	/**
+	 * Get the 
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_get_function", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function getFunction()
+	{
+		$this->authorize();
+		
+		$callback_name  = wp_unslash( $_REQUEST['callback_name'] );
+		$callback_class = wp_unslash( $_REQUEST['callback_class'] );
+		$where = $callback_class ? array( 'function_name=%s AND function_class=%s', $callback_name, $callback_class ) : array( 'function_name=%s AND function_class IS NULL', $callback_name );
+		
+		$functions = \MWP\Studio\Models\Function_::loadWhere( $where );	
+		
+		wp_send_json( array( 'callback' => $functions[0] ? $functions[0]->dataArray() : null ) );
+	}
+	
+	/**
 	 * Get the content of a file 
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_get_file_content", for={"users"} )

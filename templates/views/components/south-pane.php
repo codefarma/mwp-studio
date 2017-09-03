@@ -31,8 +31,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 			afterRender: function(elements, tab) { 
 				jQuery('.ui-layout-south').trigger('resize');
 				if( jQuery( elements[1] ).is( 'li.active' ) ) {
-					tab.refreshContent();
 					tab.initialized = true;
+					tab.refreshContent();
 				}				
 			}
 		}">
@@ -44,8 +44,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 					'shown.bs.tab': function() {
 						var tab = this;
 						if ( ! tab.initialized ) {
-							tab.refreshContent();
 							tab.initialized = true;
+							tab.refreshContent();
 						}
 					}
 				}
@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</li>
 	</ul>
 
-	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="overflow-y: scroll; margin-bottom: 0">
+	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="margin-bottom: 0">
 		<div class="tab-content full-height" data-bind="foreach: env().studioPaneTabs">
 			<div data-bind="attr: { id: id }, css: { active: $index() == 0 }, template: { nodes: template, data: viewModel }" role="tabpanel" class="tab-pane full-height"></div>
 		</div>

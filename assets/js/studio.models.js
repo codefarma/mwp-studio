@@ -471,17 +471,17 @@
 			{
 				var closeit = function() 
 				{
-					var tabindex = viewModel.openFiles.indexOf( self.fileViewModel );
+					var tabindex = studio.viewModel.openFiles.indexOf( self.getFileViewModel() );
 					self.editorReady = $.Deferred();
 					self.editor.destroy();
 					self.editor = null;
-					studio.viewModel.openFiles.remove( self.fileViewModel );
+					studio.viewModel.openFiles.remove( self.getFileViewModel() );
 					self.open(false);
 					self.conflicted(false);
 					self.edited(false);
 					
 					// If we're closing the active file, we need to pick a new active file
-					if ( studio.viewModel.activeFile() === self.fileViewModel )
+					if ( studio.viewModel.activeFile() === self.getFileViewModel() )
 					{
 						var openFileCount = studio.viewModel.openFiles().length;
 						
@@ -696,7 +696,69 @@
 		/**
 		 * Multiton Cache
 		 */
-		cache: new Backbone.Collection()
+		cache: new Backbone.Collection(),
+		
+		/**
+		 * Load a file given a path
+		 *
+		 * @param	string			filepath			The path of the file to load
+		 * @return	$.Deferred
+		 */
+		loadFile: function( filepath )
+		{
+			var deferredLoad = $.Deferred();
+			var file = FileTreeNode.cache.findWhere({ path: filepath });
+			
+			if ( file ) {
+				deferredLoad.resolve( file );
+			}
+			else
+			{
+				$.ajax({
+					url: studio.local.ajaxurl,
+					data: {
+						action: 'mwp_studio_load_file',
+						filepath: filepath
+					}
+				}).done( function( response ) {
+					if ( response.file ) {
+						deferredLoad.resolve( new FileTreeNode( response.file ) );
+					}
+				});
+			}
+			
+			return deferredLoad.promise();
+		},
+		
+		/**
+		 * Load a file given a callback
+		 *
+		 * @param	string				name			The callback name
+		 * @param	string|undefined	class			The callback class
+		 * @return	$.Deferred
+		 */
+		loadCallbackFile: function( callback_name, callback_class )
+		{
+			var deferredLoad = $.Deferred();
+			
+			$.ajax({
+				url: studio.local.ajaxurl,
+				data: {
+					action: 'mwp_studio_get_function',
+					callback_name: callback_name,
+					callback_class: callback_class
+				}
+			}).done( function( response ) {
+				if ( response.callback ) {
+					FileTreeNode.loadFile( response.callback.function_file ).done( function( file ) {
+						deferredLoad.resolve( file, response.callback );
+					});
+				}
+			});
+
+			return deferredLoad.promise();
+		}
+		
 	}));
 	
 	/**
@@ -773,7 +835,7 @@
 			
 			this.fileTree = _.extend( new FileTree(), {
 				plugin: this,
-				initialized: ko.observable(false)
+				initialized: false
 			});
 
 			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
@@ -834,7 +896,7 @@
 				if ( data.nodes ) {
 					self.fileTree.nodes.reset();
 					self.fileTree.nodes.set( data.nodes );
-					self.fileTree.initialized( true );					
+					self.fileTree.initialized = true;					
 					self.fileTree.loading( false );
 				}
 			});

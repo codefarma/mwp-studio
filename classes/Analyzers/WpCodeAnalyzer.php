@@ -112,6 +112,16 @@ class WpCodeAnalyzer extends AbstractAnalyzer
 										$callback_class = $this->getTraverser()->getCurrentClassname();
 									}
 								}
+								else if ( $arg1 instanceof Node\Scalar\MagicConst\Class_ )
+								{
+									$callback_class = $this->getTraverser()->getCurrentClassname();
+								}
+								else if ( $arg1 instanceof Node\Expr\ConstFetch ) 
+								{
+									if ( $arg1->name instanceof Node\Name\FullyQualified ) {
+										$callback_class = implode( '\\', $arg1->name->parts );
+									}
+								}
 								
 								if ( $arg2 instanceof Node\Scalar\String_ ) {
 									$callback_name = $arg2->value;
