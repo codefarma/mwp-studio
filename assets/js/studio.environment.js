@@ -208,7 +208,8 @@
 		 */
 		getStudioPaneTabs: function()
 		{
-			return[{
+			return[
+			{
 				id: 'hooked-actions',
 				title: 'Actions',
 				viewModel: studio.viewModel,
@@ -216,8 +217,10 @@
 				refreshContent: function() {
 					var pluginView = studio.viewModel.currentPlugin();
 					if ( pluginView ) {
-						pluginView.model().fetchItemCatalog( 'actions' );
+						return pluginView.model().fetchItemCatalog( 'actions' );
 					}
+					
+					return $.Deferred();
 				}
 			},
 			{
@@ -228,8 +231,10 @@
 				refreshContent: function() {
 					var pluginView = studio.viewModel.currentPlugin();
 					if ( pluginView ) {
-						pluginView.model().fetchItemCatalog( 'filters' );
+						return pluginView.model().fetchItemCatalog( 'filters' );
 					}
+					
+					return $.Deferred();
 				}
 			}];
 		}

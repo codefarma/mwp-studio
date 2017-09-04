@@ -41,12 +41,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 				text: title,
 				attr: { href: '#' + id },
 				event: {
-					'shown.bs.tab': function() {
-						var tab = this;
+					'shown.bs.tab': function(tab, e) {
 						if ( ! tab.initialized ) {
 							tab.initialized = true;
 							tab.refreshContent();
 						}
+						jQuery(e.target)
+							.closest('.ui-layout-pane')
+							.trigger('resize');
 					}
 				}
 				">
@@ -56,7 +58,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="margin-bottom: 0">
 		<div class="tab-content full-height" data-bind="foreach: env().studioPaneTabs">
-			<div data-bind="attr: { id: id }, css: { active: $index() == 0 }, template: { nodes: template, data: viewModel }" role="tabpanel" class="tab-pane full-height"></div>
+			<div role="tabpanel" class="tab-pane full-height" data-bind="
+				attr: { id: id }, 
+				css: { active: $index() == 0 }, 
+				template: { 
+					nodes: template, 
+					data: viewModel 
+				}"></div>
 		</div>
 	</div>
 </div>
