@@ -46,15 +46,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 						data-bind="
 						text: hook_name,
 						click: function() {
-							var file = $parent.model().fileTree.findChild( 'nodes', function( node ) {
-								return node.get('path') == hook_file;
-							});
-							if ( file ) {
+							mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
 								file.switchTo().done( function( editor ) {
 									editor.gotoLine( hook_line );
 									setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 								});
-							}
+							});
 						}
 					"></a>
 				</td>

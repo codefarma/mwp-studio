@@ -177,6 +177,7 @@ body.folded #wpcontent, body.folded #wpfooter {
 .mwp-studio .overflow-ellipsis {
 	overflow: hidden;
 	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 /* Actions Table */
@@ -225,4 +226,13 @@ body.folded #wpcontent, body.folded #wpfooter {
 .mwp-studio .btn-flex .btn:first-child {
     flex-grow: 1;
     text-align: left;
+}
+
+/* Toolbar Elements */
+.mwp-bootstrap .hook-inspector .panel-title {
+	font-size: 14px;
+}
+
+.mwp-bootstrap .hook-inspector .panel-body .label {
+	margin-right: 5px;
 }

@@ -119,22 +119,8 @@
 				 */
 				activeFileBreadcrumbs: ko.computed( function() 
 				{
-					var breadcrumbs = [];
 					var currentFile = self.viewModel.activeFile();
-					
-					if ( currentFile ) 
-					{
-						var currentNode = currentFile.model();
-						
-						while( typeof currentNode.getParent == 'function' && currentNode.getParent() ) {
-							breadcrumbs.unshift( currentNode.get('text') );
-							currentNode = currentNode.getParent();
-						}
-						
-						if ( currentNode instanceof FileTree ) {
-							breadcrumbs.unshift( currentNode.plugin.get('basedir').replace(/^\//,'') );
-						}
-					}
+					var breadcrumbs = currentFile ? currentFile.path().split('/') : [];
 					
 					return breadcrumbs.length ? breadcrumbs : [ 'No file open' ];
 				})

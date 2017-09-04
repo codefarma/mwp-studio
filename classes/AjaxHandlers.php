@@ -220,7 +220,19 @@ class AjaxHandlers extends Singleton
 		$file = ABSPATH . $file_path;
 		
 		file_put_contents( $file, wp_unslash( $_REQUEST['content'] ) );
-
+		
+		$parts = explode( '.', $file );
+		$ext = array_pop( $parts );
+		
+		if ( $ext == 'php' ) {
+			try	{
+				$agent = \MWP\Studio\Analyzers\Agent::instance();
+				$agent->analyzeFile( $file );
+				$agent->saveAnalysis();
+			}
+			catch( \Exception $e ) { }
+		}
+		
 		wp_send_json( array( 'success' => true, 'modified' => filemtime( $file ) ) );
 	}
 
@@ -503,11 +515,7 @@ class AjaxHandlers extends Singleton
 		$results = array();
 		$hooks = \MWP\Studio\Models\Hook::loadWhere( array( 'hook_name=%s', $search ) );
 		
-		foreach( $hooks as $hook ) {
-			$results[ $hook->type ][] = $hook->dataArray();
-		}
-		
-		wp_send_json( array( 'results' => $results ) );
+		wp_send_json( array( 'results' => array_map( function( $hook ) { return $hook->dataArray(); }, $hooks ) ) );
 	}
 	
 	/**
