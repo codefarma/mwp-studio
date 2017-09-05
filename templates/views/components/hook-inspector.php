@@ -78,29 +78,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
 							<div class="panel-body">
-								<ul data-bind="
-									foreach: _.filter( hookSearch.results().results, function( result ) {
-										return result.hook_type == 'do_action';
-									})
-									">
-									<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
-										<a href="#" 
-											class="label label-success"
-											data-bind="
-											attr: {
-												title: 'do_action( \'' + hook_name + '\' )'
-											},
-											click: function() {
-												mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
-													file.switchTo().done( function( editor ) {
-														editor.gotoLine( hook_line );
-														setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
+								<div data-bind="foreach: hookSearch.groupedResults().do_action.groups">
+									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<ul data-bind="foreach: hooks">
+										<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
+											<a href="#" 
+												class="label label-success"
+												data-bind="
+												attr: {
+													title: 'do_action( \'' + hook_name + '\' )'
+												},
+												click: function() {
+													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
+														file.switchTo().done( function( editor ) {
+															editor.gotoLine( hook_line );
+															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
+														});
 													});
-												});
-											}
-										">do_action</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
-									</li>
-								</ul>					
+												}
+											">do_action</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -121,53 +120,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
 							<div class="panel-body">
-								<ul data-bind="
-									foreach: _.filter( hookSearch.results().results, function( result ) {
-										return result.hook_type == 'add_action';
-									})
-									">
-									<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-										<a href="#" 
-											class="label label-success"
-											data-bind="
-											attr: {
-												title: 'add_action( \'' + hook_name + '\' )'
-											},
-											click: function() {
-												mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
-													file.switchTo().done( function( editor ) {
-														editor.gotoLine( hook_line );
-														setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
-													});
-												});
-											}
-										">add_action</a>
-										<span data-bind="if: hook_callback_type !== 'closure'">
-											<a href="#" data-bind="
-												text: hook_callback_name,
-												jquery: {
-													popover: {
-														content: callback_signature,
-														html: true,
-														placement: 'top',
-														trigger: 'hover'
-													}
+								<div data-bind="foreach: hookSearch.groupedResults().add_action.groups">
+									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<ul data-bind="foreach: hooks">
+										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
+											<a href="#" 
+												class="label label-success"
+												data-bind="
+												attr: {
+													title: 'add_action( \'' + hook_name + '\' )'
 												},
-												click: function() { 
-													mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
-														file.switchTo().done( function() {
-															file.editor.gotoLine( callback.function_line );
-															setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+												click: function() {
+													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
+														file.switchTo().done( function( editor ) {
+															editor.gotoLine( hook_line );
+															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
-													}).fail( function() {
-														bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
 													});
 												}
-											"></a>
-										</span>
-										<span data-bind="if: hook_callback_type == 'closure'">{closure}</span>								
-									</li>
-								</ul>					
+											">add_action</a>
+											<span data-bind="if: hook_callback_type !== 'closure'">
+												<a href="#" data-bind="
+													text: hook_callback_name,
+													jquery: {
+														popover: {
+															content: callback_signature,
+															html: true,
+															placement: 'top',
+															trigger: 'hover'
+														}
+													},
+													click: function() { 
+														mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
+															file.switchTo().done( function() {
+																file.editor.gotoLine( callback.function_line );
+																setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+															});
+														}).fail( function() {
+															bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
+														});
+													}
+												"></a>
+											</span>
+											<span data-bind="if: hook_callback_type == 'closure'">{closure}</span>								
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -195,30 +193,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
 							<div class="panel-body">
-								<ul data-bind="
-									foreach: _.filter( hookSearch.results().results, function( result ) {
-										return result.hook_type == 'apply_filters';
-									})
-									">
-									<li>
-										<a href="#" 
-											class="label label-success"
-											data-bind="
-											attr: {
-												title: 'apply_filters( \'' + hook_name + '\' )'
-											},
-											click: function() {
-												mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
-													file.switchTo().done( function( editor ) {
-														editor.gotoLine( hook_line );
-														setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
+								<div data-bind="foreach: hookSearch.groupedResults().apply_filters.groups">
+									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<ul data-bind="foreach: hooks">
+										<li class="overflow-ellipsis">
+											<a href="#" 
+												class="label label-success"
+												data-bind="
+												attr: {
+													title: 'apply_filters( \'' + hook_name + '\' )'
+												},
+												click: function() {
+													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
+														file.switchTo().done( function( editor ) {
+															editor.gotoLine( hook_line );
+															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
+														});
 													});
-												});
-											}
-										">apply_filters</a> in <span data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
-
-									</li>
-								</ul>					
+												}
+											">apply_filters</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -239,53 +235,52 @@ if ( ! defined( 'ABSPATH' ) ) {
 						</div>
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
 							<div class="panel-body">
-								<ul data-bind="
-									foreach: _.filter( hookSearch.results().results, function( result ) {
-										return result.hook_type == 'add_filter';
-									})
-									">
-									<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-										<a href="#" 
-											class="label label-success"
-											data-bind="
-											attr: {
-												title: 'add_filter( \'' + hook_name + '\' )'
-											},
-											click: function() {
-												mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
-													file.switchTo().done( function( editor ) {
-														editor.gotoLine( hook_line );
-														setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
-													});
-												});
-											}
-										">add_filter</a> 
-										<span data-bind="if: hook_callback_type !== 'closure'">
-											<a href="#" data-bind="
-												text: hook_callback_name,
-												jquery: {
-													popover: {
-														content: callback_signature,
-														html: true,
-														placement: 'top',
-														trigger: 'hover'
-													}
+								<div data-bind="foreach: hookSearch.groupedResults().add_filter.groups">
+									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<ul data-bind="foreach: hooks">
+										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
+											<a href="#" 
+												class="label label-success"
+												data-bind="
+												attr: {
+													title: 'add_filter( \'' + hook_name + '\' )'
 												},
-												click: function() { 
-													mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
-														file.switchTo().done( function() {
-															file.editor.gotoLine( callback.function_line );
-															setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+												click: function() {
+													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
+														file.switchTo().done( function( editor ) {
+															editor.gotoLine( hook_line );
+															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
-													}).fail( function() {
-														bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
 													});
 												}
-											"></a>
-										</span>
-										<span data-bind="if: hook_callback_type == 'closure'">{closure}</span>								
-									</li>
-								</ul>					
+											">add_filter</a> 
+											<span data-bind="if: hook_callback_type !== 'closure'">
+												<a href="#" data-bind="
+													text: hook_callback_name,
+													jquery: {
+														popover: {
+															content: callback_signature,
+															html: true,
+															placement: 'top',
+															trigger: 'hover'
+														}
+													},
+													click: function() { 
+														mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
+															file.switchTo().done( function() {
+																file.editor.gotoLine( callback.function_line );
+																setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+															});
+														}).fail( function() {
+															bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
+														});
+													}
+												"></a>
+											</span>
+											<span data-bind="if: hook_callback_type == 'closure'">{closure}</span>								
+										</li>
+									</ul>
+								</div>
 							</div>
 						</div>
 					</div>

@@ -118,21 +118,17 @@
 					return hook;
 				});
 				
-				var groupedResults = _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
+				return _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
 					return {
 						type: hook_type,
 						groups: _.map( _.groupBy( _.where( results, { hook_type: hook_type } ), 'group' ), function( hooks, group_key ) {
 							var pieces = group_key.split('/');				
-							return {
-								location: pieces[0],
-								slug: pieces[1],
-								hooks: hooks
-							};
-						})
-					};
+							return { 
+								location: pieces[0], 
+								slug: pieces[1], 
+								hooks: hooks };
+						}) };
 				}), 'type' );
-				
-				return groupedResults;
 			});
 			
 			/**
