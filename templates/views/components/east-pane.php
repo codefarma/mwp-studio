@@ -24,4 +24,3 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <?php echo $this->getTemplateContent( 'views/components/studio-toolbox' ) ?>
-<?php echo $this->getTemplateContent( 'views/components/hook-inspector' ) ?>

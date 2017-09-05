@@ -105,8 +105,35 @@
 							search: hook_name
 						}
 					});
-				})
+				}, 25, true)
 			};
+			
+			/**
+			 * Hook Search Grouping
+			 */
+			this.viewModel.hookSearch.groupedResults = ko.computed( function() 
+			{
+				var results = _.map( self.viewModel.hookSearch.results().results || [], function( hook ) {
+					hook.group = hook.callback_location + '/' + hook.callback_location_slug;
+					return hook;
+				});
+				
+				var groupedResults = _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
+					return {
+						type: hook_type,
+						groups: _.map( _.groupBy( _.where( results, { hook_type: hook_type } ), 'group' ), function( hooks, group_key ) {
+							var pieces = group_key.split('/');				
+							return {
+								location: pieces[0],
+								slug: pieces[1],
+								hooks: hooks
+							};
+						})
+					};
+				}), 'type' );
+				
+				return groupedResults;
+			});
 			
 			/**
 			 * More View Model
@@ -470,6 +497,33 @@
 				$(element).closest(options.pane).on( 'resize', fitElement );
 				fitElement();
 			}		
+		},
+		
+		/**
+		 * Bind an arbitrary callback
+		 */
+		callback: {
+			update: function( element, valueAccessor, allBindingsAccessor ) {
+				var callback = ko.utils.unwrapObservable( valueAccessor() );
+				if ( typeof callback == 'function' ) {
+					callback();
+				}
+			}
+		},
+		
+		/**
+		 * jQuery proxy
+		 */
+		jquery: {
+			update: function( element, valueAccessor, allBindingsAccessor ) {
+				var options = ko.utils.unwrapObservable( valueAccessor() );
+				var el = $(element);
+				$.each( options, function( key, props ) {
+					if ( typeof el[key] == 'function' ) {
+						el[key](props);
+					}
+				});
+			}
 		}
 	});
 	
@@ -577,7 +631,7 @@
 		 * @param	function		interval			The debounce wait period
 		 * @return	observable
 		 */
-		searchObservable: function( search, interval )
+		searchObservable: function( search, interval, immediate )
 		{
 			var observable = _.extend( ko.observable(''), {
 				loading: ko.observable(false),
@@ -598,7 +652,7 @@
 						observable.loading(false);
 					}
 				});
-			}, interval || 500 ));
+			}, interval || 500, immediate ));
 			
 			return observable;
 		}

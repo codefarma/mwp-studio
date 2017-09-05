@@ -23,8 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" 
-	data-bind="layout: { 
+<div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" data-bind="
+	layout: { 
 		applyDefaultStyles: true, 
 		north: { 
 			resizable: false, 
@@ -43,6 +43,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 				localStorage.setItem( 'mwp-studio-west-size', pane.outerWidth() );
 			}
 		}
+	},
+	callback: function() {
+		hookSearch.subscribe( function() {
+			jQuery('#mwp-studio-container').layout().open( 'east' );
+		});
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>

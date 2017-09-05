@@ -29,7 +29,9 @@ class BaseAnalyzer extends AbstractAnalyzer
 	 */
     public function beforeTraverse( array $nodes ) 
 	{
-	
+		print "<pre>";
+		print_r( $nodes );
+		exit;
     }
 	
 	/**

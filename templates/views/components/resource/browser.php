@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="breadcrumb" data-view-model="mwp-studio" data-bind="with: currentPlugin()">
 	<div class="btn-group btn-flex">
-	  <button type="button" style="border-right: 0;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
+	  <button type="button" style="border-right: 0; max-width: calc(100% - 30px); overflow: hidden;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
 	  <ul class="dropdown-menu pull-left" data-bind="foreach: $root.plugins">
 		<li><a href="#" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
 	  </ul>

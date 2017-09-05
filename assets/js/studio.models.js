@@ -706,11 +706,11 @@
 		 */
 		loadFile: function( filepath )
 		{
-			var deferredLoad = $.Deferred();
+			var deferredFile = $.Deferred();
 			var file = FileTreeNode.cache.findWhere({ path: filepath });
 			
 			if ( file ) {
-				deferredLoad.resolve( file );
+				deferredFile.resolve( file );
 			}
 			else
 			{
@@ -722,12 +722,14 @@
 					}
 				}).done( function( response ) {
 					if ( response.file ) {
-						deferredLoad.resolve( new FileTreeNode( response.file ) );
+						deferredFile.resolve( new FileTreeNode( response.file ) );
+					} else {
+						deferredFile.reject();
 					}
 				});
 			}
 			
-			return deferredLoad.promise();
+			return deferredFile.promise();
 		},
 		
 		/**
@@ -739,7 +741,7 @@
 		 */
 		loadCallbackFile: function( callback_name, callback_class )
 		{
-			var deferredLoad = $.Deferred();
+			var deferredFile = $.Deferred();
 			
 			$.ajax({
 				url: studio.local.ajaxurl,
@@ -751,12 +753,14 @@
 			}).done( function( response ) {
 				if ( response.callback ) {
 					FileTreeNode.loadFile( response.callback.function_file ).done( function( file ) {
-						deferredLoad.resolve( file, response.callback );
+						deferredFile.resolve( file, response.callback );
 					});
+				} else {
+					deferredFile.reject();
 				}
 			});
 
-			return deferredLoad.promise();
+			return deferredFile.promise();
 		}
 		
 	}));

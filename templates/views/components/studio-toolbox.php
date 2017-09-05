@@ -27,3 +27,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<h4 style="margin:9px 0; font-weight: normal;">Toolbox</h4>
 	</div>
 </div>
+
+<?php echo $this->getTemplateContent( 'views/components/hook-inspector' ) ?>

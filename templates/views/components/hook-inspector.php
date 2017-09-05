@@ -22,11 +22,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<div class="panel panel-default" data-bind="visible: hookSearch()">
+<div class="panel panel-default">
 	<div class="panel-heading"><i class="fa fa-search-plus"></i> Hook Inspector</div>
 	<div class="panel-body">
+		<a href="#" title="Search hooks" class="pull-right" data-bind="
+			click: function() {
+				bootbox.prompt({ 
+					title: 'Hook Search', 
+					value: hookSearch(), 
+					callback: function( hook_name ) {
+						hookSearch( hook_name );
+					}
+				}); 
+			}">
+			<i class="fa fa-search"></i>
+		</a>
 		<h4 style="margin: 0 0 5px 0; font-weight: normal;">Hook Name</h4>
-		<pre style="color: green; padding: 6px 9px;" data-bind="text: hookSearch, studioActivity: { active: hookSearch.loading(), align: 'right', width: 2, length: 4, space: 1, segments: 10 }"></pre>
+		
+		<pre style="color: #888; padding: 6px 9px" data-bind="visible: hookSearch() == ''">none</pre>
+		<pre style="color: green; padding: 6px 9px;" data-bind="
+			visible: hookSearch() !== '',
+			text: hookSearch, 
+			studioActivity: { 
+				active: hookSearch.loading(), 
+				align: 'right', 
+				width: 2, 
+				length: 4, 
+				space: 1, 
+				segments: 10 
+			}"></pre>
+		
+		<div data-bind="visible: ( hookSearch() !== '' ) && ( ! hookSearch.loading() ) && ( ! hookSearch.results().results.length )">
+			<blockquote class="text-danger" style="font-size: 1em">No references found.</blockquote>
+		</div>
 		
 		<div data-bind="if: ! hookSearch.loading()">
 			<!-- Actions -->
@@ -117,12 +145,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<span data-bind="if: hook_callback_type !== 'closure'">
 											<a href="#" data-bind="
 												text: hook_callback_name,
-												attr: {
-													title: ( hook_callback_class ? 
-														( hook_callback_type == 'method' ? hook_callback_class + '::' + hook_callback_name + '()' 
-															: hook_callback_class + '\\' + hook_callback_name + '()' 
-														) 
-														: 'function ' + hook_callback_name + '()' )
+												jquery: {
+													popover: {
+														content: callback_signature,
+														html: true,
+														placement: 'top',
+														trigger: 'hover'
+													}
 												},
 												click: function() { 
 													mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
@@ -130,6 +159,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 															file.editor.gotoLine( callback.function_line );
 															setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
 														});
+													}).fail( function() {
+														bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
 													});
 												}
 											"></a>
@@ -232,12 +263,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 										<span data-bind="if: hook_callback_type !== 'closure'">
 											<a href="#" data-bind="
 												text: hook_callback_name,
-												attr: {
-													title: ( hook_callback_class ? 
-														( hook_callback_type == 'method' ? hook_callback_class + '::' + hook_callback_name + '()' 
-															: hook_callback_class + '\\' + hook_callback_name + '()' 
-														) 
-														: 'function ' + hook_callback_name + '()' )
+												jquery: {
+													popover: {
+														content: callback_signature,
+														html: true,
+														placement: 'top',
+														trigger: 'hover'
+													}
 												},
 												click: function() { 
 													mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
@@ -245,6 +277,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 															file.editor.gotoLine( callback.function_line );
 															setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
 														});
+													}).fail( function() {
+														bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
 													});
 												}
 											"></a>

@@ -234,6 +234,37 @@ class Plugin extends \Modern\Wordpress\Plugin
 	}
 	
 	/**
+	 * Get theme info
+	 *
+	 * @param	string		$theme_key			The theme key
+	 * @return	array
+	 */
+	public function getThemeInfo( $theme_key )
+	{
+		$theme_info = array();
+		$theme = wp_get_theme( $theme_key );
+		
+		if ( ! $theme instanceof WP_Theme ) {
+			return $theme_info;
+		}
+		
+		$theme_info['key']         = $theme_key;
+		$theme_info['name']        = $theme->get('Name');
+		$theme_info['uri']         = $theme->get('ThemeURI');
+		$theme_info['description'] = $theme->get('Description');
+		$theme_info['author']      = $theme->get('Author');
+		$theme_info['author_url']  = $theme->get('AuthorURI');
+		$theme_info['version']     = $theme->get('Version');
+		$theme_info['template']    = $theme->get('Template');
+		$theme_info['status']      = $theme->get('Status');
+		$theme_info['tags']        = array_map( 'trim', explode( ',', $theme->get('Tags') ) );
+		$theme_info['text_domain'] = $theme->get('TextDomain');
+		$theme_info['domain_path'] = $theme->get('DomainPath');
+		
+		return apply_filters( 'mwp_studio_theme_info', $theme_info );
+	}
+
+	/**
 	 * Get the file node info
 	 *
 	 * @param	string		$fullpath 				File or directory
@@ -366,6 +397,14 @@ class Plugin extends \Modern\Wordpress\Plugin
 		/**
 		 * Wordpress core
 		 */
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_catalog_directory' ),
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ), 'recurse' => false )
+		);
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_catalog_directory' ),
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-admin', 'recurse' => true )
+		);
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
 			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-includes', 'recurse' => true )

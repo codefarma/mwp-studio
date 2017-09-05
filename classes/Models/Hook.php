@@ -130,5 +130,27 @@ class Hook extends ActiveRecord
 		return $this->callback;
 	}
 	
+	/**
+	 * Get the file record for this hook
+	 *
+	 * @return	File
+	 */
+	public function getFile()
+	{
+		return \MWP\Studio\Models\File::loadByPath( $this->file );
+	}
+	
+	/**
+	 * Get the content to display in the hook popover
+	 *
+	 * @return	array
+	 */
+	public function getStudioModel()
+	{
+		$data = $this->dataArray();
+		$data['hook_data'] = $this->data;
+		
+		return apply_filters( 'studio_model_hook', $data, $this );
+	}
 	
 }

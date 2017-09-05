@@ -98,6 +98,28 @@ class AjaxHandlers extends Singleton
 	}
 
 	/**
+	 * Load available studio themes
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_load_themes", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function loadStudioThemes()
+	{
+		$this->authorize();
+		
+		$studio = \MWP\Studio\Plugin::instance();
+		$plugins = array();
+		
+		foreach( wp_get_themes() as $theme_key => $theme )
+		{			
+			$plugins[] = $studio->getThemeInfo( $theme_key );
+		}
+		
+		wp_send_json( array( 'plugins' => $plugins ) );
+	}
+	
+	/**
 	 * Fetch the files contained within a plugin
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_fetch_filetree", for={"users"} )
@@ -150,7 +172,7 @@ class AjaxHandlers extends Singleton
 		
 		$callback_name  = wp_unslash( $_REQUEST['callback_name'] );
 		$callback_class = wp_unslash( $_REQUEST['callback_class'] );
-		$where = $callback_class ? array( 'function_name=%s AND function_class=%s', $callback_name, $callback_class ) : array( 'function_name=%s AND function_class IS NULL', $callback_name );
+		$where = $callback_class ? array( 'function_name=%s AND function_class=%s', $callback_name, $callback_class ) : array( 'function_name=%s AND ( function_class IS NULL OR function_class = "" )', $callback_name );
 		
 		$functions = \MWP\Studio\Models\Function_::loadWhere( $where );	
 		
@@ -390,19 +412,20 @@ class AjaxHandlers extends Singleton
 		{
 			case 'actions':
 				
-				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_action','do_action')", $basepath . '%' ) ) as $hook ) {
-					$data = $hook->dataArray();
-					$data['data'] = json_decode( $data['data'], true );
-					$results[] = $data;
+				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_action','do_action')", $basepath . '%' ) ) as $hook ) 
+				{
+					$results[] = array_merge( $hook->getStudioModel(), array( 
+						'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : ''
+					));
 				}
 				break;
 
 			case 'filters':
 
 				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_filter','apply_filters')", $basepath . '%' ) ) as $hook ) {
-					$data = $hook->dataArray();
-					$data['data'] = json_decode( $data['data'], true );
-					$results[] = $data;
+					$results[] = array_merge( $hook->getStudioModel(), array( 
+						'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : ''
+					));
 				}
 				break;
 			
@@ -457,7 +480,7 @@ class AjaxHandlers extends Singleton
 			$status['complete'] = ( $monitor->completed > 0 );
 			
 			$completed_count = $status['files_count'] - $status['files_left'];
-			$complete_pct = $status['files_count'] ? round( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
+			$complete_pct = $status['files_count'] ? floor( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
 			$status['status'] = "Indexing files ({$complete_pct}%): " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " complete.";
 		}
 		
@@ -515,7 +538,19 @@ class AjaxHandlers extends Singleton
 		$results = array();
 		$hooks = \MWP\Studio\Models\Hook::loadWhere( array( 'hook_name=%s', $search ) );
 		
-		wp_send_json( array( 'results' => array_map( function( $hook ) { return $hook->dataArray(); }, $hooks ) ) );
+		wp_send_json( array( 'results' => array_map( function( $hook ) 
+		{ 
+			if ( ! $file = $hook->getFile() ) {
+				$file = new \MWP\Studio\Models\File;
+				$file->file = $hook->file;
+			}
+			
+			return array_merge( $hook->getStudioModel(), array(
+				'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : '',
+				'callback_location' => $file->getLocation(),
+				'callback_location_slug' => $file->getLocationSlug(),
+			));
+		}, $hooks ) ) );
 	}
 	
 	/**

@@ -119,7 +119,7 @@ class WpCodeAnalyzer extends AbstractAnalyzer
 								else if ( $arg1 instanceof Node\Expr\ConstFetch ) 
 								{
 									if ( $arg1->name instanceof Node\Name\FullyQualified ) {
-										$callback_class = implode( '\\', $arg1->name->parts );
+										//$callback_class = implode( '\\', $arg1->name->parts );
 									}
 								}
 								

@@ -153,20 +153,19 @@ body.folded #wpcontent, body.folded #wpfooter {
 
 /* Tables */
 
-.mwp-studio .table-fixed tbody {
+.mwp-studio .table-fixed > tbody {
     display:block;
-    height:200px;
     overflow:auto;
 }
 
-.mwp-studio .table-fixed thead, 
-.mwp-studio .table-fixed tbody tr {
+.mwp-studio .table-fixed > thead, 
+.mwp-studio .table-fixed > tbody tr {
     display:table;
     width:100%;
     table-layout:fixed;
 }
 
-.mwp-studio .table-fixed thead {
+.mwp-studio .table-fixed > thead {
     width: calc( 100% - 1em )
 }
 
@@ -180,12 +179,43 @@ body.folded #wpcontent, body.folded #wpfooter {
 	white-space: nowrap;
 }
 
+.mwp-studio .popover-table {
+	margin-bottom: 5px;
+}
+
+.mwp-studio .popover-table > tbody > tr {
+	border-top: 0;
+}
+
 /* Actions Table */
 
 .mwp-studio .pane-table {
 	margin-bottom: 0;
 }
 
+.mwp-bootstrap .studio-hooks-table .tooltip-inner {
+	max-width: none;
+}
+
+.mwp-bootstrap .studio-hooks-table .popover {
+	max-width: 325px;
+}
+
+.mwp-bootstrap .studio-hooks-table .popover-title {
+	font-size: 0.95em;
+	font-weight: normal;
+}
+
+.mwp-bootstrap .studio-hooks-table .popover-content {
+	margin:0;
+}
+
+.mwp-bootstrap .cb-signature {
+	background-color: transparent;
+	border: 0;
+	margin-bottom: 0;
+	padding: 0;
+}
 
 /* Ace Editors */
 .mwp-studio .ace-editors .tab-pane:not(.active) .ace_editor {
@@ -235,4 +265,23 @@ body.folded #wpcontent, body.folded #wpfooter {
 
 .mwp-bootstrap .hook-inspector .panel-body .label {
 	margin-right: 5px;
+}
+
+/* Bootstrap popover */
+.mwp-bootstrap .popover > .arrow {
+	left: auto;
+	overflow: visible;
+	margin-left: 0;
+}
+
+.mwp-bootstrap .popover > .arrow::after {
+	left: auto;
+	top: auto;
+	background-color: transparent;
+	-webkit-transform: none;
+	-ms-transform: none;
+	transform: none;
+	-webkit-box-shadow: none;
+	-ms-box-shadow: none;
+	box-shadow: none;
 }

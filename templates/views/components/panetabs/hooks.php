@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="full-height" data-bind="with: currentPlugin()">
   <div class="full-height" data-bind="studioActivity: model().<?php echo $hook_type ?>.loading() || model().<?php echo $hook_type ?>.progressiveFilter.isFiltering()">
-	<table class="table table-striped table-fixed pane-table">
+	<table class="table table-striped table-fixed pane-table studio-hooks-table">
 		<thead>
 			<tr>
 				<th style="width: 100px">Type</th>
@@ -41,7 +41,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<span data-bind="text: hook_type" style="padding-right:15px"></span>
 				</td>
 				<td class="overflow-ellipsis">
-					<a href="#" title="Show hook details" data-bind="click: function() { $root.hookSearch( hook_name ); }"><i class="fa fa-info-circle"></i></a>
+					<a href="#" _title="Inspect Hook" data-bind="
+						click: function() { $root.hookSearch( hook_name ); },
+						jquery: { tooltip: { title: '<i class=\'fa fa-search-plus\'></i> Inspect Hook', html: true, trigger: 'hover' } }
+						"><i class="fa fa-info-circle"></i></a>
 					<a href="#" 
 						data-bind="
 						text: hook_name,
@@ -57,31 +60,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</td>
 				<td class="overflow-ellipsis">
 					<span data-bind="if: hook_callback_type !== 'closure'">
-					<a href="#" data-bind="
-						text: hook_callback_name,
-						attr: {
-							title: ( hook_callback_class ? 
-								( hook_callback_type == 'method' ? hook_callback_class + '::' + hook_callback_name + '()' 
-									: hook_callback_class + '\\' + hook_callback_name + '()' 
-								) 
-								: 'function ' + hook_callback_name + '()' )
-						},
-						click: function() { 
-							mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
-								file.switchTo().done( function() {
-									file.editor.gotoLine( callback.function_line );
-									setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+						<a href="#" data-toggle="popover" data-trigger="hover" data-bind="
+							text: hook_callback_name,
+							jquery: {
+								popover: {
+									content: callback_signature,
+									html: true,
+									placement: 'left',
+									trigger: 'hover'
+								}
+							},
+							click: function() { 
+								mwp.model.get('mwp-studio-filetree-node').loadCallbackFile( hook_callback_name, hook_callback_class ).done( function( file, callback ) {
+									file.switchTo().done( function() {
+										file.editor.gotoLine( callback.function_line );
+										setTimeout( function() { file.editor.gotoLine( callback.function_line ); }, 500 );
+									});
+								}).fail( function() {
+									bootbox.alert({title: 'File Not Found', message: 'The callback function could not be explicitly located.'});
 								});
-							});
-						}
-					"></a>
+							}
+						"></a>
 					</span>
 					<span data-bind="if: hook_callback_type == 'closure'">{closure}</span>
 				</td>
 				<td class="overflow-ellipsis">
 					<a href="#" data-bind="
-						attr: { title: hook_file }, 
-						text: hook_file.split('/').pop(), 
+						text: hook_file.split('/').pop(),
+						jquery: {
+							tooltip: {
+								title: hook_file.split('/').slice(0,-1).join('/') + '/',
+								placement: 'left',
+								trigger: 'hover'
+							}
+						},
 						click: function() {
 							mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
 								file.switchTo();
