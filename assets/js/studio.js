@@ -126,7 +126,7 @@
 							return { 
 								location: pieces[0], 
 								slug: pieces[1], 
-								hooks: hooks };
+								hooks: _.sortBy( hooks, function( _hook ) { return parseInt( _hook.hook_priority ); } ) };
 						}) };
 				}), 'type' );
 			});

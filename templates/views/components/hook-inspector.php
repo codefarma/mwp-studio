@@ -31,9 +31,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					title: 'Hook Search', 
 					value: hookSearch(), 
 					callback: function( hook_name ) {
-						hookSearch( hook_name );
+						if ( hook_name ) {
+							hookSearch( hook_name );
+						}
 					}
-				}); 
+				});
 			}">
 			<i class="fa fa-search"></i>
 		</a>
@@ -79,14 +81,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().do_action.groups">
-									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
 										<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
 											<a href="#" 
 												class="label label-success"
 												data-bind="
 												attr: {
-													title: 'do_action( \'' + hook_name + '\' )'
+													title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
 												},
 												click: function() {
 													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
@@ -95,8 +97,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
 													});
-												}
-											">do_action</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
+												},
+												jquery:{tooltip:{html:true}}
+											">do_action</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }, jquery:{tooltip:{}}"></span>
 										</li>
 									</ul>
 								</div>
@@ -121,14 +124,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().add_action.groups">
-									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
 										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
+											<span title="Priority" class="label label-warning" data-bind="text: hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority, jquery:{tooltip:{}}"></span>
 											<a href="#" 
 												class="label label-success"
 												data-bind="
 												attr: {
-													title: 'add_action( \'' + hook_name + '\' )'
+													title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
 												},
 												click: function() {
 													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
@@ -137,13 +141,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
 													});
-												}
+												},
+												jquery:{tooltip:{html:true}}
 											">add_action</a>
 											<span data-bind="if: hook_callback_type !== 'closure'">
 												<a href="#" data-bind="
 													text: hook_callback_name,
 													jquery: {
 														popover: {
+															title: '<i class=\'fa fa-search-plus\'></i> Inspect callback',
 															content: callback_signature,
 															html: true,
 															placement: 'top',
@@ -194,14 +200,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().apply_filters.groups">
-									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
-										<li class="overflow-ellipsis">
+										<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
 											<a href="#" 
 												class="label label-success"
 												data-bind="
 												attr: {
-													title: 'apply_filters( \'' + hook_name + '\' )'
+													title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
 												},
 												click: function() {
 													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
@@ -210,8 +216,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
 													});
-												}
-											">apply_filters</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }"></span>
+												},
+												jquery:{tooltip:{html:true}}
+											">apply_filters</a> in <span class="text-info" data-bind="text: hook_file.split('/').pop(), attr: { title: hook_file + ' : line ' + hook_line }, jquery:{tooltip:{}}"></span>
 										</li>
 									</ul>
 								</div>
@@ -236,14 +243,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().add_filter.groups">
-									<h4 data-bind="text: location + ( slug ? ' / ' + slug : '')"></h4>
+									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
 										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
+											<span class="label label-warning" data-bind="text: hook_priority"></span>
 											<a href="#" 
 												class="label label-success"
 												data-bind="
 												attr: {
-													title: 'add_filter( \'' + hook_name + '\' )'
+													title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
 												},
 												click: function() {
 													mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
@@ -252,13 +260,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 															setTimeout( function() { editor.gotoLine( hook_line ); }, 500 );
 														});
 													});
-												}
+												},
+												jquery:{tooltip:{html:true}}
 											">add_filter</a> 
 											<span data-bind="if: hook_callback_type !== 'closure'">
 												<a href="#" data-bind="
 													text: hook_callback_name,
 													jquery: {
 														popover: {
+															title: '<i class=\'fa fa-search-plus\'></i> Inspect callback',
 															content: callback_signature,
 															html: true,
 															placement: 'top',

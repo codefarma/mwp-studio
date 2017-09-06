@@ -201,11 +201,6 @@ body.folded #wpcontent, body.folded #wpfooter {
 	max-width: 325px;
 }
 
-.mwp-bootstrap .studio-hooks-table .popover-title {
-	font-size: 0.95em;
-	font-weight: normal;
-}
-
 .mwp-bootstrap .studio-hooks-table .popover-content {
 	margin:0;
 }
@@ -268,6 +263,11 @@ body.folded #wpcontent, body.folded #wpfooter {
 }
 
 /* Bootstrap popover */
+.mwp-bootstrap .popover-title {
+	font-size: 0.95em;
+	font-weight: normal;
+}
+
 .mwp-bootstrap .popover > .arrow {
 	left: auto;
 	overflow: visible;
