@@ -62,23 +62,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Actions -->
 			<div data-bind="if: _.filter(hookSearch.results().results,function(result){return result.hook_type.indexOf('action')>0;}).length">
 				<h4><i class="fa fa-bolt"></i> Type: <span class="label label-info">Code Action</span></h4>
-				<div class="panel-group hook-inspector" role="tablist" aria-multiselectable="true">
+				<div class="panel-group action-inspector" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab">
 							<div class="panel-title">
-								<a href="#hook-triggers" 
+								<a href="#action-triggers" 
 									role="button" 
 									data-toggle="collapse" 
-									data-parent=".hook-inspector" 
+									data-parent=".action-inspector" 
 									aria-expanded="false" 
-									aria-controls="hook-triggers">Triggers 
+									aria-controls="action-triggers">Triggers 
 									<span class="badge pull-right" data-bind="text: _.filter( hookSearch.results().results, function( result ) {
 										return result.hook_type == 'do_action';
 									}).length"></span>
 								</a>
 							</div>
 						</div>
-						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
+						<div class="panel-collapse collapse" role="tabpanel" id="action-triggers">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().do_action.groups">
 									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
@@ -109,25 +109,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab">
 							<div class="panel-title">
-								<a href="#hook-callbacks" 
+								<a href="#action-callbacks" 
 									role="button" 
 									data-toggle="collapse" 
-									data-parent=".hook-inspector" 
+									data-parent=".action-inspector" 
 									aria-expanded="false" 
-									aria-controls="hook-callbacks">Callbacks 
+									aria-controls="action-callbacks">Callbacks 
 									<span class="badge pull-right" data-bind="text: _.filter( hookSearch.results().results, function( result ) {
 										return result.hook_type == 'add_action';
 									}).length"></span>
 								</a>
 							</div>
 						</div>
-						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
+						<div class="panel-collapse collapse" role="tabpanel" id="action-callbacks">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().add_action.groups">
 									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
 										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-											<span title="Priority" class="label label-warning" data-bind="text: hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority, jquery:{tooltip:{}}"></span>
+											<span title="Priority" class="label label-warning" data-bind="text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', jquery:{tooltip:{}}"></span>
 											<a href="#" 
 												class="label label-success"
 												data-bind="
@@ -181,23 +181,23 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<!-- Filters -->
 			<div data-bind="if: _.filter(hookSearch.results().results,function(result){return result.hook_type.indexOf('filter') > 0;}).length">
 				<h4><i class="fa fa-filter"></i> Type: <span class="label label-warning">Data Filter</span></h4>
-				<div class="panel-group hook-inspector" role="tablist" aria-multiselectable="true">
+				<div class="panel-group filter-inspector" role="tablist" aria-multiselectable="true">
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab">
 							<div class="panel-title">
-								<a href="#hook-triggers" 
+								<a href="#filter-triggers" 
 									role="button" 
 									data-toggle="collapse" 
-									data-parent=".hook-inspector" 
+									data-parent=".filter-inspector" 
 									aria-expanded="false" 
-									aria-controls="hook-triggers">Triggers 
+									aria-controls="filter-triggers">Triggers 
 									<span class="badge pull-right" data-bind="text: _.filter( hookSearch.results().results, function( result ) {
 										return result.hook_type == 'apply_filters';
 									}).length"></span>
 								</a>
 							</div>
 						</div>
-						<div class="panel-collapse collapse" role="tabpanel" id="hook-triggers">
+						<div class="panel-collapse collapse" role="tabpanel" id="filter-triggers">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().apply_filters.groups">
 									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
@@ -228,25 +228,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<div class="panel panel-default">
 						<div class="panel-heading" role="tab">
 							<div class="panel-title">
-								<a href="#hook-callbacks" 
+								<a href="#filter-callbacks" 
 									role="button" 
 									data-toggle="collapse" 
-									data-parent=".hook-inspector" 
+									data-parent=".filter-inspector" 
 									aria-expanded="false" 
-									aria-controls="hook-callbacks">Callbacks 
+									aria-controls="filter-callbacks">Callbacks 
 									<span class="badge pull-right" data-bind="text: _.filter( hookSearch.results().results, function( result ) {
 										return result.hook_type == 'add_filter';
 									}).length"></span>
 								</a>
 							</div>
 						</div>
-						<div class="panel-collapse collapse" role="tabpanel" id="hook-callbacks">
+						<div class="panel-collapse collapse" role="tabpanel" id="filter-callbacks">
 							<div class="panel-body">
 								<div data-bind="foreach: hookSearch.groupedResults().add_filter.groups">
 									<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 									<ul data-bind="foreach: hooks">
 										<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-											<span class="label label-warning" data-bind="text: hook_priority"></span>
+											<span title="Priority" class="label label-warning" data-bind="text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', jquery:{tooltip:{}}"></span>
 											<a href="#" 
 												class="label label-success"
 												data-bind="

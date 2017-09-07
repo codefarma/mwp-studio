@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<div class="full-height" data-bind="with: currentPlugin()">
+<div class="full-height" data-bind="with: currentProject()">
   <div class="full-height" data-bind="studioActivity: model().<?php echo $hook_type ?>.loading() || model().<?php echo $hook_type ?>.progressiveFilter.isFiltering()">
 	<table class="table table-striped table-fixed pane-table studio-hooks-table">
 		<thead>

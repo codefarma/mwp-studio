@@ -201,7 +201,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Get plugin info
 	 *
-	 * @param	string		$slug			The plugin slug
+	 * @param	string		$file			The plugin filename
 	 * @return	array
 	 */
 	public function getPluginInfo( $file )
@@ -236,19 +236,14 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Get theme info
 	 *
-	 * @param	string		$theme_key			The theme key
+	 * @param	string		$theme			The theme
 	 * @return	array
 	 */
-	public function getThemeInfo( $theme_key )
+	public function getThemeInfo( $theme )
 	{
 		$theme_info = array();
-		$theme = wp_get_theme( $theme_key );
 		
-		if ( ! $theme instanceof WP_Theme ) {
-			return $theme_info;
-		}
-		
-		$theme_info['key']         = $theme_key;
+		$theme_info['key']         = $theme->get_stylesheet();
 		$theme_info['name']        = $theme->get('Name');
 		$theme_info['uri']         = $theme->get('ThemeURI');
 		$theme_info['description'] = $theme->get('Description');
@@ -260,6 +255,10 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$theme_info['tags']        = array_map( 'trim', explode( ',', $theme->get('Tags') ) );
 		$theme_info['text_domain'] = $theme->get('TextDomain');
 		$theme_info['domain_path'] = $theme->get('DomainPath');
+		$theme_info['basedir']     = str_replace( ABSPATH, '', $theme->get_stylesheet_directory() );
+		$theme_info['slug']        = $theme->get_stylesheet;
+		$theme_info['environment'] = 'generic';
+		$theme_info['id']          = md5( $theme_info['basedir'] );
 		
 		return apply_filters( 'mwp_studio_theme_info', $theme_info );
 	}

@@ -27,7 +27,7 @@
 	var CollectibleModel  = mwp.model.get( 'mwp-studio-collectible' );
 	var FileTree          = mwp.model.get( 'mwp-studio-filetree' );
 	var FileTreeNode      = mwp.model.get( 'mwp-studio-filetree-node' );
-	var Plugin            = mwp.model.get( 'mwp-studio-plugin' );
+	var Project           = mwp.model.get( 'mwp-studio-project' );
 	var GenericInterface  = mwp.model.get( 'mwp-studio-generic-interface' );
 	
 	/**
@@ -71,24 +71,24 @@
 			var self = this;
 			
 			/**
-			 * @var	Collection		Plugins list
+			 * @var	Collection		Projects list
 			 */
-			this.plugins = new Backbone.Collection( [], { model: Plugin } );
+			this.projects = new Backbone.Collection( [], { model: Project } );
 			
 			/**
 			 * View Model
 			 */
 			this.viewModel = 
 			{
-				_controller:   this,
-				plugins:       kb.collectionObservable( this.plugins ),
-				currentPlugin: ko.observable(),
-				openFiles:     ko.observableArray(),
-				activeFile:    ko.observable(),
-				env:           function() { return self.env(); },
-				statustext:    ko.observable(''),
-				processStatus: ko.observable(),
-				searchPhrase:  ko.searchObservable( function( phrase ) {
+				_controller:    this,
+				projects:       kb.collectionObservable( this.projects ),
+				currentProject: ko.observable(),
+				openFiles:      ko.observableArray(),
+				activeFile:     ko.observable(),
+				env:            function() { return self.env(); },
+				statustext:     ko.observable(''),
+				processStatus:  ko.observable(),
+				searchPhrase:   ko.searchObservable( function( phrase ) {
 					return $.ajax({
 						url: self.local.ajaxurl,
 						data: {
@@ -97,7 +97,7 @@
 						}
 					});
 				}),
-				hookSearch:    ko.searchObservable( function( hook_name ) {
+				hookSearch:     ko.searchObservable( function( hook_name ) {
 					return $.ajax({
 						url: self.local.ajaxurl,
 						data: {
@@ -153,33 +153,33 @@
 			this.initAceHandlers( $(document) );	
 			
 			/**
-			 * Load plugins
+			 * Load projects
 			 *
-			 * - Select last active plugin after initial load -or-
-			 * - Select first plugin in the list
+			 * - Select last active project after initial load -or-
+			 * - Select first project in the list
 			 */
-			this.loadPlugins().done( function() {
-				var plugin_id = localStorage.getItem( 'mwp-studio-current-plugin' );
-				var index = self.plugins.indexOf( self.plugins.get( plugin_id ) );
+			this.loadProjects().done( function() {
+				var project_id = localStorage.getItem( 'mwp-studio-current-project' );
+				var index = self.projects.indexOf( self.projects.get( project_id ) );
 				
 				if ( index == -1 ) { index = 0; }				
-				self.viewModel.currentPlugin( self.viewModel.plugins()[index] );
+				self.viewModel.currentProject( self.viewModel.projects()[index] );
 			});
 			
 			/**
-			 * Lazy load plugin resources only after it becomes active
+			 * Lazy load project resources only after it becomes active
 			 *
 			 */
-			this.viewModel.currentPlugin.subscribe( function( pluginView ) 
+			this.viewModel.currentProject.subscribe( function( projectView ) 
 			{
-				var plugin = pluginView.model();
+				var project = projectView.model();
 				
-				if ( ! plugin.fileTree.initialized ) {
-					plugin.fetchFileTree();
+				if ( ! project.fileTree.initialized ) {
+					project.fetchFileTree();
 				}
 				
-				// Remember last active plugin
-				localStorage.setItem( 'mwp-studio-current-plugin', plugin.get('id') );
+				// Remember last active project
+				localStorage.setItem( 'mwp-studio-current-project', project.get('id') );
 			});	
 
 			// Start our ticker
@@ -209,8 +209,8 @@
 		 */
 		env: function()
 		{
-			if ( this.viewModel.currentPlugin() ) {
-				return this.viewModel.currentPlugin().model().env;
+			if ( this.viewModel.currentProject() ) {
+				return this.viewModel.currentProject().model().env;
 			}
 			
 			return this.environments.get('generic');
@@ -310,22 +310,22 @@
 		},
 		
 		/**
-		 * Load available studio plugins from the backend
+		 * Load available studio projects from the backend
 		 *
 		 * @return	$.Deferred
 		 */
-		loadPlugins: function()
+		loadProjects: function()
 		{
 			var self = this;
 			
 			return $.ajax({
 				method: 'post',
 				url: this.local.ajaxurl,
-				data: { action: 'mwp_studio_load_plugins' }
+				data: { action: 'mwp_studio_load_projects' }
 			})
 			.then( function( data ) {
-				if ( data.plugins ) {
-					self.plugins.add( data.plugins );
+				if ( data.projects ) {
+					self.projects.add( data.projects );
 				}
 			});
 		}

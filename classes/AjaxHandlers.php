@@ -75,48 +75,35 @@ class AjaxHandlers extends Singleton
 	}
 	
 	/**
-	 * Load available studio plugins
+	 * Load available studio projects
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_load_plugins", for={"users"} )
+	 * @Wordpress\AjaxHandler( action="mwp_studio_load_projects", for={"users"} )
 	 *
 	 * @return	void
 	 */
-	public function loadStudioPlugins()
+	public function loadStudioProjects()
 	{
 		$this->authorize();
 		
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		$studio = \MWP\Studio\Plugin::instance();
-		$plugins = array();
+		$projects = array();
 		
 		foreach( get_plugins() as $file => $data )
 		{			
-			$plugins[] = $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $file );
+			$project = $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $file );
+			$project['type'] = 'plugin';
+			$projects[] = $project;
 		}
-		
-		wp_send_json( array( 'plugins' => $plugins ) );
-	}
-
-	/**
-	 * Load available studio themes
-	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_load_themes", for={"users"} )
-	 *
-	 * @return	void
-	 */
-	public function loadStudioThemes()
-	{
-		$this->authorize();
-		
-		$studio = \MWP\Studio\Plugin::instance();
-		$plugins = array();
 		
 		foreach( wp_get_themes() as $theme_key => $theme )
 		{			
-			$plugins[] = $studio->getThemeInfo( $theme_key );
+			$project = $studio->getThemeInfo( $theme );
+			$project['type'] = 'theme';
+			$projects[] = $project;
 		}
 		
-		wp_send_json( array( 'plugins' => $plugins ) );
+		wp_send_json( array( 'projects' => $projects ) );
 	}
 	
 	/**

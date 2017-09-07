@@ -661,7 +661,7 @@
 		},
 		
 		/**
-		 * Get the root directory inside the plugin for this node
+		 * Get the root directory inside the project for this node
 		 *
 		 * @param	int			level		The sublevel of the directory to check
 		 * @return	string
@@ -818,12 +818,14 @@
 	}));
 	
 	/**
-	 * [Model] Plugin
+	 * [Model] Project
 	 *
-	 * @var	string		name		Plugin name
-	 * @var	string		slug		Plugin slug
+	 * @var	string		name			Project name
+	 * @var	string		slug			Project slug
+	 * @var	string		type			Project type (plugin,theme)
+	 * @var	string		environment		The environment that the project uses
 	 */
-	var Plugin = mwp.model( 'mwp-studio-plugin',
+	var Project = mwp.model( 'mwp-studio-project',
 	{		
 		/**
 		 * Initialize
@@ -838,7 +840,7 @@
 				studio.environments.get('generic');
 			
 			this.fileTree = _.extend( new FileTree(), {
-				plugin: this,
+				project: this,
 				initialized: false
 			});
 
@@ -855,26 +857,14 @@
 		},
 		
 		/**
-		 * Switch to this plugin as the active studio plugin
+		 * Switch to this project as the active studio project
 		 * 
 		 * @return	void
 		 */
-		switchToPlugin: function()
+		switchTo: function()
 		{
-			var i = this.collection.indexOf( this );
-			studio.viewModel.currentPlugin( studio.viewModel.plugins()[ i ] );
-		},
-		
-		/**
-		 * Prepare plugin to become the active studio plugin
-		 *
-		 * @return	void
-		 */
-		refreshStudio: function()
-		{
-			// Load the most current file tree
-			this.fetchFileTree();
-			this.fetchCatalogItems('actions');
+			var i = studio.projects.indexOf( this );
+			studio.viewModel.currentProject( studio.viewModel.projects()[ i ] );
 		},
 		
 		/**

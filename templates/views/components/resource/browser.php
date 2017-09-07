@@ -23,18 +23,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div class="breadcrumb" data-view-model="mwp-studio" data-bind="with: currentPlugin()">
+<div class="breadcrumb" data-view-model="mwp-studio" data-bind="with: currentProject()">
 	<div class="btn-group btn-flex">
 	  <button type="button" style="border-right: 0; max-width: calc(100% - 30px); overflow: hidden;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
-	  <ul class="dropdown-menu pull-left" data-bind="foreach: $root.plugins">
-		<li><a href="#" data-bind="click: function(){ model().switchToPlugin(); }"><i class="fa fa-folder-open"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></a></li>
-	  </ul>
+	  <ul class="dropdown-menu pull-left" data-bind="bootstrapMenu: $root.env().projectsMenu"></ul>
 	  <div class="btn-group">
 		  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>
 		  </button>
-		  <ul class="dropdown-menu pull-right" data-bind="bootstrapMenu: $root.env().pluginMenuItems"></ul>
+		  <ul class="dropdown-menu pull-right" data-bind="bootstrapMenu: $root.env().projectMenuItems"></ul>
 	  </div>
 	</div>
 </div>
@@ -45,7 +43,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="panel panel-default tabbed-panel" 
 	data-bind="
 		fillPaneContainer: { pane: '.ui-layout-pane', container: '.column' },
-		studioActivity: ( ! currentPlugin() ? false : { active: currentPlugin().model().fileTree.loading() } )
+		studioActivity: ( ! currentProject() ? false : { active: currentProject().model().fileTree.loading() } )
 	" style="overflow-y: scroll; margin-bottom: 0">
 	<div id="files" role="tabpanel" class="files-tabpanel tab-pane active">
 		<?php echo $this->getTemplateContent( 'views/components/resource/filetree' ) ?>

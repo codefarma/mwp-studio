@@ -45,17 +45,26 @@
 			 * Studio menu items
 			 */
 			this.studioMenuItems = ko.computed( function() {
-				var plugin = studio.viewModel.currentPlugin();
-				var items = plugin ? self.getStudioMenuItems( plugin.model() ) : [];
+				var project = studio.viewModel.currentProject();
+				var items = project ? self.getStudioMenuItems( project.model() ) : [];
 				return _.map( items, function( itemData ) { return kb.viewModel( new MenuItem( itemData ) ); } );
 			});
 			
 			/**
-			 * Plugin menu items
+			 * Studio projects menu
 			 */
-			this.pluginMenuItems = ko.computed( function() {
-				var plugin = studio.viewModel.currentPlugin();
-				var items = plugin ? self.getPluginMenuItems( plugin.model() ) : [];
+			this.projectsMenu = ko.computed( function()
+			{
+				var menu = self.getProjectsMenu();
+				return _.map( menu, function( itemData ) { return kb.viewModel( new MenuItem( itemData ) ); } );
+			});
+			
+			/**
+			 * Project menu items
+			 */
+			this.projectMenuItems = ko.computed( function() {
+				var project = studio.viewModel.currentProject();
+				var items = project ? self.getProjectMenuItems( project.model() ) : [];
 				return _.map( items, function( itemData ) { return kb.viewModel( new MenuItem( itemData ) ); } );
 			});
 			
@@ -63,27 +72,69 @@
 			 * File context actions
 			 */
 			this.fileContextActions = ko.computed( function() {
-				var plugin = studio.viewModel.currentPlugin();
-				return plugin ? self.getFileContextActions( plugin.model() ) : [];
+				var project = studio.viewModel.currentProject();
+				return project ? self.getFileContextActions( project.model() ) : [];
 			});
 			
 			/**
 			 * Studio pane tabs
 			 */
 			this.studioPaneTabs = ko.computed( function() {
-				var plugin = studio.viewModel.currentPlugin();
-				return plugin ? self.getStudioPaneTabs( plugin.model() ) : [];
+				var project = studio.viewModel.currentProject();
+				return project ? self.getStudioPaneTabs( project.model() ) : [];
 			});
 			
 		},
 		
 		/**
-		 * Get plugin menu elements
-		 * 
-		 * @param	Plugin		plugin			The plugin to get menu items for
+		 * Get projects menu
+		 *
 		 * @return	array
 		 */
-		getStudioMenuItems: function( plugin )
+		getProjectsMenu: function()
+		{
+			var plugins = _.filter( studio.viewModel.projects(), function( project ) { return project.model().get('type') == 'plugin'; } );
+			var themes = _.filter( studio.viewModel.projects(), function( project ) { return project.model().get('type') == 'theme'; } );
+			
+			var menu = [];
+			
+			menu.push({	type: 'header',	title: 'Plugins', icon: 'fa fa-plug' });
+			
+			_.each( plugins, function( plugin ) {
+				menu.push({
+					type: 'action',
+					title: plugin.name(),
+					icon: 'fa fa-angle-right',
+					callback: function() {
+						plugin.model().switchTo();
+					}					
+				});
+			});
+
+			menu.push({	type: 'divider'	});
+			menu.push({	type: 'header',	title: 'Themes', icon: 'fa fa-paint-brush' });
+			
+			_.each( themes, function( theme ) {
+				menu.push({
+					type: 'action',
+					title: theme.name(),
+					icon: 'fa fa-angle-right',
+					callback: function() {
+						theme.model().switchTo();
+					}					
+				});
+			});
+		
+			return menu;
+		},
+		
+		/**
+		 * Get project menu elements
+		 * 
+		 * @param	Project		project			The project to get menu items for
+		 * @return	array
+		 */
+		getStudioMenuItems: function( project )
 		{
 			return [{
 				type: 'dropdown',
@@ -101,21 +152,13 @@
 				},
 				{
 					type: 'submenu',
-					title: 'Open plugin',
+					title: 'Open project',
 					icon: 'fa fa-folder-open',
-					subitems: _.map( studio.viewModel.plugins(), function( _plugin ) {
-						return {
-							type: 'action',
-							title: _plugin.name(),
-							callback: function() {
-								_plugin.model().switchToPlugin();
-							}
-						};
-					})
+					subitems: this.getProjectsMenu()
 				},
 				{
 					type: 'action',
-					title: 'Rebuild catalog',
+					title: 'Refresh indexes',
 					icon: 'fa fa-database',
 					callback: function() {
 						$.ajax({
@@ -132,19 +175,19 @@
 		},
 		
 		/**
-		 * Get plugin menu elements
+		 * Get project menu elements
 		 * 
-		 * @param	Plugin		plugin			The plugin to get menu items for
+		 * @param	Project		project			The project to get menu items for
 		 * @return	array
 		 */
-		getPluginMenuItems: function( plugin )
+		getProjectMenuItems: function( project )
 		{
 			return [{
 				title: 'Meta Information',
 				type: 'header'
 			},
 			{
-				title: 'Edit Plugin Info',
+				title: 'Edit Project Info',
 				type: 'action',
 				icon: 'fa fa-info-circle',
 				callback: function() {
@@ -156,10 +199,10 @@
 		/**
 		 * Get file context actions
 		 *
-		 * @param	Plugin		plugin			The plugin to get file context menus for
+		 * @param	Project		project			The project to get file context menus for
 		 * @return	object
 		 */
-		getFileContextActions: function( plugin )
+		getFileContextActions: function( project )
 		{
 			return {
 				/**
@@ -180,8 +223,8 @@
 				 * Reindex the directory
 				 */
 				reindexDirectory: {
-					name: 'Scan & Catalog',
-					iconClass: 'fa-file-code-o',
+					name: 'Refresh indexes',
+					iconClass: 'fa-database',
 					onClick: function( node ) {
 						$.when( node.model.reindex() ).done( function( response ) {
 							if ( response.success ) {
@@ -203,10 +246,10 @@
 		/**
 		 * Get studio pane tabs
 		 *
-		 * @param	Plugin		plugin			The plugin to get file context menus for
+		 * @param	Project		project			The project to get studio pane tabs for
 		 * @return	array
 		 */
-		getStudioPaneTabs: function()
+		getStudioPaneTabs: function( project )
 		{
 			return[
 			{
@@ -215,7 +258,7 @@
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-actions']),
 				refreshContent: function() {
-					var pluginView = studio.viewModel.currentPlugin();
+					var pluginView = studio.viewModel.currentProject();
 					if ( pluginView ) {
 						return pluginView.model().fetchItemCatalog( 'actions' );
 					}
@@ -229,7 +272,7 @@
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-filters']),
 				refreshContent: function() {
-					var pluginView = studio.viewModel.currentPlugin();
+					var pluginView = studio.viewModel.currentProject();
 					if ( pluginView ) {
 						return pluginView.model().fetchItemCatalog( 'filters' );
 					}
@@ -252,15 +295,15 @@
 	var MWPEnvironment = mwp.model.set( 'mwp-studio-mwp-environment', GenericEnvironment.extend(
 	{
 		/**
-		 * Get plugin menu elements
+		 * Get project menu elements
 		 * 
-		 * @param	Plugin		plugin			The plugin to get menu items for
+		 * @param	Project		project			The project to get menu items for
 		 * @return	array
 		 */
-		getPluginMenuItems: function( plugin )
+		getProjectMenuItems: function( project )
 		{
 			var self = this;
-			var elements = MWPEnvironment.__super__.getPluginMenuItems.call( this, plugin );
+			var elements = MWPEnvironment.__super__.getProjectMenuItems.call( this, project );
 			
 			elements.push(
 			{
@@ -309,13 +352,13 @@
 		/**
 		 * Get file context actions
 		 *
-		 * @param	Plugin		plugin			The plugin to get file context menus for
+		 * @param	Project		project			The project to get file context menus for
 		 * @return	object
 		 */
-		getFileContextActions: function( plugin )
+		getFileContextActions: function( project )
 		{
 			var self = this;
-			var actions = MWPEnvironment.__super__.getFileContextActions.call( this, plugin ) || {};
+			var actions = MWPEnvironment.__super__.getFileContextActions.call( this, project ) || {};
 			
 			_.extend( actions, 
 			{
@@ -335,11 +378,10 @@
 						}
 						
 						var suggestedNamespace = namespaces.length ? namespaces.join('\\') + '\\' : '';
-						self.addClassDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+						self.addClassDialog( node.model.getParent( FileTree ).project, suggestedNamespace );
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
 						return file.get('type') == 'dir' 
 							&& file.rootDir(0) == 'classes';
 					}
@@ -361,11 +403,10 @@
 						}
 						
 						var suggestedNamespace = namespaces.length ? namespaces.join('/') + '/' : '';
-						self.addTemplateDialog( node.model.getParent( FileTree ).plugin, suggestedNamespace );
+						self.addTemplateDialog( node.model.getParent( FileTree ).project, suggestedNamespace );
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
 						return file.get('type') == 'dir' 
 							&& node.model.rootDir(0) == 'templates';
 					}
@@ -379,11 +420,10 @@
 					name: 'Add Stylesheet',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-						self.addCSSDialog( node.model.getParent( FileTree ).plugin );					
+						self.addCSSDialog( node.model.getParent( FileTree ).project );					
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
 						return file.rootDir(0) == 'assets' 
 							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'css' );
 					}
@@ -397,11 +437,10 @@
 					name: 'Add Javascript',
 					iconClass: 'fa-file-code-o',
 					onClick: function( node ) {
-						self.addJSDialog( node.model.getParent( FileTree ).plugin );
+						self.addJSDialog( node.model.getParent( FileTree ).project );
 					},
 					isShown: function( node ) {
 						var file = node.model;
-						var plugin = file.getParent( FileTree ).plugin;
 						return file.rootDir(0) == 'assets' 
 							&& ( file.rootDir(1) === undefined || file.rootDir(1) == 'js' );
 					}
@@ -469,7 +508,7 @@
 		addClassDialog: function( plugin, namespace )
 		{
 			var self = this;
-			var plugin = plugin || studio.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentProject().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -494,7 +533,7 @@
 		addTemplateDialog: function( plugin, filepath )
 		{
 			var self = this;
-			var plugin = plugin || studio.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentProject().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -519,7 +558,7 @@
 		addCSSDialog: function( plugin, filename )
 		{
 			var self = this;
-			var plugin = plugin || studio.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentProject().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
@@ -544,7 +583,7 @@
 		addJSDialog: function( plugin, filename )
 		{
 			var self = this;
-			var plugin = plugin || studio.viewModel.currentPlugin().model();
+			var plugin = plugin || studio.viewModel.currentProject().model();
 			
 			var viewModel = {
 				plugin: kb.viewModel( plugin ),
