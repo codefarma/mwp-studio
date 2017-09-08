@@ -131,6 +131,24 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 * @see: http://bootboxjs.com
 	 */
 	public $bootboxJS = 'assets/js/lib/bootstrap-bootbox.min.js';
+
+	/**
+	 * Init
+	 *
+	 * @Wordpress\Action( for="init" )
+	 *
+	 * @return	void
+	 */
+	public function wp_init()
+	{
+		foreach( scandir( $this->pluginFile( 'toolsets' ) ) as $toolset ) {
+			if ( is_dir( $this->pluginFile( 'toolsets/' . $toolset ) ) ) {
+				if ( is_file( $this->pluginFile( "toolsets/{$toolset}/tool.php" ) ) ) {
+					include_once $this->pluginFile( "toolsets/{$toolset}/tool.php" ); 
+				}
+			}
+		}	
+	}
 	
 	/**
 	 * Enqueue scripts and stylesheets
@@ -142,6 +160,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public function enqueueScripts()
 	{
 		$screen = get_current_screen();
+		
 		if ( $screen->id == 'dashboard_page_mwp-studio-dashboard' )
 		{			
 			// jQuery Layout
@@ -189,10 +208,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-stylesheet' => $this->getTemplateContent( 'dialogs/create-stylesheet' ),
 						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
 					),
-					'panetabs' => array(
-						'hooked-actions'    => $this->getTemplateContent( 'views/components/panetabs/hooks', array( 'hook_type' => 'actions' ) ),
-						'hooked-filters'    => $this->getTemplateContent( 'views/components/panetabs/hooks', array( 'hook_type' => 'filters' ) ),
-					),
+					'panetabs' => array(),
 				),
 			)));
 		}

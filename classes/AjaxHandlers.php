@@ -397,24 +397,6 @@ class AjaxHandlers extends Singleton
 		
 		switch( $datatype ) 
 		{
-			case 'actions':
-				
-				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_action','do_action')", $basepath . '%' ) ) as $hook ) 
-				{
-					$results[] = array_merge( $hook->getStudioModel(), array( 
-						'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : ''
-					));
-				}
-				break;
-
-			case 'filters':
-
-				foreach( \MWP\Studio\Models\Hook::loadWhere( array( "hook_file LIKE %s AND hook_type IN ('add_filter','apply_filters')", $basepath . '%' ) ) as $hook ) {
-					$results[] = array_merge( $hook->getStudioModel(), array( 
-						'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : ''
-					));
-				}
-				break;
 			
 		}
 		
@@ -507,37 +489,6 @@ class AjaxHandlers extends Singleton
 			}
 			wp_send_json( array( 'success' => true, 'background' => false ) );
 		}
-	}
-	
-	/**
-	 * Get results for a hook
-	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_hook_results", for={"users"} )
-	 *
-	 * @return	void
-	 */
-	public function hookResults()
-	{
-		$this->authorize();		
-		
-		$search = $_REQUEST['search'];
-		$db = \Modern\Wordpress\Framework::instance()->db();
-		$results = array();
-		$hooks = \MWP\Studio\Models\Hook::loadWhere( array( 'hook_name=%s', $search ) );
-		
-		wp_send_json( array( 'results' => array_map( function( $hook ) 
-		{ 
-			if ( ! $file = $hook->getFile() ) {
-				$file = new \MWP\Studio\Models\File;
-				$file->file = $hook->file;
-			}
-			
-			return array_merge( $hook->getStudioModel(), array(
-				'callback_signature' => $hook->callback_name ? $this->getPlugin()->getTemplateContent( 'views/components/hook/callback-signature', array( 'hook' => $hook ) ) : '',
-				'callback_location' => $file->getLocation(),
-				'callback_location_slug' => $file->getLocationSlug(),
-			));
-		}, $hooks ) ) );
 	}
 	
 	/**

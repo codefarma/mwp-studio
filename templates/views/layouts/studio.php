@@ -43,11 +43,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				localStorage.setItem( 'mwp-studio-west-size', pane.outerWidth() );
 			}
 		}
-	},
-	callback: function() {
-		hookSearch.subscribe( function() {
-			jQuery('#mwp-studio-container').layout().open( 'east' );
-		});
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>

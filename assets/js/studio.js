@@ -96,41 +96,9 @@
 							phrase: phrase
 						}
 					});
-				}),
-				hookSearch:     ko.searchObservable( function( hook_name ) {
-					return $.ajax({
-						url: self.local.ajaxurl,
-						data: {
-							action: 'mwp_studio_hook_results',
-							search: hook_name
-						}
-					});
-				}, 25, true)
+				})
 			};
-			
-			/**
-			 * Hook Search Grouping
-			 */
-			this.viewModel.hookSearch.groupedResults = ko.computed( function() 
-			{
-				var results = _.map( self.viewModel.hookSearch.results().results || [], function( hook ) {
-					hook.group = hook.callback_location + '/' + hook.callback_location_slug;
-					return hook;
-				});
-				
-				return _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
-					return {
-						type: hook_type,
-						groups: _.map( _.groupBy( _.where( results, { hook_type: hook_type } ), 'group' ), function( hooks, group_key ) {
-							var pieces = group_key.split('/');				
-							return { 
-								location: pieces[0], 
-								slug: pieces[1], 
-								hooks: _.sortBy( hooks, function( _hook ) { return parseInt( _hook.hook_priority ); } ) };
-						}) };
-				}), 'type' );
-			});
-			
+
 			/**
 			 * More View Model
 			 */
@@ -148,9 +116,6 @@
 					return breadcrumbs.length ? breadcrumbs : [ 'No file open' ];
 				})
 			});
-			
-			// Custom ace editor handlers
-			this.initAceHandlers( $(document) );	
 			
 			/**
 			 * Load projects
@@ -184,22 +149,6 @@
 
 			// Start our ticker
 			this.heartbeat();
-		},
-		
-		/**
-		 * Initialize ace editor custom handlers
-		 *
-		 * @param	jQuery		scope			The scope on which to listen for events
-		 * @return	void
-		 */
-		initAceHandlers: function( scope )
-		{
-			var self = this;
-			
-			// Hook name is clicked
-			scope.on( 'click', '.ace_wp_hook_name', function() {
-				self.viewModel.hookSearch( $(this).text() );
-			});	
 		},
 		
 		/**

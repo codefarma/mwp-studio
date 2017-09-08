@@ -251,35 +251,7 @@
 		 */
 		getStudioPaneTabs: function( project )
 		{
-			return[
-			{
-				id: 'hooked-actions',
-				title: 'Actions',
-				viewModel: studio.viewModel,
-				template: $(studio.local.templates.panetabs['hooked-actions']),
-				refreshContent: function() {
-					var pluginView = studio.viewModel.currentProject();
-					if ( pluginView ) {
-						return pluginView.model().fetchItemCatalog( 'actions' );
-					}
-					
-					return $.Deferred();
-				}
-			},
-			{
-				id: 'hooked-filters',
-				title: 'Filters',
-				viewModel: studio.viewModel,
-				template: $(studio.local.templates.panetabs['hooked-filters']),
-				refreshContent: function() {
-					var pluginView = studio.viewModel.currentProject();
-					if ( pluginView ) {
-						return pluginView.model().fetchItemCatalog( 'filters' );
-					}
-					
-					return $.Deferred();
-				}
-			}];
+			return [];
 		}
 
 	}));

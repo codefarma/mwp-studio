@@ -28,4 +28,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</div>
 </div>
 
-<?php echo $this->getTemplateContent( 'views/components/hook-inspector' ) ?>
+<?php 
+	foreach( apply_filters( 'mwp_studio_toolbox_components', array() ) as $component ) { 
+		echo $component; 
+	} 
+?>

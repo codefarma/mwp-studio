@@ -22,7 +22,7 @@ if ( ! class_exists( 'MWPStudioPlugin' ) )
 			/* Plugin Core */
 			$plugin	= \MWP\Studio\Plugin::instance();
 			$plugin->setPath( rtrim( plugin_dir_path( __FILE__ ), '/' ) );
-			
+
 			/* Plugin Settings */
 			$settings = \MWP\Studio\Settings::instance();
 			$plugin->addSettings( $settings );
