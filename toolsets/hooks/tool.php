@@ -58,9 +58,18 @@ class HookInspector extends Tool
 	 * @param	array		$components				Toolbox components
 	 * @return	array
 	 */
-	public function addToolboxComponent( $components )
+	public function getToolboxComponents( $components )
 	{
-		$components[] = $this->getToolTemplate( 'hook-inspector' );
+		$components[ 'hook-inspector' ] = array(
+			'panelClass' => '',
+			'panelHeadingClass' => '',
+			'panelBodyClass' =>'',
+			'panelCollapseClass' => 'inspectorCollapse',
+			'panelTitle' => 'Hook Inspector',
+			'panelIcon' => 'fa fa-search-plus',
+			'panelContent' => $this->getToolTemplate( 'hook-inspector' ),
+		);
+		
 		return $components;
 	}
 	

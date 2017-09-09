@@ -22,14 +22,27 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 ?>
-<div data-view-model="mwp-studio" class="mwp-studio-toolbox">
+<div class="mwp-studio-toolbox">
 	<div class="breadcrumb">
 		<h4 style="margin:9px 0; font-weight: normal;">Toolbox</h4>
 	</div>
+	
+	<div class="panel-group">
+		<?php foreach( apply_filters( 'mwp_studio_toolbox_components', array() ) as $key => $component ): ?>
+		<div class="panel panel-default <?php echo $component['panelClass'] ?>">
+			<div class="panel-heading <?php echo $component['panelHeadingClass'] ?>" data-target="#<?php echo $key ?>-toolbox-panel" data-toggle="collapse">
+				<i class="<?php echo $component['panelIcon'] ?>"></i> <?php echo $component['panelTitle'] ?>
+			</div>
+			<div id="<?php echo $key ?>-toolbox-panel" class="panel-collapse collapse <?php echo $component['panelCollapseClass'] ?>">
+				<div class="panel-body <?php echo $component['panelBodyClass'] ?>">
+					<?php echo $component['panelContent'] ?>
+				</div>
+			</div>
+		</div>
+		<?php endforeach; ?>
+	</div>
 </div>
 
-<?php 
-	foreach( apply_filters( 'mwp_studio_toolbox_components', array() ) as $component ) { 
-		echo $component; 
-	} 
-?>
+
+
+

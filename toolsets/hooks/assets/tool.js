@@ -21,17 +21,20 @@
 	var GenericEnvironment = mwp.model.get( 'mwp-studio-generic-environment' );
 	
 	/**
-	 * Add actions/filters pane tabs to the generic environment
-	 *
-	 * @param	function		parent			The overloaded method callback
-	 * @param	Project			project			The project to get pane tabs for
-	 * @return	array
+	 * Enhance the generic environment
 	 */
 	GenericEnvironment.override(
 	{
-		getStudioPaneTabs: function( parent, project )
+		/**
+		 * Add actions/filters pane tabs to the generic environment
+		 *
+		 * @param	function		_super			The overridden method callback
+		 * @param	Project			project			The project to get pane tabs for
+		 * @return	array
+		 */
+		getStudioPaneTabs: function( _super, project )
 		{
-			var tabs = parent( project );
+			var tabs = _super.apply( this, arguments );
 			var studio = mwp.controller.get('mwp-studio');
 			
 			tabs.push(
@@ -40,10 +43,11 @@
 				title: 'Actions',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-actions']),
-				refreshContent: function() {
-					var project = studio.viewModel.currentProject();
-					if ( project ) {
-						return project.model().fetchItemCatalog( 'actions' );
+				refreshContent: function() 
+				{
+					var _project = studio.viewModel.currentProject();
+					if ( _project ) {
+						return _project.model().fetchItemCatalog( 'actions' );
 					}
 					
 					return $.Deferred();
@@ -54,10 +58,11 @@
 				title: 'Filters',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-filters']),
-				refreshContent: function() {
-					var project = studio.viewModel.currentProject();
-					if ( project ) {
-						return project.model().fetchItemCatalog( 'filters' );
+				refreshContent: function() 
+				{
+					var _project = studio.viewModel.currentProject();
+					if ( _project ) {
+						return _project.model().fetchItemCatalog( 'filters' );
 					}
 					
 					return $.Deferred();
@@ -145,12 +150,23 @@
 		});
 		
 		/**
-		 * Open inspector when hook is searched
+		 * Presenter Logic
+		 *
+		 * Show inspector in the toolbox when a new hook is searched
 		 */
-		studio.viewModel.hookSearch.subscribe( function() {
-			$('#mwp-studio-container').layout().open('east');
-			$('#hook-inspector-panel').collapse('show');
-		}, null, 'beforeChange');	
+		studio.viewModel.hookSearch.subscribe( function( hook_name ) 
+		{
+			if ( hook_name ) {
+				// Open the east layout pane
+				if ( studio.viewModel.studioLayout() ) {
+					studio.viewModel.studioLayout().open('east');
+				}
+				
+				// Uncollapse the hook inspector panel
+				$('.inspectorCollapse').collapse('show');
+			}
+		}, 
+		null, 'beforeChange');	
 	
 	});
 	

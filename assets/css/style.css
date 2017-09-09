@@ -253,12 +253,16 @@ body.folded #wpcontent, body.folded #wpfooter {
     text-align: left;
 }
 
-/* Toolbar Elements */
-.mwp-bootstrap .hook-inspector .panel-title {
+/* Toolbox Elements */
+.mwp-bootstrap .mwp-studio-toolbox .panel-title {
 	font-size: 14px;
 }
 
-.mwp-bootstrap .hook-inspector .panel-body .label {
+.mwp-bootstrap .mwp-studio-toolbox .panel-heading {
+	cursor: pointer;
+}
+
+.mwp-bootstrap .mwp-studio-toolbox .panel-body .label {
 	margin-right: 5px;
 }
 

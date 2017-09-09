@@ -846,8 +846,6 @@
 
 			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
 			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
-			this.shortcodes = ko.observableArray([]);
-			this.posttypes = ko.observableArray([]);
 			
 			this.actions.loading = ko.observable(false);
 			this.filters.loading = ko.observable(false);

@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" data-bind="
-	layout: { 
+	layout: {
 		applyDefaultStyles: true, 
 		north: { 
 			resizable: false, 
@@ -43,6 +43,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 				localStorage.setItem( 'mwp-studio-west-size', pane.outerWidth() );
 			}
 		}
+	},
+	callback: function( bindings ) {
+		studioLayout( jQuery(this).layout() );
 	}">
 	<div class="ui-layout-north">
 		<?php echo $this->getTemplateContent( 'views/components/navbar' ) ?>

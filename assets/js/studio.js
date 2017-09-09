@@ -80,6 +80,7 @@
 			 */
 			this.viewModel = 
 			{
+				studioLayout:   ko.observable(),
 				projects:       kb.collectionObservable( this.projects ),
 				currentProject: ko.observable(),
 				openFiles:      ko.observableArray(),
@@ -450,7 +451,7 @@
 			update: function( element, valueAccessor, allBindingsAccessor ) {
 				var callback = ko.utils.unwrapObservable( valueAccessor() );
 				if ( typeof callback == 'function' ) {
-					callback();
+					callback.call( element, allBindingsAccessor );
 				}
 			}
 		},
