@@ -43,12 +43,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<td class="overflow-ellipsis">
 					<a href="#" style="margin-right: 10px" data-bind="
 						click: function() { $root.hookSearch( hook_name ); },
-						jquery: { tooltip: { title: '<i class=\'fa fa-search-plus\'></i> Inspect Hook', html: true } }
+						jquery: { tooltip: { title: '<i class=\'fa fa-search-plus\'></i> Inspect Hook', html: true, trigger: 'hover' } }
 						"><i class="fa fa-search-plus"></i></a>
 					<a href="#" 
 						data-bind="
 						text: hook_name,
-						jquery: { tooltip: { title: '<i class=\'fa fa-search-plus\'></i> Inspect Code', html: true } },
+						jquery: { tooltip: { title: '<i class=\'fa fa-search-plus\'></i> Inspect Code', html: true, trigger: 'hover' } },
 						click: function() {
 							mwp.model.get('mwp-studio-filetree-node').loadFile( hook_file ).done( function( file ) {
 								file.switchTo().done( function( editor ) {

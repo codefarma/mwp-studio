@@ -23,46 +23,49 @@
 	/**
 	 * Add actions/filters pane tabs to the generic environment
 	 *
-	 * @param	Project			project			The project to get pane tabs for
 	 * @param	function		parent			The overloaded method callback
+	 * @param	Project			project			The project to get pane tabs for
 	 * @return	array
 	 */
-	GenericEnvironment.overload( 'getStudioPaneTabs', function( project, parent )
+	GenericEnvironment.override(
 	{
-		var tabs = parent( project );
-		var studio = mwp.controller.get('mwp-studio');
-		
-		tabs.push(
+		getStudioPaneTabs: function( parent, project )
 		{
-			id: 'hooked-actions',
-			title: 'Actions',
-			viewModel: studio.viewModel,
-			template: $(studio.local.templates.panetabs['hooked-actions']),
-			refreshContent: function() {
-				var project = studio.viewModel.currentProject();
-				if ( project ) {
-					return project.model().fetchItemCatalog( 'actions' );
+			var tabs = parent( project );
+			var studio = mwp.controller.get('mwp-studio');
+			
+			tabs.push(
+			{
+				id: 'hooked-actions',
+				title: 'Actions',
+				viewModel: studio.viewModel,
+				template: $(studio.local.templates.panetabs['hooked-actions']),
+				refreshContent: function() {
+					var project = studio.viewModel.currentProject();
+					if ( project ) {
+						return project.model().fetchItemCatalog( 'actions' );
+					}
+					
+					return $.Deferred();
 				}
-				
-				return $.Deferred();
-			}
-		},
-		{
-			id: 'hooked-filters',
-			title: 'Filters',
-			viewModel: studio.viewModel,
-			template: $(studio.local.templates.panetabs['hooked-filters']),
-			refreshContent: function() {
-				var project = studio.viewModel.currentProject();
-				if ( project ) {
-					return project.model().fetchItemCatalog( 'filters' );
+			},
+			{
+				id: 'hooked-filters',
+				title: 'Filters',
+				viewModel: studio.viewModel,
+				template: $(studio.local.templates.panetabs['hooked-filters']),
+				refreshContent: function() {
+					var project = studio.viewModel.currentProject();
+					if ( project ) {
+						return project.model().fetchItemCatalog( 'filters' );
+					}
+					
+					return $.Deferred();
 				}
-				
-				return $.Deferred();
-			}
-		});
+			});
 
-		return tabs;
+			return tabs;
+		}
 	});
 	
 	/**
@@ -74,7 +77,7 @@
 	mwp.on( 'mwp-studio.init', function( studio ) 
 	{
 		/**
-		 * Connect to ace editor click events on hook names
+		 * Connect ace editor click events on hook names
 		 */
 		$(document).on( 'click', '.ace_wp_hook_name', function() {
 			studio.viewModel.hookSearch( $(this).text() );
@@ -85,7 +88,11 @@
 		 */
 		_.extend( studio.viewModel, 
 		{
-			hookSearch: ko.searchObservable( function( hook_name ) {
+			/**
+			 * Searched hook observable
+			 */
+			hookSearch: ko.searchObservable( function( hook_name ) 
+			{
 					return $.ajax({
 						url: studio.local.ajaxurl,
 						data: {
@@ -93,7 +100,25 @@
 							search: hook_name
 						}
 					});
-			}, 25, true)
+			}, 25, true ),
+			
+			/**
+			 * Open a hook search dialog
+			 *
+			 * @return	void
+			 */
+			hookDialog: function() 
+			{
+				bootbox.prompt({ 
+					title: 'Hook Search', 
+					value: studio.viewModel.hookSearch(), 
+					callback: function( hook_name ) { 
+						if ( hook_name ) { 
+							studio.viewModel.hookSearch( hook_name );
+						}
+					}
+				});
+			}
 		});
 		
 		/**
@@ -120,11 +145,12 @@
 		});
 		
 		/**
-		 * Open pane when hook is searched
+		 * Open inspector when hook is searched
 		 */
 		studio.viewModel.hookSearch.subscribe( function() {
-			$('#mwp-studio-container').layout().open( 'east' );
-		});	
+			$('#mwp-studio-container').layout().open('east');
+			$('#hook-inspector-panel').collapse('show');
+		}, null, 'beforeChange');	
 	
 	});
 	

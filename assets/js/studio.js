@@ -80,7 +80,6 @@
 			 */
 			this.viewModel = 
 			{
-				_controller:    this,
 				projects:       kb.collectionObservable( this.projects ),
 				currentProject: ko.observable(),
 				openFiles:      ko.observableArray(),
