@@ -18,7 +18,13 @@
 	
 	"use strict";
 	
+	var studio;
+	mwp.on( 'mwp-studio.ready', function(c){ studio = c; } );
+	
+	// Apply mwp bootstrap styles to the whole document
 	$('html').addClass('mwp-bootstrap');
+	
+	// Wordpress collapse side menu
 	$(document).on( 'click', '#collapse-menu', function() {
 		$(window).resize();
 	});

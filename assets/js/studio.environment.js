@@ -13,10 +13,7 @@
 	"use strict";
 
 	var studio;
-	
-	mwp.on( 'mwp-studio.ready', function( controller ) {
-		studio = controller;
-	});
+	mwp.on( 'mwp-studio.ready', function(c){ studio = c; } );
 	
 	var CollectorModel   = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel = mwp.model.get( 'mwp-studio-collectible' );

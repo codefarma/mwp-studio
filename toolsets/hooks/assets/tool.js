@@ -18,6 +18,9 @@
 	
 	"use strict";
 
+	var studio;
+	mwp.on( 'mwp-studio.ready', function(c){ studio = c; } );
+	
 	var GenericEnvironment = mwp.model.get( 'mwp-studio-generic-environment' );
 	var Project            = mwp.model.get( 'mwp-studio-project' );
 	var Studio             = mwp.controller.model.get( 'mwp-studio' );
@@ -183,27 +186,71 @@
 			 */
 			this.viewModel.hookSearch.subscribe( function( hook_name ) 
 			{
-				if ( hook_name ) {
-					// Open the east layout pane
-					if ( self.viewModel.studioLayout() ) {
-						self.viewModel.studioLayout().open('east');
-					}
-					
-					// Uncollapse the hook inspector panel
-					$('.inspectorCollapse').collapse('show');
+				// Open the east layout pane
+				if ( self.viewModel.studioLayout() ) {
+					self.viewModel.studioLayout().open('east');
 				}
+				
+				// Uncollapse the hook inspector panel
+				$('.inspectorCollapse').collapse('show');
 			}, 
-			null, 'beforeChange');	
-			
-			/**
-			 * Connect ace editor click events on hook names
-			 */
-			$(document).on( 'click', '.ace_wp_hook_name', function() {
-				self.viewModel.hookSearch( $(this).text() );
-			});
+			null, 'beforeChange');			
 		}	
 	
 	});
+	
+	/**
+	 * Add ace editor highlighting rules
+	 *
+	 * @param	string		type			The rules type (comments, javascript, php, html)
+	 * @param	object		rules			The rules object
+	 */
+	mwp.on( 'ace.rules', function( type, rules ) 
+	{
+		switch( type ) 
+		{
+			case 'comments':
+			
+				rules.$rules.start.push({
+					token: "comment.doc",
+					regex : "(Action|Filter)[\\s]*\\([\\s]*for=['\"]",
+					next: "mwp_hook"
+				});
+				
+				rules.addRules({
+					"mwp_hook" : [
+						{token : "wp_hook_name", regex : /[^'"]+/},
+						{token : "comment.doc", regex : "['\"]", next : "start"},
+						{defaultToken : "comment.doc"}		
+					]
+				});
+				break;
+				
+			case 'php':
+				
+				rules.$rules.start.splice( 1, 0, {
+					token: "wp_hook_call",
+					regex : "(do_action|add_action|apply_filters|add_filter)\\([\\s]*['\"]",
+					next: "wp_hook"
+				});
+				
+				rules.addRules({
+					"wp_hook" : [
+						{token : "wp_hook_name", regex : /[^'"]+/},
+						{token : "string", regex : "['\"]", next : "start"},
+						{defaultToken : "string"}		
+					]
+				});
+				break;
+		}
+	});
+
+	/**
+	 * Search hooks when they are clicked in the editor
+	 */
+	$(document).on( 'click', '.ace_wp_hook_name', function() {
+		studio.viewModel.hookSearch( $(this).text() );
+	});	
 	
 })( jQuery );
  

@@ -115,4 +115,15 @@ class Tool
 		return $toolsets;
 	}
 	
+	/**
+	 * Get toolset file relative path
+	 *
+	 * @param	string		$path			File path relative to the toolset dir
+	 * @return	string
+	 */
+	public function relativePath( $path )
+	{
+		return 'toolsets/' . $this->getToolsetDir() . ( $path ? '/' . $path : '' );
+	}
+	
 }

@@ -9,23 +9,15 @@ var DocCommentHighlightRules = function() {
         "start" : [ {
             token : "comment.doc.tag",
             regex : "@[\\w\\d_]+" // TODO: fix email addresses
-        }, 
-		{
-			token: "comment.doc",
-			regex : "(Action|Filter)[\\s]*\\([\\s]*for=['\"]",
-			next: "mwp_hook"
-		},
+        },
         DocCommentHighlightRules.getTagRule(),
         {
             defaultToken : "comment.doc",
             caseInsensitive: true
-        }],
-		"mwp_hook" : [
-            {token : "wp_hook_name", regex : /[^'"]+/},
-            {token : "comment.doc", regex : "['\"]", next : "start"},
-            {defaultToken : "comment.doc"}		
-		],
+        }]
     };
+	
+	mwp.trigger( 'ace.rules', 'comments', this );	
 };
 
 oop.inherits(DocCommentHighlightRules, TextHighlightRules);
@@ -595,6 +587,7 @@ var JavaScriptHighlightRules = function(options) {
         [ DocCommentHighlightRules.getEndRule("no_regex") ]);
 
     this.normalizeRules();
+	mwp.trigger( 'ace.rules', 'javascript', this );
 };
 
 oop.inherits(JavaScriptHighlightRules, TextHighlightRules);
@@ -1001,6 +994,8 @@ var HtmlHighlightRules = function() {
 
     if (this.constructor === HtmlHighlightRules)
         this.normalizeRules();
+		
+	mwp.trigger( 'ace.rules', 'html', this );
 };
 
 oop.inherits(HtmlHighlightRules, XmlHighlightRules);
@@ -1885,11 +1880,6 @@ var PhpLangHighlightRules = function() {
                 token : "comment",
                 regex : /(?:#|\/\/)(?:[^?]|\?[^>])*/
             },
-			{
-				token: "wp_hook_call",
-				regex : "(do_action|add_action|apply_filters|add_filter)\\([\\s]*['\"]",
-				next: "wp_hook"
-			},
             docComment.getStartRule("doc-start"),
             {
                 token : "comment", // multi line comment
@@ -2012,11 +2002,6 @@ var PhpLangHighlightRules = function() {
                 defaultToken : "comment"
             }
         ],
-		"wp_hook" : [
-            {token : "wp_hook_name", regex : /[^'"]+/},
-            {token : "string", regex : "['\"]", next : "start"},
-            {defaultToken : "string"}		
-		],
         "qqstring" : [
             {
                 token : "constant.language.escape",
@@ -2040,6 +2025,8 @@ var PhpLangHighlightRules = function() {
 
     this.embedRules(DocCommentHighlightRules, "doc-",
         [ DocCommentHighlightRules.getEndRule("start") ]);
+		
+	mwp.trigger( 'ace.rules', 'php', this );	
 };
 
 oop.inherits(PhpLangHighlightRules, TextHighlightRules);

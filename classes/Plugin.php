@@ -135,7 +135,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Init
 	 *
-	 * @Wordpress\Action( for="init" )
+	 * @Wordpress\Action( for="plugins_loaded" )
 	 *
 	 * @return	void
 	 */
@@ -151,6 +151,17 @@ class Plugin extends \Modern\Wordpress\Plugin
 	}
 	
 	/**
+	 * Load Studio UI?
+	 *
+	 * @return	bool
+	 */
+	public function loadStudioUI()
+	{
+		$screen = get_current_screen();		
+		return $screen->id === 'dashboard_page_mwp-studio-dashboard';	
+	}
+	
+	/**
 	 * Enqueue scripts and stylesheets
 	 * 
 	 * @Wordpress\Action( for="admin_enqueue_scripts" )
@@ -158,10 +169,8 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 * @return	void
 	 */
 	public function enqueueScripts()
-	{
-		$screen = get_current_screen();
-		
-		if ( $screen->id == 'dashboard_page_mwp-studio-dashboard' )
+	{	
+		if ( $this->loadStudioUI() )
 		{			
 			// jQuery Layout
 			$this->useScript( $this->jqueryLayout );
@@ -608,7 +617,6 @@ class Plugin extends \Modern\Wordpress\Plugin
 		if ( isset( $data['files'] ) and ! empty( $data['files'] ) ) 
 		{
 			foreach( $data['files'] as $file ) {
-				Models\Hook::deleteWhere( array( 'hook_file=%s', $file['file'] ) );
 				Models\Function_::deleteWhere( array( 'function_file=%s', $file['file'] ) );
 				Models\Class_::deleteWhere( array( 'class_file=%s', $file['file'] ) );
 				
@@ -620,10 +628,6 @@ class Plugin extends \Modern\Wordpress\Plugin
 				$_file->last_analyzed = time();
 				$_file->save();
 			}
-		}
-		
-		if ( isset( $data['hooks'] ) and ! empty( $data['hooks'] ) ) {
-			$this->saveAnalysisModels( $data['hooks'], 'MWP\Studio\Models\Hook' );
 		}
 		
 		if ( isset( $data['functions'] ) and ! empty( $data['functions'] ) ) {

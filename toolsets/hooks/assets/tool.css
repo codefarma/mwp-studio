@@ -1,0 +1,9 @@
+.mwp-studio .ace_wp_hook_name {
+	color: purple;
+	pointer-events: auto !important;
+}
+
+.mwp-studio .ace_wp_hook_name:hover {
+	border-bottom: 1px solid;
+	cursor: pointer;
+}
