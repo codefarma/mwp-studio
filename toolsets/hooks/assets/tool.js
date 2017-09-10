@@ -19,6 +19,8 @@
 	"use strict";
 
 	var GenericEnvironment = mwp.model.get( 'mwp-studio-generic-environment' );
+	var Project            = mwp.model.get( 'mwp-studio-project' );
+	var Studio             = mwp.controller.model.get( 'mwp-studio' );
 	
 	/**
 	 * Enhance the generic environment
@@ -74,102 +76,134 @@
 	});
 	
 	/**
-	 * Extend the studio functionality
-	 *
-	 * @param	controller		studio			The studio controller after it has been initialized
-	 * @return	void
+	 * Enhance the project model
 	 */
-	mwp.on( 'mwp-studio.init', function( studio ) 
+	Project.override(
 	{
 		/**
-		 * Connect ace editor click events on hook names
-		 */
-		$(document).on( 'click', '.ace_wp_hook_name', function() {
-			studio.viewModel.hookSearch( $(this).text() );
-		});
-		
-		/**
-		 * Extend the studio view model
-		 */
-		_.extend( studio.viewModel, 
-		{
-			/**
-			 * Searched hook observable
-			 */
-			hookSearch: ko.searchObservable( function( hook_name ) 
-			{
-					return $.ajax({
-						url: studio.local.ajaxurl,
-						data: {
-							action: 'mwp_studio_hook_results',
-							search: hook_name
-						}
-					});
-			}, 25, true ),
-			
-			/**
-			 * Open a hook search dialog
-			 *
-			 * @return	void
-			 */
-			hookDialog: function() 
-			{
-				bootbox.prompt({ 
-					title: 'Hook Search', 
-					value: studio.viewModel.hookSearch(), 
-					callback: function( hook_name ) { 
-						if ( hook_name ) { 
-							studio.viewModel.hookSearch( hook_name );
-						}
-					}
-				});
-			}
-		});
-		
-		/**
-		 * Extend the hookSearch observable with a grouped results computation
-		 */
-		studio.viewModel.hookSearch.groupedResults = ko.computed( function() 
-		{
-			var results = _.map( studio.viewModel.hookSearch.results().results || [], function( hook ) {
-				hook.group = hook.callback_location + '/' + hook.callback_location_slug;
-				return hook;
-			});
-			
-			return _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
-				return {
-					type: hook_type,
-					groups: _.map( _.groupBy( _.where( results, { hook_type: hook_type } ), 'group' ), function( hooks, group_key ) {
-						var pieces = group_key.split('/');				
-						return { 
-							location: pieces[0], 
-							slug: pieces[1], 
-							hooks: _.sortBy( hooks, function( _hook ) { return parseInt( _hook.hook_priority ); } ) };
-					}) };
-			}), 'type' );
-		});
-		
-		/**
-		 * Presenter Logic
+		 * Initialize
 		 *
-		 * Show inspector in the toolbox when a new hook is searched
+		 * @param	function		_super			The overridden method callback
+		 * @return	void
 		 */
-		studio.viewModel.hookSearch.subscribe( function( hook_name ) 
+		initialize: function( _super )
 		{
-			if ( hook_name ) {
-				// Open the east layout pane
-				if ( studio.viewModel.studioLayout() ) {
-					studio.viewModel.studioLayout().open('east');
-				}
-				
-				// Uncollapse the hook inspector panel
-				$('.inspectorCollapse').collapse('show');
-			}
-		}, 
-		null, 'beforeChange');	
-	
+			_super.apply( this, arguments );
+			
+			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
+			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
+			
+			this.actions.loading = ko.observable(false);
+			this.filters.loading = ko.observable(false);			
+		}
 	});
 	
+	/**
+	 * Enhance the studio controller
+	 */
+	Studio.override(
+	{
+		/**
+		 * Initialize
+		 *
+		 * @param	function		_super			The overridden method callback
+		 * @return	void
+		 */
+		init: function( _super )
+		{
+			var self = this;
+			
+			_super.apply( this, arguments );
+
+			/**
+			 * Extend the studio view model
+			 */
+			_.extend( this.viewModel, 
+			{
+				/**
+				 * Searched hook observable
+				 */
+				hookSearch: ko.searchObservable( function( hook_name ) 
+				{
+						return $.ajax({
+							url: self.local.ajaxurl,
+							data: {
+								action: 'mwp_studio_hook_results',
+								search: hook_name
+							}
+						});
+				}, 25, true ),
+				
+				/**
+				 * Open a hook search dialog
+				 *
+				 * @return	void
+				 */
+				hookDialog: function() 
+				{
+					bootbox.prompt({ 
+						title: 'Hook Search', 
+						value: self.viewModel.hookSearch(), 
+						callback: function( hook_name ) { 
+							if ( hook_name ) { 
+								self.viewModel.hookSearch( hook_name );
+							}
+						}
+					});
+				}
+			});
+			
+			/**
+			 * Extend the hookSearch observable with a grouped results computation
+			 */
+			this.viewModel.hookSearch.groupedResults = ko.computed( function() 
+			{
+				var results = _.map( self.viewModel.hookSearch.results().results || [], function( hook ) {
+					hook.group = hook.callback_location + '/' + hook.callback_location_slug;
+					return hook;
+				});
+				
+				return _.indexBy( _.map( ['do_action','add_action','apply_filters','add_filter'], function( hook_type ) {
+					return {
+						type: hook_type,
+						groups: _.map( _.groupBy( _.where( results, { hook_type: hook_type } ), 'group' ), function( hooks, group_key ) {
+							var pieces = group_key.split('/');				
+							return { 
+								location: pieces[0], 
+								slug: pieces[1], 
+								hooks: _.sortBy( hooks, function( _hook ) { return parseInt( _hook.hook_priority ); } ) };
+						}) };
+				}), 'type' );
+			});
+			
+			/**
+			 * Presenter Logic
+			 *
+			 * Show inspector in the toolbox when a new hook is searched
+			 */
+			this.viewModel.hookSearch.subscribe( function( hook_name ) 
+			{
+				if ( hook_name ) {
+					// Open the east layout pane
+					if ( self.viewModel.studioLayout() ) {
+						self.viewModel.studioLayout().open('east');
+					}
+					
+					// Uncollapse the hook inspector panel
+					$('.inspectorCollapse').collapse('show');
+				}
+			}, 
+			null, 'beforeChange');	
+			
+			/**
+			 * Connect ace editor click events on hook names
+			 */
+			$(document).on( 'click', '.ace_wp_hook_name', function() {
+				self.viewModel.hookSearch( $(this).text() );
+			});
+		}	
+	
+	});
 	
 })( jQuery );
  

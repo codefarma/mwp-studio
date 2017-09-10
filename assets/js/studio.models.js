@@ -843,12 +843,6 @@
 				project: this,
 				initialized: false
 			});
-
-			this.actions = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
-			this.filters = ko.observableArray([]).extend({ progressiveFilter: { batchSize: 50 }, rateLimit: 50 });
-			
-			this.actions.loading = ko.observable(false);
-			this.filters.loading = ko.observable(false);
 			
 			this.set( 'filetree', kb.viewModel( this.fileTree ) );
 			this.set( 'filenodes', this.fileTree.filenodes );

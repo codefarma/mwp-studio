@@ -54,7 +54,7 @@
 	 *   <span data-bind="text: title"></span>
 	 * </div>
 	 */
-	var studio = mwp.controller( 'mwp-studio', 
+	var Studio = mwp.controller.model( 'mwp-studio', 
 	{
 		/**
 		 * @var	Collection
