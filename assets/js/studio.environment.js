@@ -138,7 +138,7 @@
 				title: 'Studio',
 				subitems: [{
 					type: 'action',
-					title: 'Create a new plugin',
+					title: 'New Project',
 					icon: 'fa fa-plus-circle',
 					callback: function() {
 					
@@ -149,13 +149,13 @@
 				},
 				{
 					type: 'submenu',
-					title: 'Open project',
+					title: 'Open Project',
 					icon: 'fa fa-folder-open',
 					subitems: this.getProjectsMenu()
 				},
 				{
 					type: 'action',
-					title: 'Refresh code index',
+					title: 'Refresh Code Index',
 					icon: 'fa fa-database',
 					callback: function() {
 						$.ajax({

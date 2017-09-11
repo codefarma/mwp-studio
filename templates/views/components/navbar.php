@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="navbar-header">
 	  <span class="navbar-brand">
 		<i class="fa fa-wordpress fa-lg"></i>
-		<h4 style="display:inline">MWP</h4>
+		<h4><small>Modern</small>Wordpress Studio</h4>
 	  </span>
 	  <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#studio-navbar">
 		<span class="sr-only">Toggle navigation</span>

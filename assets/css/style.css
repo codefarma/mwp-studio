@@ -74,6 +74,10 @@ body.folded #wpcontent, body.folded #wpfooter {
 	overflow: hidden !important;
 }
 
+.mwp-studio .ui-layout-resizer {
+	z-index: 0 !important;
+}
+
 /* Activity Indicator */
 .activity-indicator {
 	z-index: 1;
@@ -84,6 +88,25 @@ body.folded #wpcontent, body.folded #wpfooter {
 	margin-bottom: 0;
 }
 
+.mwp-studio .navbar-brand {
+	padding: 0 10px;
+}	
+
+.mwp-studio .navbar-brand > i.fa.fa-lg {
+	vertical-align: 3px;
+}
+
+.mwp-studio .navbar-brand h4 {
+	display: inline-block;
+	margin: 5px 20px 0 5px;
+}
+
+.mwp-studio .navbar-brand small {
+	display: block;
+	font-size: 10px;
+	color: #bbb;
+	margin-bottom: -4px;
+}
 
 .mwp-studio .dropdown-submenu {
     position: relative;
