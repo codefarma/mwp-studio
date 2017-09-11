@@ -218,6 +218,18 @@ class HookInspector extends Tool
 		}		
 	}
 	
+	/**
+	 * Delete hook records for detected missing files
+	 *
+	 * @Wordpress\Action( for="mwp_studio_missing_file" )
+	 *
+	 * @param	File		$file			The missing file record
+	 * @return	void
+	 */
+	public function removeMissingFile( $file )
+	{
+		HookModel::deleteWhere( array( 'hook_file=%s', $file->file ) );
+	}	
 }
 
 /**

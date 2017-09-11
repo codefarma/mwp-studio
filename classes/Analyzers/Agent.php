@@ -52,6 +52,11 @@ class Agent extends Singleton
 	/**
 	 * @var	array
 	 */
+	public $errors = array();
+	
+	/**
+	 * @var	array
+	 */
 	protected $analyzers = array();
 	
 	/**
@@ -104,6 +109,7 @@ class Agent extends Singleton
 	public function resetAnalysis()
 	{
 		$this->skipped_dirs = array();
+		$this->errors = array();
 		
 		foreach( $this->analyzers as $analyzer ) {
 			$analyzer->resetAnalysis();
@@ -200,11 +206,10 @@ class Agent extends Singleton
 			'file' => str_replace( ABSPATH, '', $filepath ),
 		));
 		
-		try {
-			$this->traverser->traverse( $this->parser->parse( file_get_contents( $filepath ) ) );
-		}
-		catch( \PhpParser\Error $e ) { 
-			
+		$errorHandler = new \PhpParser\ErrorHandler\Collecting;
+		$this->traverser->traverse( $this->parser->parse( file_get_contents( $filepath ), $errorHandler ) );
+		if ( $errorHandler->hasErrors() ) {
+			$this->errors[ $filepath ] = $errorHandler->getErrors();
 		}
 	}
 	

@@ -526,16 +526,16 @@
 		},
 		
 		/**
-		 * Reindex file
+		 * Reindex file or directory
 		 *
 		 * @return	$.Deferred
 		 */
-		reindex: function()
+		syncIndex: function()
 		{
 			var self = this;
 			return $.ajax({
 				url: studio.local.ajaxurl,
-				data: { action: 'mwp_studio_rebuild_catalog', path: self.get('path') }
+				data: { action: 'mwp_studio_sync_catalog', path: self.get('path') }
 			});
 		},
 		

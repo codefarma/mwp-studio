@@ -412,26 +412,63 @@ class Plugin extends \Modern\Wordpress\Plugin
 	}
 	
 	/**
-	 * Queue the catalog of all wordpress code
-	 * 
+	 * Scan code index and delete records for missing files
+	 *
+	 * @Wordpress\Action( for="mwp_studio_remove_missing_files" )
+	 *
+	 * @param	Task			$task			The task
 	 * @return	void
 	 */
-	public function catalogEverything()
+	public function removeMissingFileRecords( $task )
+	{
+		$last_file_id = $task->getData( 'last_file_id' ) ?: 0;
+		$files = \MWP\Studio\Models\File::loadWhere( array( 'file_id > %d', $last_file_id ), 'file_id ASC', 100 );
+		
+		if ( empty( $files ) ) {
+			return $task->complete();
+		}
+		
+		$c = 0;
+		
+		foreach( $files as $file ) 
+		{
+			if ( ! file_exists( ABSPATH . '/' . $file->file ) ) {
+				\MWP\Studio\Models\Function_::deleteWhere( array( 'function_file=%s', $file->file ) );
+				\MWP\Studio\Models\Class_::deleteWhere( array( 'class_file=%s', $file->file ) );
+				do_action( 'mwp_studio_missing_file', $file );
+				$task->log( "File removed from code index: {$file->file}" );
+				$file->delete();
+			}
+			$c++;
+			$last_file_id = $file->id;
+		}
+		
+		$task->log( "Processed {$c} files, ending with file_id: {$last_file_id}" );
+		$task->setData( 'last_file_id', $last_file_id );
+	}
+	
+	/**
+	 * Synchronize the catalog of all wordpress code
+	 * 
+	 * @param	bool		$force			Force rebuild
+	 * @return	void
+	 */
+	public function syncCodeIndex( $force=FALSE )
 	{
 		/**
 		 * Wordpress core
 		 */
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
-			array( 'fullpath' => rtrim( ABSPATH, '/\\' ), 'recurse' => false )
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ), 'recurse' => false, 'force' => $force )
 		);
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
-			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-admin', 'recurse' => true )
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-admin', 'recurse' => true, 'force' => $force )
 		);
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
-			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-includes', 'recurse' => true )
+			array( 'fullpath' => rtrim( ABSPATH, '/\\' ) . '/wp-includes', 'recurse' => true, 'force' => $force )
 		);
 		
 		/**
@@ -439,7 +476,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		 */
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
-			array( 'fullpath' => WP_PLUGIN_DIR, 'recurse' => true )
+			array( 'fullpath' => WP_PLUGIN_DIR, 'recurse' => true, 'force' => $force )
 		);
 		
 		/**
@@ -447,8 +484,19 @@ class Plugin extends \Modern\Wordpress\Plugin
 		 */
 		Task::queueTask(
 			array( 'action' => 'mwp_studio_catalog_directory' ),
-			array( 'fullpath' => get_theme_root(), 'recurse' => true )
+			array( 'fullpath' => get_theme_root(), 'recurse' => true, 'force' => $force )
+		);
+
+		/**
+		 * Remove missing files
+		 */
+		Task::queueTask(
+			array( 'action' => 'mwp_studio_remove_missing_files' ),
+			array( 'last_file_id' => 0 )
 		);		
+		
+		$monitor = $this->getActiveMonitor( 'catalog' );
+		$monitor->setStatus( 'Scheduled' );
 	}
 	
 	/**
@@ -495,11 +543,15 @@ class Plugin extends \Modern\Wordpress\Plugin
 		if ( $fullpath = $task->getData( 'fullpath' ) and is_dir( $fullpath ) )
 		{
 			if ( ! $task->getData( 'initialized' ) )
-			{			
+			{
 				$skips = array_merge( array( '.', '..' ), apply_filters( 'mwp_studio_analyzer_skips', array(), $fullpath ) );
 				$files = array();
+				$force = $task->getData( 'force' );
 				
 				$task->log( 'Analyze files in: ' . $fullpath );
+				
+				$monitor = $this->getActiveMonitor( 'catalog' );
+				$monitor->setStatus( 'Scanning' );
 				
 				foreach( scandir( $fullpath ) as $file ) 
 				{
@@ -523,12 +575,23 @@ class Plugin extends \Modern\Wordpress\Plugin
 						$parts = explode( '.', $file );
 						$ext = array_pop( $parts );
 						if ( $ext == 'php' ) {
+							if ( ! $force ) {				
+								// only add new or changed files 
+								$_file = \MWP\Studio\Models\File::loadByPath( ltrim( str_replace( rtrim( ABSPATH, '/' ), '', $fullpath ) . '/' . $file, '/' ) );
+								if ( $_file and $_file->last_analyzed >= filemtime( ABSPATH . $_file->file ) ) {
+									continue;
+								}
+							}
 							$files[] = $fullpath . '/' . $file;
 						}
 					}
 				}
 				
-				$monitor = $this->getActiveMonitor( 'catalog' );
+				if ( empty( $files ) ) {
+					$task->log( 'No files to process.' );
+					return $task->complete();
+				}
+				
 				$db      = \Modern\Wordpress\Framework::instance()->db();
 				$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
 				$monitor->setData( 'files_count', $data['files_count'] + count( $files ) );
@@ -569,13 +632,16 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$file = array_shift( $files );
 		$task->setData( 'files', $files );
 		
+		$monitor = $this->getActiveMonitor( 'catalog' );
+		$monitor->setStatus( 'Analyzing' );
+		
 		$agent->analyzeFile( $file );
 		$agent->saveAnalysis();
 		
 		$db      = \Modern\Wordpress\Framework::instance()->db();
-		$monitor = $this->getActiveMonitor( 'catalog' );
 		$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
 		$monitor->setData( 'files_left', $data['files_left'] - 1 );
+		$monitor->log( 'Analyzed: ' . $file );
 		$monitor->save();
 		
 		$task->log( 'Analyzed: ' . $file );
@@ -598,7 +664,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		}
 		else
 		{
-			$task->next_start = time() + 60;
+			$task->next_start = time() + 5;
 		}
 	}
 	

@@ -440,26 +440,50 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$status = array();
+		$response = array(
+			'icon' => '',
+			'status' => '',
+		);
 		$process_name = isset( $_REQUEST['process']['name'] ) ? $_REQUEST['process']['name'] : null;
 		$monitor = $this->getPlugin()->getActiveMonitor( $process_name, false );
 		
-		if ( $monitor ) {
+		if ( $monitor ) 
+		{
 			$status = $monitor->data;
-			$status['complete'] = ( $monitor->completed > 0 );
+			$response['complete'] = ( $monitor->completed > 0 );
 			
-			$completed_count = $status['files_count'] - $status['files_left'];
-			$complete_pct = $status['files_count'] ? floor( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
-			$status['status'] = "Indexing files ({$complete_pct}%): " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " complete.";
+			switch( $monitor->getData('status') )
+			{
+				case 'Analyzing':
+					$completed_count = $status['files_count'] - $status['files_left'];
+					$complete_pct = $status['files_count'] ? floor( ( $completed_count / $status['files_count'] ) * 100 ) : 0;
+					
+					$response['mode'] = 'analyzing';
+					$response['icon'] = ( $status['files_left'] > 0 ? 'fa fa-refresh fa-spin' : 'fa fa-check' );
+					$response['status'] = ( $status['files_left'] > 0 ? "Updating" : "Updated" ) . " code index: " . ( $status['files_count'] - $status['files_left'] ) . " of " . $status['files_count'] . " files analyzed. ({$complete_pct}%) ";
+					break;
+					
+				case 'Scanning':
+					$response['mode'] = 'scanning';
+					$response['icon'] = 'fa fa-refresh fa-spin';
+					$response['status'] = 'Scanning for file changes... ' . ( $status['files_count'] > 0 ? "{$status['files_count']} files found." : "" );
+					break;
+					
+				case 'Scheduled':
+					$response['mode'] = 'waiting';
+					$response['icon'] = 'fa fa-calendar';
+					$response['status'] = 'Scheduled code indexing will begin shortly.';
+					break;					
+			}
 		}
 		
-		wp_send_json( $status );
+		wp_send_json( $response );
 	}
 	
 	/**
 	 * Rebuild catalog
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_rebuild_catalog", for={"users"} )
+	 * @Wordpress\AjaxHandler( action="mwp_studio_sync_catalog", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -469,14 +493,14 @@ class AjaxHandlers extends Singleton
 		$path = $_REQUEST['path'];
 		
 		if ( $path == 'all' ) {
-			$this->getPlugin()->catalogEverything();
+			$this->getPlugin()->syncCodeIndex();
 			wp_send_json( array( 'success' => true, 'background' => true ) );
 		}
 		else if ( is_dir( ABSPATH . $path ) ) {
 			\Modern\Wordpress\Task::queueTask(
 				array( 'action' => 'mwp_studio_catalog_directory' ),
 				array( 'fullpath' => ABSPATH . $path, 'recurse' => true )
-			);			
+			);
 			wp_send_json( array( 'success' => true, 'background' => true ) );
 		}
 		else if ( is_file( ABSPATH . $path ) ) {

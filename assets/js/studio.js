@@ -248,7 +248,7 @@
 					var current_status = self.viewModel.processStatus();
 					
 					// Progressively slow down the poll if a process hasn't changed status
-					if ( JSON.stringify( current_status ) == JSON.stringify( status ) && timeout < 60000 ) {
+					if ( JSON.stringify( current_status ) == JSON.stringify( status ) && timeout < 20000 ) {
 						timeout = timeout + 500;
 					}
 					else

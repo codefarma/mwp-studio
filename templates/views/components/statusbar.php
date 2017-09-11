@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="ui-layout-statusbar">
 	<div class="col-xs-4">
 		<div data-bind="with: processStatus">
-			<span data-bind="text: status"></span>
+			<i data-bind="attr: { class: icon }"></i> <span data-bind="text: status"></span>
 		</div>
 	</div>
 	<div class="col-xs-4"></div>

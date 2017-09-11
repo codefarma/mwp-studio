@@ -155,15 +155,15 @@
 				},
 				{
 					type: 'action',
-					title: 'Refresh indexes',
+					title: 'Refresh code index',
 					icon: 'fa fa-database',
 					callback: function() {
 						$.ajax({
 							url: studio.local.ajaxurl,
-							data: { action: 'mwp_studio_rebuild_catalog', path: 'all' }
+							data: { action: 'mwp_studio_sync_catalog', path: 'all' }
 						}).done( function( response ) {
 							if ( response.success ) {
-								bootbox.alert({ title: 'Notice', message: 'Success. Processing will execute as a background process.' });
+								bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
 							}
 						});
 					}
@@ -219,14 +219,14 @@
 				/**
 				 * Reindex the directory
 				 */
-				reindexDirectory: {
-					name: 'Refresh indexes',
+				syncIndex: {
+					name: 'Sync code index',
 					iconClass: 'fa-database',
 					onClick: function( node ) {
-						$.when( node.model.reindex() ).done( function( response ) {
+						$.when( node.model.syncIndex() ).done( function( response ) {
 							if ( response.success ) {
 								if ( response.background ) {
-									bootbox.alert({ title: 'Notice', message: 'Success. Processing will execute as a background process.' });
+									bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
 								} else {
 									bootbox.alert({ title: 'Notice', message: 'Success. Processing complete.' });
 								}
