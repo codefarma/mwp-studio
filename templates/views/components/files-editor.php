@@ -65,7 +65,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</a>
 		</li>
 	</ul>
-	<div class="panel panel-default tabbed-panel" data-bind="fillPaneContainer: { pane: '.ui-layout-center', container: '.column' }, foreach: openFiles">
+	<div class="panel panel-default tabbed-panel file-editors-panel" data-bind="fillPaneContainer: { pane: '.ui-layout-center', container: '.column' }, foreach: openFiles">
 		<div data-bind="attr: { id: id() }" role="tabpanel" class="tab-pane">
 			<div class="tabbed-editor" 
 				data-bind="

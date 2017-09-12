@@ -133,9 +133,11 @@
 		 */
 		getStudioMenuItems: function( project )
 		{
-			return [{
+			return [
+			{
 				type: 'dropdown',
 				title: 'Studio',
+				icon: 'fa fa-server',
 				subitems: [{
 					type: 'action',
 					title: 'New Project',
@@ -167,6 +169,42 @@
 							}
 						});
 					}
+				}]
+			},
+			{
+				type: 'dropdown',
+				title: 'Editor',
+				icon: 'fa fa-keyboard-o',
+				subitems: [
+				{
+				
+				}]
+			},
+			{
+				type: 'dropdown',
+				title: 'View',
+				icon: 'fa fa-tv',
+				subitems: [
+				{
+				
+				}]
+			},
+			{
+				type: 'dropdown',
+				title: 'Tools',
+				icon: 'fa fa-cogs',
+				subitems: [
+				{
+				
+				}]
+			},
+			{
+				type: 'dropdown',
+				title: 'Help',
+				icon: 'fa fa-question-circle',
+				subitems: [
+				{
+				
 				}]
 			}];
 		},

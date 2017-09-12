@@ -26,7 +26,10 @@ if ( ! defined( 'ABSPATH' ) ) {
   <div class="container-fluid">
 	<div class="navbar-form navbar-right" style="margin-right:5px">
 		<div class="form-group"> 
-			<input class="form-control" placeholder="Search" style="border-radius:30px" data-bind="textInput: searchPhrase">
+			<div class="input-group">
+				<div style="border-radius:30px 0 0 30px;" class="input-group-addon"><i class="fa fa-search"></i></div>
+				<input class="form-control" placeholder="Search" style="border-radius:0 30px 30px 0;" data-bind="textInput: searchPhrase">
+			</div>
 		</div>
 	</div>
 	<div class="navbar-header">
