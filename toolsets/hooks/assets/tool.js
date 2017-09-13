@@ -46,6 +46,7 @@
 			{
 				id: 'hooked-actions',
 				title: 'Actions',
+				icon: 'fa fa-bolt',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-actions']),
 				refreshContent: function() 
@@ -61,6 +62,7 @@
 			{
 				id: 'hooked-filters',
 				title: 'Filters',
+				icon: 'fa fa-filter',
 				viewModel: studio.viewModel,
 				template: $(studio.local.templates.panetabs['hooked-filters']),
 				refreshContent: function() 

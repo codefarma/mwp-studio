@@ -7,3 +7,22 @@
 	border-bottom: 1px solid;
 	cursor: pointer;
 }
+
+.mwp-bootstrap .studio-hooks-table .tooltip-inner {
+	max-width: none;
+}
+
+.mwp-bootstrap .studio-hooks-table .popover {
+	max-width: 325px;
+}
+
+.mwp-bootstrap .studio-hooks-table .popover-content {
+	margin:0;
+}
+
+.mwp-bootstrap .cb-signature {
+	background-color: transparent;
+	border: 0;
+	margin-bottom: 0;
+	padding: 0;
+}

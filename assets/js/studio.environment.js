@@ -286,7 +286,18 @@
 		 */
 		getStudioPaneTabs: function( project )
 		{
-			return [];
+			return [
+			{
+				id: 'project-info',
+				title: 'Project Info',
+				icon: 'fa fa-info-circle',
+				viewModel: studio.viewModel,
+				template: $(studio.local.templates.panetabs['project-info']),
+				refreshContent: function() 
+				{
+					
+				}
+			}];
 		}
 
 	}));

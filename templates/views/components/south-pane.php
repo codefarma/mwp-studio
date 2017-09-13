@@ -38,7 +38,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}">
 		<li role="presentation" data-bind="css: { active: $index() == 0 }">
 			<a role="tab" data-toggle="tab" data-bind="
-				text: title,
 				attr: { href: '#' + id },
 				event: {
 					'shown.bs.tab': function(tab, e) {
@@ -51,7 +50,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							.trigger('resize');
 					}
 				}
-				">
+				"><span data-bind="if: typeof icon !== 'undefined'"><i data-bind="attr: { class: icon }"></i> </span><span data-bind="text: title"></span>
 			</a>
 		</li>
 	</ul>

@@ -133,8 +133,10 @@
 				var project_id = localStorage.getItem( 'mwp-studio-current-project' );
 				var index = self.projects.indexOf( self.projects.get( project_id ) );
 				
-				if ( index == -1 ) { index = 0; }				
-				self.viewModel.currentProject( self.viewModel.projects()[index] );
+				if ( index == -1 ) { index = 0; }
+				setTimeout( function() {
+					self.viewModel.currentProject( self.viewModel.projects()[index] );
+				}, 1000 );
 			});
 			
 			/**

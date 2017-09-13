@@ -93,7 +93,7 @@ body.folded #wpcontent, body.folded #wpfooter {
 }	
 
 .mwp-studio .navbar-brand > i.fa.fa-lg {
-	vertical-align: 3px;
+	vertical-align: 0px;
 }
 
 .mwp-studio .navbar-brand h4 {
@@ -105,7 +105,7 @@ body.folded #wpcontent, body.folded #wpfooter {
 	display: block;
 	font-size: 10px;
 	color: #bbb;
-	margin-bottom: -4px;
+	margin-bottom: -8px;
 }
 
 .mwp-studio .dropdown-submenu {
@@ -210,34 +210,15 @@ body.folded #wpcontent, body.folded #wpfooter {
 	border-top: 0;
 }
 
-/* Actions Table */
+/* Pane Tables */
 
 .mwp-studio .pane-table {
 	margin-bottom: 0;
 }
 
-.mwp-bootstrap .studio-hooks-table .tooltip-inner {
-	max-width: none;
-}
-
-.mwp-bootstrap .studio-hooks-table .popover {
-	max-width: 325px;
-}
-
-.mwp-bootstrap .studio-hooks-table .popover-content {
-	margin:0;
-}
-
-.mwp-bootstrap .cb-signature {
-	background-color: transparent;
-	border: 0;
-	margin-bottom: 0;
-	padding: 0;
-}
-
 /* Ace Editors */
 .mwp-studio .file-editors-panel {
-	background: url('../img/file-backdrop.png') center center no-repeat;
+	background: url('../img/studio-animation.gif') center center no-repeat;
 }
 
 
@@ -282,6 +263,17 @@ body.folded #wpcontent, body.folded #wpfooter {
 
 .mwp-bootstrap .mwp-studio-toolbox .panel-body .label {
 	margin-right: 5px;
+}
+
+/* Project Info Tab */
+.mwp-studio .tabbed-panel .project-info {
+	padding: 35px 20px 20px;
+	overflow: hidden;
+}
+
+.mwp-studio .tabbed-panel .project-info .project-name {
+	font-size: 28px;
+	font-weight: 200;
 }
 
 /* Bootstrap popover */

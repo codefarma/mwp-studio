@@ -200,6 +200,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->studioInterfaces );
 			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
 				'cron_url' => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
+				'studio_logo' => $this->fileUrl( 'assets/img/studio-animated-logo.gif' ) . '?' . rand( 0, 1000000 ), // http://www.christiantailor.co.uk/
 				'heartbeat_interval' => 20000,
 				'templates' => array
 				(
@@ -217,12 +218,37 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-stylesheet' => $this->getTemplateContent( 'dialogs/create-stylesheet' ),
 						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
 					),
-					'panetabs' => array(),
+					'panetabs' => array(
+						'project-info'      => $this->getTemplateContent( 'views/components/panetabs/project-info' ),
+					),
 				),
 			)));
 		}
 	}
 	
+	/**
+	 * Add the toolbox component to the studio
+	 *
+	 * @Wordpress\Filter( for="mwp_studio_toolbox_components" )
+	 *
+	 * @param	array		$components				Toolbox components
+	 * @return	array
+	 */
+	public function getToolboxComponents( $components )
+	{
+		$components[ 'code-generator' ] = array(
+			'panelClass' => '',
+			'panelHeadingClass' => '',
+			'panelBodyClass' =>'',
+			'panelCollapseClass' => 'in',
+			'panelTitle' => 'Code Generators',
+			'panelIcon' => 'fa fa-code',
+			'panelContent' => $this->getTemplateContent( 'views/components/toolset/code-generators' ),
+		);
+		
+		return $components;
+	}
+
 	/**
 	 * Get plugin info
 	 *
