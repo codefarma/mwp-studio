@@ -24,5 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 
 <div class="project-info full-height overflow-hidden" data-bind="with: currentProject()">
-    <span class="project-name" data-bind="text: name"></span>
+    <span class="project-name" data-bind="text: name"></span> <span class="label label-info" data-bind="text: version"></span>
+	<div class="project-description" data-bind="html: description"></div>
 </div>

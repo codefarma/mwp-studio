@@ -272,8 +272,25 @@ body.folded #wpcontent, body.folded #wpfooter {
 }
 
 .mwp-studio .tabbed-panel .project-info .project-name {
-	font-size: 28px;
+	font-size: 24px;
 	font-weight: 200;
+	padding-right: 20px;
+}
+
+.mwp-studio .tabbed-panel .project-info .label {
+	font-size: 0.8em;
+	vertical-align: 3px;
+}
+
+.mwp-studio .tabbed-panel .project-info .project-description {
+	font-size: 18px;
+	font-weight: 200;
+	padding: 18px 0;
+	line-height: 22px;
+}
+
+.mwp-studio .tabbed-panel .project-info .project-description cite {
+	font-size: 14px;
 }
 
 /* Bootstrap popover */

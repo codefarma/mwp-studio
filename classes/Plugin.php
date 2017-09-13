@@ -240,7 +240,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			'panelClass' => '',
 			'panelHeadingClass' => '',
 			'panelBodyClass' =>'',
-			'panelCollapseClass' => 'in',
+			'panelCollapseClass' => '',
 			'panelTitle' => 'Code Generators',
 			'panelIcon' => 'fa fa-code',
 			'panelContent' => $this->getTemplateContent( 'views/components/toolset/code-generators' ),
