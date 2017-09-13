@@ -75,7 +75,7 @@ body.folded #wpcontent, body.folded #wpfooter {
 }
 
 .mwp-studio .ui-layout-resizer {
-	z-index: 0 !important;
+	/*z-index: 0 !important;*/
 }
 
 /* Activity Indicator */
@@ -217,11 +217,6 @@ body.folded #wpcontent, body.folded #wpfooter {
 }
 
 /* Ace Editors */
-.mwp-studio .file-editors-panel {
-	background: url('../img/studio-animation.gif') center center no-repeat;
-}
-
-
 .mwp-studio .ace-editors .tab-pane:not(.active) .ace_editor {
 	display:none;
 }

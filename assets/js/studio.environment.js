@@ -157,7 +157,7 @@
 				},
 				{
 					type: 'action',
-					title: 'Refresh Code Index',
+					title: 'Update Code Index',
 					icon: 'fa fa-database',
 					callback: function() {
 						$.ajax({
@@ -177,7 +177,15 @@
 				icon: 'fa fa-keyboard-o',
 				subitems: [
 				{
-				
+					type: 'action',
+					title: 'Full Screen',
+					icon: 'fa fa-window-maximize',
+					callback: function() {
+						var layout = studio.viewModel.studioLayout();
+						layout.close('west');
+						layout.close('east');
+						$(layout.panes.center[0]).layout().close('south');
+					}
 				}]
 			},
 			{
