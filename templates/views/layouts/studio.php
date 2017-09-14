@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" style="visibility: hidden" data-bind="
+<div id="mwp-studio-container" data-view-model="mwp-studio" class="mwp-studio mwp-bootstrap" style="display:none" data-bind="
 	visible: true,
 	layout: {
 		applyDefaultStyles: true, 

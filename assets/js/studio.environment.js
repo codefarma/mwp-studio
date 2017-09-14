@@ -5,7 +5,7 @@
  *
  * @package    Wordpress Plugin Studio
  * @author     Kevin Carwile
- * @since      {build_version}
+ * @since      0.0.0
  */
 
 (function( $, undefined ) {
@@ -194,7 +194,49 @@
 				icon: 'fa fa-tv',
 				subitems: [
 				{
-				
+					type: 'action',
+					title: 'View Left Pane',
+					icon: 'fa fa-angle-double-left',
+					callback: function() {
+						var layout = studio.viewModel.studioLayout();
+						layout.open('west');
+					}
+					
+				},
+				{
+					type: 'action',
+					title: 'View Right Pane',
+					icon: 'fa fa-angle-double-right',
+					callback: function() {
+						var layout = studio.viewModel.studioLayout();
+						layout.open('east');
+					}
+					
+				},
+				{
+					type: 'action',
+					title: 'View South Pane',
+					icon: 'fa fa-angle-double-down',
+					callback: function() {
+						var layout = studio.viewModel.studioLayout();
+						$(layout.panes.center[0]).layout().open('south');
+					}
+					
+				},
+				{
+					type: 'divider'
+				},
+				{
+					type: 'action',
+					title: 'View All Panes',
+					icon: 'fa fa-arrows-alt',
+					callback: function() {
+						var layout = studio.viewModel.studioLayout();
+						layout.open('west');
+						layout.open('east');
+						$(layout.panes.center[0]).layout().open('south');
+					}
+					
 				}]
 			},
 			{

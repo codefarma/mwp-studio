@@ -6,7 +6,7 @@
  *
  * @package  Wordpress Plugin Studio
  * @author   Kevin Carwile
- * @since    {build_version}
+ * @since    0.0.0
  *
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:
@@ -77,7 +77,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 			pane: '.ui-layout-center', 
 			container: '.column' 
 		}, 
-		foreach: openFiles">
+		foreach: openFiles,
+		studioActivity: { 
+			active: studioLoading(),
+			valign: 'top',
+			padding: 45
+		}
+		">
 		<div data-bind="attr: { id: id() }" role="tabpanel" class="tab-pane">
 			<div class="tabbed-editor" 
 				data-bind="

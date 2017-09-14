@@ -5,7 +5,7 @@
  *
  * @package    Wordpress Plugin Studio
  * @author     Kevin Carwile
- * @since      {build_version}
+ * @since      0.0.0
  */
 
 /**
@@ -86,6 +86,7 @@
 			 */
 			this.viewModel = 
 			{
+				studioLoading:  ko.observable(false),
 				studioLayout:   ko.observable(),
 				projects:       kb.collectionObservable( this.projects ),
 				currentProject: ko.observable(),
@@ -96,6 +97,7 @@
 				processStatus:  ko.observable(),
 				searchPhrase:   ko.searchObservable( function( phrase ) {
 					return $.ajax({
+						method: 'post',
 						url: self.local.ajaxurl,
 						data: {
 							action: 'mwp_studio_search',
@@ -129,15 +131,20 @@
 			 * - Select last active project after initial load -or-
 			 * - Select first project in the list
 			 */
-			this.loadProjects().done( function() {
-				var project_id = localStorage.getItem( 'mwp-studio-current-project' );
-				var index = self.projects.indexOf( self.projects.get( project_id ) );
+			setTimeout( function() 
+			{
+				self.viewModel.studioLoading( true );
 				
-				if ( index == -1 ) { index = 0; }
-				setTimeout( function() {
+				self.loadProjects().done( function() 
+				{
+					self.viewModel.studioLoading( false );
+					var project_id = localStorage.getItem( 'mwp-studio-current-project' );
+					var index = self.projects.indexOf( self.projects.get( project_id ) );
+					
+					if ( index == -1 ) { index = 0; }
 					self.viewModel.currentProject( self.viewModel.projects()[index] );
-				}, 1000 );
-			});
+				});
+			}, 1500 );
 			
 			/**
 			 * Lazy load project resources only after it becomes active
@@ -206,7 +213,7 @@
 			$.when.apply( this, checkups ).done( function() 
 			{
 				$.ajax({ url: self.local.cron_url });
-				$.ajax({ url: self.local.ajaxurl, data: { action: 'mwp_studio_statuscheck' } }).done( function( status ) 
+				$.ajax({ url: self.local.ajaxurl, data: { action: 'mwp_studio_statuscheck' }, method: 'post' }).done( function( status ) 
 				{
 					if ( status.statustext ) {
 						self.viewModel.statustext( status.statustext );
@@ -231,7 +238,7 @@
 			process_polling = true;
 			
 			var self = this;
-			var timeout = 1500;
+			var timeout = 2500;
 			
 			/**
 			 * Poll the backend for an update on this process
@@ -243,6 +250,7 @@
 			var poll = function() 
 			{
 				$.ajax({
+					method: 'post',
 					url: self.local.ajaxurl,
 					data: { action: 'mwp_studio_process_status', process: process }
 				}).done( function( status ) 
@@ -255,7 +263,7 @@
 					}
 					else
 					{
-						timeout = 1500;
+						timeout = 2500;
 						self.viewModel.processStatus( status );
 					}
 					

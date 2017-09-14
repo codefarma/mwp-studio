@@ -420,23 +420,72 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Add the wordpress code analyzer skips
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_analyzer_skips", args=2 )
+	 * @Wordpress\Filter( for="mwp_studio_analyzer_skip", args=2 )
 	 *
-	 * @param	array			$skips			Array of existing skips
-	 * @param	string			$dirpath		Directory being analyzed
+	 * @param	bool			$skip				Whether to skip or not
+	 * @param	string			$relative_path		File to be analyzed
 	 * @return	array
 	 */
-	public function pluginAnalyzerFileSkips( $skips, $dirpath )
+	public function pluginAnalyzerFileSkips( $skip, $relative_path )
 	{
-		$skips = array_merge( $skips, array( '.git', '.svn' ) );
-		
-		if ( is_file( $dirpath . '/data/plugin-meta.php' ) ) {
-			$skips = array_merge( $skips, array( 'vendor', 'data', 'tests', 'framework', 'boilerplate', 'annotations' ) );
+		// short circuit if its already been decided
+		if ( $skip ) {
+			return $skip;
 		}
 		
-		return $skips;
+		$plugins_relative = str_replace( ABSPATH, '', WP_PLUGIN_DIR );
+		
+		// Is it in a plugin
+		if ( substr( $relative_path, 0, strlen( $plugins_relative ) ) === $plugins_relative ) 
+		{
+			// Is it a mwp plugin?
+			$parts = explode( '/', ltrim( str_replace( $plugins_relative, '', $relative_path ), '/' ) );
+			
+			if ( count( $parts ) > 1 )
+			{
+				// Is the plugin subdir a composer directory
+				if ( $parts[1] == 'vendor' ) {
+					return true;
+				}
+				
+				// Is it a mwp plugin
+				if ( is_file( rtrim( WP_PLUGIN_DIR, '/' ) . '/' . $parts[0] . '/data/plugin-meta.php' ) ) 
+				{
+					if ( in_array( $parts[1], array( 'data', 'builds', 'tests', 'framework', 'boilerplate', 'annotations' ) ) ) {
+						return true;
+					}
+				}
+			}
+		}
+
+		return $skip;
 	}
 	
+	/**
+	 * Add the wordpress code analyzer skips
+	 *
+	 * @Wordpress\Filter( for="mwp_studio_analyzer_update_file", args=2 )
+	 *
+	 * @param	bool			$update				Whether file needs update or not
+	 * @param	string			$relative_path		Relative path to the file
+	 * @return	array
+	 */
+	public function pluginAnalyzerFileNeedsUpdate( $update, $relative_path )
+	{
+		// short circuit if its already been decided
+		if ( $update ) {
+			return $update;
+		}
+		
+		$db = \Modern\Wordpress\Framework::instance()->db();
+		
+		if ( ! $db->get_var( $db->prepare( "SELECT COUNT(*) FROM {$db->base_prefix}studio_file_catalog WHERE file_file=%s AND file_last_analyzed >= %d", $relative_path, filemtime( rtrim( ABSPATH, '/' ) . '/' . $relative_path ) ) ) ) {
+			return true;
+		}
+		
+		return $update;
+	}
+
 	/**
 	 * Scan code index and delete records for missing files
 	 *
@@ -570,46 +619,50 @@ class Plugin extends \Modern\Wordpress\Plugin
 		{
 			if ( ! $task->getData( 'initialized' ) )
 			{
-				$skips = array_merge( array( '.', '..' ), apply_filters( 'mwp_studio_analyzer_skips', array(), $fullpath ) );
-				$files = array();
-				$force = $task->getData( 'force' );
+				$db      = \Modern\Wordpress\Framework::instance()->db();				
+				$force   = $task->getData( 'force' );
+				$recurse = $task->getData( 'recurse' );
 				
 				$task->log( 'Analyze files in: ' . $fullpath );
 				
 				$monitor = $this->getActiveMonitor( 'catalog' );
 				$monitor->setStatus( 'Scanning' );
 				
-				foreach( scandir( $fullpath ) as $file ) 
+				if ( $recurse ) 
 				{
-					if ( in_array( $file, $skips ) ) {
-						$task->log( 'Skipping: ' . $fullpath . '/' . $file );
-						continue;
-					}
-					
-					if ( is_dir( $fullpath . '/' . $file ) )
+					$directory = new \RecursiveDirectoryIterator( $fullpath );
+					$iterator  = new \RecursiveIteratorIterator( $directory );
+				}
+				else
+				{
+					$directory = new \DirectoryIterator( $fullpath );
+					$iterator  = new \IteratorIterator( $directory );					
+				}
+				
+				$_files = new \RegexIterator( $iterator, '/(.*?)\.php$/i', \RegexIterator::GET_MATCH );
+				$files = array();
+				
+				foreach( $_files as $file ) 
+				{
+					if ( $recurse ) 
 					{
-						if ( $task->getData( 'recurse' ) ) {
-							Task::queueTask(
-								array( 'action' => 'mwp_studio_catalog_directory' ),
-								array( 'fullpath' => $fullpath . '/' . $file, 'recurse' => true )
-							);
-							$task->log( 'Added task to catalog sub-directory: ' . $file );
-						}
+						$relative_path = str_replace( rtrim( ABSPATH, '/' ), '', $file[0] );
+						$relative_path = ltrim( str_replace( '\\', '/', $relative_path ), '/' );
 					}
 					else
 					{
-						$parts = explode( '.', $file );
-						$ext = array_pop( $parts );
-						if ( $ext == 'php' ) {
-							if ( ! $force ) {				
-								// only add new or changed files 
-								$_file = \MWP\Studio\Models\File::loadByPath( ltrim( str_replace( rtrim( ABSPATH, '/' ), '', $fullpath ) . '/' . $file, '/' ) );
-								if ( $_file and $_file->last_analyzed >= filemtime( ABSPATH . $_file->file ) ) {
-									continue;
-								}
-							}
-							$files[] = $fullpath . '/' . $file;
-						}
+						$relative_path = str_replace( rtrim( ABSPATH, '/' ), '', $fullpath . '/' . $file[0] );
+						$relative_path = ltrim( str_replace( '\\', '/', $relative_path ), '/' );						
+					}
+					
+					$_fullpath = $recurse ? rtrim( ABSPATH, '/' ) . '/' . $relative_path : $fullpath . '/' . $file[0];
+					
+					if ( apply_filters( 'mwp_studio_analyzer_skip', false, $relative_path ) ) {
+						continue;
+					}
+					
+					if ( $force or apply_filters( 'mwp_studio_analyzer_update_file', false, $relative_path ) ) {
+						$files[] = $_fullpath;
 					}
 				}
 				
@@ -618,7 +671,6 @@ class Plugin extends \Modern\Wordpress\Plugin
 					return $task->complete();
 				}
 				
-				$db      = \Modern\Wordpress\Framework::instance()->db();
 				$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
 				$monitor->setData( 'files_count', $data['files_count'] + count( $files ) );
 				$monitor->setData( 'files_left', $data['files_left'] + count( $files ) );
@@ -628,6 +680,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 				$task->setData( 'initialized', true );
 				$task->priority = 4;
 				$task->next_start = time() + 10;
+				$task->log( 'Rescheduling' );
 			}
 		}
 		else

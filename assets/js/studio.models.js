@@ -5,7 +5,7 @@
  *
  * @package    Wordpress Plugin Studio
  * @author     Kevin Carwile
- * @since      {build_version}
+ * @since      0.0.0
  */
 
 /**
@@ -534,6 +534,7 @@
 		{
 			var self = this;
 			return $.ajax({
+				method: 'post',
 				url: studio.local.ajaxurl,
 				data: { action: 'mwp_studio_sync_catalog', path: self.get('path') }
 			});
@@ -712,6 +713,7 @@
 			else
 			{
 				$.ajax({
+					method: 'post',
 					url: studio.local.ajaxurl,
 					data: {
 						action: 'mwp_studio_load_file',
@@ -741,6 +743,7 @@
 			var deferredFile = $.Deferred();
 			
 			$.ajax({
+				method: 'post',
 				url: studio.local.ajaxurl,
 				data: {
 					action: 'mwp_studio_get_function',
