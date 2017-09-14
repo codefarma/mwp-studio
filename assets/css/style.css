@@ -75,7 +75,7 @@ body.folded #wpcontent, body.folded #wpfooter {
 }
 
 .mwp-studio .ui-layout-resizer {
-	/*z-index: 0 !important;*/
+	z-index: 0 !important;
 }
 
 /* Activity Indicator */

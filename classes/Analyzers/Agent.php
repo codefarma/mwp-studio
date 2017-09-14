@@ -6,7 +6,7 @@
  *
  * @package:  Wordpress Plugin Studio
  * @author:   Kevin Carwile
- * @since:    {build_version}
+ * @since:    0.0.0
  */
 namespace MWP\Studio\Analyzers;
 

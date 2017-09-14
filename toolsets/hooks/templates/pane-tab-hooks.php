@@ -6,7 +6,7 @@
  *
  * @package  Wordpress Plugin Studio
  * @author   Kevin Carwile
- * @since    {build_version}
+ * @since    0.0.0
  *
  * Here is an example of how to get the contents of this template while 
  * providing the values of the $title and $content variables:

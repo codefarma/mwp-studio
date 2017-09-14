@@ -4,7 +4,7 @@
  *
  * @package  Wordpress Plugin Studio
  * @author   Kevin Carwile
- * @since    {build_version}
+ * @since    0.0.0
  */
 
 if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) or ! WP_UNINSTALL_PLUGIN ) {
