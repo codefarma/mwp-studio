@@ -68,8 +68,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="panel panel-default tabbed-panel file-editors-panel" data-bind="
 		style: {
 			background: (function(){
+				var studio = mwp.controller.get('mwp-studio');
+				var logo = studioLoading() ? studio.local.studio_logo : studio.local.studio_animated_logo;
 				if ( openFiles().length == 0 ) {
-					return 'url(\'' + mwp.controller.get('mwp-studio').local.studio_logo + '\') center center no-repeat';
+					return 'url(\'' + studio.local.studio_animated_logo + '\') center center no-repeat';
 				}
 			})()
 		},
@@ -79,9 +81,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		}, 
 		foreach: openFiles,
 		studioActivity: { 
-			active: studioLoading(),
-			valign: 'top',
-			padding: 45
+			active: false
 		}
 		">
 		<div data-bind="attr: { id: id() }" role="tabpanel" class="tab-pane">

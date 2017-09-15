@@ -154,21 +154,6 @@
 					title: 'Open Project',
 					icon: 'fa fa-folder-open',
 					subitems: this.getProjectsMenu()
-				},
-				{
-					type: 'action',
-					title: 'Update Code Index',
-					icon: 'fa fa-database',
-					callback: function() {
-						$.ajax({
-							url: studio.local.ajaxurl,
-							data: { action: 'mwp_studio_sync_catalog', path: 'all' }
-						}).done( function( response ) {
-							if ( response.success ) {
-								bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
-							}
-						});
-					}
 				}]
 			},
 			{
@@ -245,7 +230,20 @@
 				icon: 'fa fa-cogs',
 				subitems: [
 				{
-				
+					type: 'action',
+					title: 'Update Code Index',
+					icon: 'fa fa-database',
+					callback: function() {
+						$.ajax({
+							url: studio.local.ajaxurl,
+							data: { action: 'mwp_studio_sync_catalog', path: 'all' }
+						}).done( function( response ) {
+							if ( response.success ) {
+								studio.updateStatus();
+								bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
+							}
+						});
+					}
 				}]
 			},
 			{

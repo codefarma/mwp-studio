@@ -86,7 +86,7 @@
 			 */
 			this.viewModel = 
 			{
-				studioLoading:  ko.observable(false),
+				studioLoading:  ko.observable(true),
 				studioLayout:   ko.observable(),
 				projects:       kb.collectionObservable( this.projects ),
 				currentProject: ko.observable(),
@@ -133,18 +133,15 @@
 			 */
 			setTimeout( function() 
 			{
-				self.viewModel.studioLoading( true );
-				
 				self.loadProjects().done( function() 
 				{
-					self.viewModel.studioLoading( false );
 					var project_id = localStorage.getItem( 'mwp-studio-current-project' );
 					var index = self.projects.indexOf( self.projects.get( project_id ) );
 					
 					if ( index == -1 ) { index = 0; }
 					self.viewModel.currentProject( self.viewModel.projects()[index] );
 				});
-			}, 1500 );
+			}, 1250 );
 			
 			/**
 			 * Lazy load project resources only after it becomes active
@@ -155,7 +152,9 @@
 				var project = projectView.model();
 				
 				if ( ! project.fileTree.initialized ) {
-					project.fetchFileTree();
+					$.when( project.fetchFileTree() ).done( function() {
+						self.viewModel.studioLoading( false );
+					});
 				}
 				
 				// Remember last active project
@@ -213,18 +212,30 @@
 			$.when.apply( this, checkups ).done( function() 
 			{
 				$.ajax({ url: self.local.cron_url });
-				$.ajax({ url: self.local.ajaxurl, data: { action: 'mwp_studio_statuscheck' }, method: 'post' }).done( function( status ) 
-				{
-					if ( status.statustext ) {
-						self.viewModel.statustext( status.statustext );
-					}
-					
-					if ( status.processing && ! process_polling ) {
-						self.startProcessPolling( status.processing );
-					}
-				});
+				self.updateStatus();
 				setTimeout( function() { self.heartbeat(); }, self.local.heartbeat_interval );
 			});
+		},
+		
+		/**
+		 * Check and update statusbar
+		 *
+		 * @return	$.Deferred
+		 */
+		updateStatus: function()
+		{
+			var self = this;
+			
+			return $.ajax({ url: self.local.ajaxurl, data: { action: 'mwp_studio_statuscheck' }, method: 'post' }).done( function( status ) 
+			{
+				if ( status.statustext ) {
+					self.viewModel.statustext( status.statustext );
+				}
+				
+				if ( status.processing && ! process_polling ) {
+					self.startProcessPolling( status.processing );
+				}
+			});		
 		},
 		
 		/**

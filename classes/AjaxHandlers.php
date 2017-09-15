@@ -471,8 +471,8 @@ class AjaxHandlers extends Singleton
 					
 				case 'Scheduled':
 					$response['mode'] = 'waiting';
-					$response['icon'] = 'fa fa-calendar';
-					$response['status'] = 'Scheduled code indexing will begin shortly.';
+					$response['icon'] = 'fa fa-hourglass-half';
+					$response['status'] = 'Code indexing will begin shortly.';
 					break;					
 			}
 		}
