@@ -17,6 +17,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 use Modern\Wordpress\Task;
 use MWP\Studio\Models;
 use MWP\Studio\Analyzers\Agent;
+use MWP\Studio\Models\Function_;
+use MWP\Studio\Models\Class_;
+use MWP\Studio\Models\File;
 
 /**
  * Plugin Class
@@ -199,9 +202,10 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->studioModels );
 			$this->useScript( $this->studioInterfaces );
 			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
-				'cron_url' => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
-				'studio_logo' => $this->fileUrl( 'assets/img/studio-animated-logo.gif' ) . '?' . rand( 0, 1000000 ), // http://www.christiantailor.co.uk/
-				'heartbeat_interval' => 20000,
+				'cron_url'             => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
+				'studio_logo'          => $this->fileUrl( 'assets/img/studio.png' ),
+				'studio_animated_logo' => $this->fileUrl( 'assets/img/studio-animated-logo-alt.gif' ) . '?' . rand( 0, 1000000 ), // http://www.christiantailor.co.uk/
+				'heartbeat_interval'   => 20000,
 				'templates' => array
 				(
 					'menus' => array(
@@ -497,7 +501,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public function removeMissingFileRecords( $task )
 	{
 		$last_file_id = $task->getData( 'last_file_id' ) ?: 0;
-		$files = \MWP\Studio\Models\File::loadWhere( array( 'file_id > %d', $last_file_id ), 'file_id ASC', 100 );
+		$files = File::loadWhere( array( 'file_id > %d', $last_file_id ), 'file_id ASC', 100 );
 		
 		if ( empty( $files ) ) {
 			return $task->complete();
@@ -507,14 +511,15 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		foreach( $files as $file ) 
 		{
-			if ( ! file_exists( ABSPATH . '/' . $file->file ) ) {
-				\MWP\Studio\Models\Function_::deleteWhere( array( 'function_file=%s', $file->file ) );
-				\MWP\Studio\Models\Class_::deleteWhere( array( 'class_file=%s', $file->file ) );
+			if ( ! file_exists( ABSPATH . '/' . $file->file ) ) 
+			{
+				Function_::deleteWhere( array( 'function_file=%s', $file->file ) );
+				Class_::deleteWhere( array( 'class_file=%s', $file->file ) );
 				do_action( 'mwp_studio_missing_file', $file );
 				$task->log( "File removed from code index: {$file->file}" );
 				$file->delete();
 			}
-			$c++;
+			$c++; // irony
 			$last_file_id = $file->id;
 		}
 		
@@ -530,6 +535,13 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function syncCodeIndex( $force=FALSE )
 	{
+		// Only one indexing operation at a time
+		if ( $monitor = $this->getActiveMonitor( 'catalog', false ) ) {
+			if ( $monitor->getData( 'fullIndex' ) ) {
+				return;
+			}
+		}
+		
 		/**
 		 * Wordpress core
 		 */
@@ -571,6 +583,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		);		
 		
 		$monitor = $this->getActiveMonitor( 'catalog' );
+		$monitor->setData( 'fullIndex', true );
 		$monitor->setStatus( 'Scheduled' );
 	}
 	
@@ -590,7 +603,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		}
 		
 		if ( $create ) {
-			return Task::queueTask( array( 'action' => 'mwp_studio_' . $type . '_monitor', 'tag' => 'mwp_studio_monitor' ), array() );
+			return Task::queueTask( array( 'action' => 'mwp_studio_' . $type . '_monitor', 'tag' => 'mwp_studio_monitor', 'priority' => 6 ), array() );
 		}
 		
 		return null;
@@ -716,6 +729,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		$agent->analyzeFile( $file );
 		$agent->saveAnalysis();
+		$agent->resetAnalysis();
 		
 		$db      = \Modern\Wordpress\Framework::instance()->db();
 		$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
