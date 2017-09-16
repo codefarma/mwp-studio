@@ -178,6 +178,7 @@
 					icon: 'fa fa-cog',
 					callback: function() {
 						var container = studio.createWindow({
+							id: 'editor-settings',
 							title: 'Editor Settings',
 							bodyContent: 'Editor settings go here...',
 							footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Close</button><button type="button" class="btn btn-primary">Save</button>',

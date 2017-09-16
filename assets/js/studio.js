@@ -195,11 +195,24 @@
 		 */
 		createWindow: function( options )
 		{
+			var _window;
+			
+			if ( options.id ) {
+				_window = this.windowManager.findWindowByID( options.id );
+				if ( _window ) {
+					_window.restore();
+					this.windowManager.setFocused( _window );
+					return _window;
+				}
+			}
+			
 			options = $.extend( true, { 
 				maximizable: false, 
 				minimizable: true, 
 				resizable: {}, 
-				draggable: {} 
+				draggable: {
+					handle: '.window-header'
+				} 
 			}, options );
 			
 		    var _window = this.windowManager.createWindow( options );
