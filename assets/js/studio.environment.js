@@ -37,7 +37,7 @@
 		initialize: function()
 		{
 			var self = this;
-
+			
 			/**
 			 * Studio menu items
 			 */
@@ -170,6 +170,18 @@
 						layout.close('west');
 						layout.close('east');
 						$(layout.panes.center[0]).layout().close('south');
+					}
+				},
+				{
+					type: 'action',
+					title: 'Settings',
+					icon: 'fa fa-cog',
+					callback: function() {
+						var container = studio.createWindow({
+							title: 'Editor Settings',
+							bodyContent: 'Editor settings go here...',
+							footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Close</button><button type="button" class="btn btn-primary">Save</button>'
+						});
 					}
 				}]
 			},
@@ -347,7 +359,6 @@
 				}
 			}];
 		}
-
 	}));
 
 	// Add Generic Environment

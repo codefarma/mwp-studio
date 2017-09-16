@@ -80,4 +80,5 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="ui-layout-west outer-west overflow-hidden">
 		<?php echo $this->getTemplateContent( 'views/components/west-pane' ) ?>
 	</div>
+	<div class="window-labels" data-role="window-labels"></div>
 </div>

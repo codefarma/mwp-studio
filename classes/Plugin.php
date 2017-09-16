@@ -122,6 +122,18 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public $bootstrapTreeviewJS = 'assets/js/lib/bootstrap-treeview.min.js';
 	
 	/**
+	 * Bootstrap Window JS
+	 * @Wordpress\Script(deps={"mwp-bootstrap","jquery-ui-draggable","jquery-ui-resizable"})
+	 */
+	public $bootstrapWindowJS = 'assets/js/lib/bootstrap-window.min.js';
+	
+	/**
+	 * Bootstrap Window CSS
+	 * @Wordpress\Stylesheet(deps={"mwp-bootstrap"})
+	 */
+	public $bootstrapWindowCSS = 'assets/css/bootstrap-window.css';	
+	
+	/**
 	 * Bootstrap Context Menu JS
 	 * @Wordpress\Script(deps={"mwp-bootstrap"})
 	 * @see: https://github.com/dgoguerra/bootstrap-menu
@@ -191,6 +203,10 @@ class Plugin extends \Modern\Wordpress\Plugin
 			// Bootbox (Modal Dialogs)
 			$this->useScript( $this->bootboxJS );
 			
+			// Bootstrap Window
+			$this->useScript( $this->bootstrapWindowJS );
+			$this->useStyle( $this->bootstrapWindowCSS );
+			
 			// Font Awesome
 			$this->useStyle( $this->fontawesome );
 			
@@ -216,6 +232,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'dropdown'          => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
 					),
 					'dialogs' => array(
+					    'window-template'   => $this->getTemplateContent( 'dialogs/window-template' ),
 						'create-plugin'     => $this->getTemplateContent( 'dialogs/create-plugin' ),
 						'create-class'      => $this->getTemplateContent( 'dialogs/create-class' ),
 						'create-javascript' => $this->getTemplateContent( 'dialogs/create-javascript' ),

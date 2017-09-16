@@ -126,6 +126,14 @@
 			});
 			
 			/**
+			 * @var WindowManager
+			 */
+			this.windowManager = new WindowManager({
+				container: $('[data-role="window-labels"]').eq(0),
+				windowTemplate: this.local.templates.dialogs['window-template']
+			});
+
+			/**
 			 * Load projects
 			 *
 			 * - Select last active project after initial load -or-
@@ -159,7 +167,7 @@
 				
 				// Remember last active project
 				localStorage.setItem( 'mwp-studio-current-project', project.get('id') );
-			});	
+			});
 
 			// Start our ticker
 			this.heartbeat();
@@ -177,6 +185,31 @@
 			}
 			
 			return this.environments.get('generic');
+		},
+		
+		/**
+		 * Create a new studio dialog window
+		 * 
+		 * @param   object      options             Window options
+		 * @return  Window
+		 */
+		createWindow: function( options )
+		{
+			options = $.extend( { maximizable: true, minimizable: true, resizable: true, draggable: true }, options );
+			
+		    var _window = this.windowManager.createWindow( options );
+			var element = $( _window.$el ).data( 'window', _window );
+			
+			if ( options.resizable !== false ) {
+				element.resizable();
+			}
+			
+			if ( options.draggable !== false ) {
+				element.draggable();
+			}
+			
+			
+			return element;
 		},
 		
 		/**
@@ -633,9 +666,12 @@
 	/**
 	 * Fit the studio to the window when page is loaded
 	 */
-	$(document).ready( function() {
-		$(window).resize( function() {
-			$('#mwp-studio-container').css({height: $(window).height() - 32});
+	$(document).ready( function() 
+	{
+		var _window = $(window);
+		var container = $('#mwp-studio-container');
+		_window.resize( function() {
+			container.css({ height: _window.height() - 32, width: _window.width() - container.offset().left });
 		}).resize();
 		
 		setTimeout( function() { $(window).resize(); }, 200 );
