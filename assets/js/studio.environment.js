@@ -180,7 +180,9 @@
 						var container = studio.createWindow({
 							title: 'Editor Settings',
 							bodyContent: 'Editor settings go here...',
-							footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Close</button><button type="button" class="btn btn-primary">Save</button>'
+							footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Close</button><button type="button" class="btn btn-primary">Save</button>',
+							minimizable: true,
+							maximizable: true
 						});
 					}
 				}]

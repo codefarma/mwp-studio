@@ -19,16 +19,15 @@
 	z-index: 898 !important;
 }
 
+body {
+	overflow: hidden;
+}
+
 body.folded #wpcontent, body.folded #wpfooter {
 	margin-left: 16px;
 }
 
-/* Layouts */
-#mwp-studio-container {
-	position: fixed;
-	z-index: 0;
-}
-
+/* Bootstrap Window */
 .window {
 	position: absolute !important;
 }
@@ -41,6 +40,38 @@ body.folded #wpcontent, body.folded #wpfooter {
 	visibility: hidden !important;
 }
 
+.window.maximized [data-minimize="window"] {
+	display: none;
+}
+
+.window .window-footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+}
+
+.window [data-minimize="window"] {
+	float: right;
+	line-height: 25px;
+	padding-right: 0;
+}
+
+.window [data-minimize="window"] i {
+	opacity: 0.2;
+	line-height: 21px;
+}
+
+.window [data-dismiss="window"], 
+.window [data-maximize="window"],
+.window [data-minimize="window"], 
+.window [data-restore="window"] {
+	color: #000;
+	cursor: pointer;
+	background: 0 0;
+	border: 0;
+	-webkit-appearance: none;
+	font-size: 12px;
+}
 .window-pane .label .close {
 	color: #fff;
 	opacity: 0.8;
@@ -51,6 +82,12 @@ body.folded #wpcontent, body.folded #wpfooter {
 	position: absolute;
 	bottom: 10px;
 	left: 20px;
+}
+
+/* Layouts */
+#mwp-studio-container {
+	position: fixed;
+	z-index: 0;
 }
 
 .mwp-studio .ui-layout-pane-north { 

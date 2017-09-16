@@ -195,21 +195,36 @@
 		 */
 		createWindow: function( options )
 		{
-			options = $.extend( { maximizable: true, minimizable: true, resizable: true, draggable: true }, options );
+			options = $.extend( true, { 
+				maximizable: false, 
+				minimizable: true, 
+				resizable: {}, 
+				draggable: {} 
+			}, options );
 			
 		    var _window = this.windowManager.createWindow( options );
 			var element = $( _window.$el ).data( 'window', _window );
 			
-			if ( options.resizable !== false ) {
-				element.resizable();
+			if ( options.minimizable ) {
+				_window.on( 'bsw.minimize', function() { 
+					_window.$windowTab.removeClass('label-primary');
+					_window.$windowTab.addClass('label-default');
+				});
 			}
 			
-			if ( options.draggable !== false ) {
-				element.draggable();
+			if ( options.resizable ) {
+				element.resizable( $.extend( true, { minWidth: element.outerWidth(), minHeight: element.outerHeight() }, options.resizable ) );
+				_window.on( 'bsw.maximize', function() { element.resizable( 'disable' ); });
+				_window.on( 'bsw.restore', function() { element.resizable( 'enable' ); });
 			}
 			
+			if ( options.draggable ) {
+				element.draggable( options.draggable );
+				_window.on( 'bsw.maximize', function() { element.draggable( 'disable' ); });
+				_window.on( 'bsw.restore', function() { element.draggable( 'enable' ); });
+			}
 			
-			return element;
+			return _window;
 		},
 		
 		/**
