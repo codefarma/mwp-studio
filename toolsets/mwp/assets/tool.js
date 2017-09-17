@@ -22,6 +22,7 @@
 	mwp.on( 'mwp-studio.ready', function(c){ studio = c; } );
 	
 	var GenericEnvironment = mwp.model.get( 'mwp-studio-generic-environment' );
+	var FileTree = mwp.model.get( 'mwp-studio-filetree' );
 	
 	/**
 	 * Modern Wordpress Environment

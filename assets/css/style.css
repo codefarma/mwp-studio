@@ -50,10 +50,13 @@ body.folded #wpcontent, body.folded #wpfooter {
 	width: 100%;
 }
 
+.window [data-maximize="window"] {
+	padding-left: 0;
+}
+
 .window [data-minimize="window"] {
 	float: right;
 	line-height: 25px;
-	padding-right: 0;
 }
 
 .window [data-minimize="window"] i {

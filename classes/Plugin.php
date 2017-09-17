@@ -233,11 +233,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 					),
 					'dialogs' => array(
 					    'window-template'   => $this->getTemplateContent( 'dialogs/window-template' ),
-						'create-plugin'     => $this->getTemplateContent( 'dialogs/create-plugin' ),
-						'create-class'      => $this->getTemplateContent( 'dialogs/create-class' ),
-						'create-javascript' => $this->getTemplateContent( 'dialogs/create-javascript' ),
-						'create-stylesheet' => $this->getTemplateContent( 'dialogs/create-stylesheet' ),
-						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
+						'create-project'    => $this->getTemplateContent( 'dialogs/create-project' ),
 						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
 					),
 					'panetabs' => array(

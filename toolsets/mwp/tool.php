@@ -94,6 +94,11 @@ class MWPSupport extends Tool
 	 */
 	public function addStudioParams( $params )
 	{
+		$params['templates']['dialogs']['create-class']      = $this->getToolTemplate( 'dialogs/create-class' );
+		$params['templates']['dialogs']['create-javascript'] = $this->getToolTemplate( 'dialogs/create-javascript' );
+		$params['templates']['dialogs']['create-stylesheet'] = $this->getToolTemplate( 'dialogs/create-stylesheet' );
+		$params['templates']['dialogs']['create-template']   = $this->getToolTemplate( 'dialogs/create-template' );
+		
 		return $params;
 	}
 	

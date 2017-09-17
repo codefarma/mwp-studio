@@ -143,7 +143,7 @@
 					title: 'New Project',
 					icon: 'fa fa-plus-circle',
 					callback: function() {
-					
+						studio.openWindow( 'create-project', function() { return studio.newProjectWindow(); } );
 					}
 				},
 				{
@@ -177,7 +177,7 @@
 					title: 'Settings',
 					icon: 'fa fa-cog',
 					callback: function() {
-						studio.openWindow( 'editor-settings', studio.getEditorSettingsWindow() );
+						studio.openWindow( 'editor-settings', function() { return studio.editorSettingsWindow(); } );
 					}
 				}]
 			},

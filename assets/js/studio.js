@@ -188,7 +188,7 @@
 		},
 		
 		/**
-		 * Create a new studio dialog window
+		 * Open a studio ui window
 		 * 
 		 * @param	string|null		id					Window id
 		 * @param   object|funcion 	options             Window options or function to get options
@@ -208,6 +208,20 @@
 				}
 			}
 			
+			return this.createWindow( id, options );
+		},
+		
+		/**
+		 * Create a new studio ui window
+		 * 
+		 * @param	string|null		id					Window id
+		 * @param   object|funcion 	options             Window options or function to get options
+		 * @return  Window
+		 */
+		createWindow: function( id, options )
+		{
+			var _window;
+			
 			// Optionally use callback to get the window options
 			if ( typeof options === 'function' ) {
 				options = options();
@@ -217,7 +231,7 @@
 			options = $.extend( true, {
 				viewModel: {},
 				bodyContent: '',
-				footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>',
+				footerContent: '<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>',
 				maximizable: false, 
 				minimizable: true, 
 				resizable: {}, 
@@ -225,8 +239,9 @@
 				submit: function() {}
 			}, options, { id: id || undefined } );
 			
+			options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
+			
 			if ( options.viewModel ) {
-				options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
 				ko.applyBindings( options.viewModel, options.bodyContent[0] );
 			}
 			
@@ -252,15 +267,22 @@
 				_window.on( 'bsw.restore', function() { element.draggable( 'enable' ); });
 			}
 			
+			if ( options.dimensions ) {
+				_window.resize( options.dimensions );
+				if ( ! ( options.dimensions.left || options.dimensions.top ) ) {
+					_window.centerWindow();
+				}
+			}
+			
 			return _window;
 		},
 		
 		/**
-		 * Get the editor settings dialog
+		 * Get the editor settings window configuration
 		 *
 		 * @return	object
 		 */
-		getEditorSettingsWindow: function()
+		editorSettingsWindow: function()
 		{
 			var self = this;
 			
@@ -281,11 +303,72 @@
 						file.model().updateEditorOptions();
 					});
 				},
-				minimizable: false,
-				maximizable: false
+				dimensions: { width: 500 }
 			};
 		},
 		
+		/**
+		 * Get the editor settings window configuration
+		 *
+		 * @return	object
+		 */
+		newProjectWindow: function()
+		{
+			var self = this;
+			
+			return {
+				title: 'Create A New Project',
+				bodyContent: this.local.templates.dialogs['create-project'],
+				footerContent: '<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Create</button>',
+				viewModel: {
+					name:        ko.observable( name || '' ),
+					description: ko.observable( '' ),
+					author:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-author' ) || '' ),
+					authorurl:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-authorurl' ) || '' ),
+					pluginurl:   ko.observable( '' ),
+					slug:        ko.observable( '' ),
+				},
+				submit: function( _window ) 
+				{
+					var viewModel = _window.options.viewModel;
+					if ( ! viewModel.name() ) { return false; }
+					
+					localStorage.setItem( 'mwp-studio-vendor-author', viewModel.author() || '' );
+					localStorage.setItem( 'mwp-studio-vendor-authorurl', viewModel.authorurl() || '' );
+					
+					var project_opts = {
+						name:        viewModel.name(),
+						description: viewModel.description(),
+						author:      viewModel.author(),
+						author_url:  viewModel.authorurl(),
+						plugin_url:  viewModel.pluginurl(),
+						slug:        viewModel.slug()
+					};
+					
+					return self.createProject( project_opts ); 
+				},
+				dimensions: { width: 500 }
+			};
+		},
+		
+		/**
+		 * Create a new project
+		 * 
+		 * @param	object			options			Plugin options
+		 * @return	$.Deferred
+		 */
+		createProject: function( options )
+		{
+			return $.ajax({
+				url: studio.local.ajaxurl,
+				method: 'post',
+				data: {
+					action: 'mwp_studio_create_project',
+					options: options
+				}
+			});
+		},
+
 		/**
 		 * Proxy ajax requests for abstract functionality implementation
 		 *
