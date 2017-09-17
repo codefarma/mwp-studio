@@ -235,6 +235,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 					    'window-template'   => $this->getTemplateContent( 'dialogs/window-template' ),
 						'create-project'    => $this->getTemplateContent( 'dialogs/create-project' ),
 						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
+						'about'             => $this->getTemplateContent( 'dialogs/about' ),
 					),
 					'panetabs' => array(
 						'project-info'      => $this->getTemplateContent( 'views/components/panetabs/project-info' ),

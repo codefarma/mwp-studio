@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 <li data-bind="attr: { class: classes() + ' dropdown-submenu' }">
-  <a tabindex="-1" href="#">
+  <a tabindex="-1" href="#" data-bind="click: function(){ if ( typeof callback !== 'undefined' ) { callback()(); } }">
     <i data-bind="if: icon(), attr: { class: icon() }"></i> 
 	<span data-bind="text: title"></span>
   </a>
