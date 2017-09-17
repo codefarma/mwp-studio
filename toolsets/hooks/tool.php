@@ -389,49 +389,6 @@ class HookInspectorAnalyzer extends AbstractAnalyzer
 				}
 			}
         }
-		
-		/**
-		 * Modern Wordpress Hooks & Filters
-		 */
-		if ( $node instanceof Node\Stmt\ClassMethod	) 
-		{
-			if ( $docBlock = $node->getDocComment() ) 
-			{
-				if ( preg_match_all( '/@Wordpress\\\(Action|Filter)\((.*)for="(.+)"(.*)\)/sU', $docBlock->getText(), $matches ) ) 
-				{
-					foreach( $matches[0] as $i => $match ) 
-					{
-						$hook_priority = 10;
-						$hook_args = 1;
-						
-						if ( preg_match( '/priority=(\d+)/', $match, $m ) ) {
-							$hook_priority = $m[1];
-						}
-						
-						if ( preg_match( '/args=(\d+)/', $match, $m ) ) {
-							$hook_args = $m[1];
-						}
-						
-						$this->analysis['hooks'][] = array_merge
-						(
-							$this->getTraverser()->getCurrentFileInfo(),
-							array(
-								'type' => 'add_' . strtolower($matches[1][$i]),
-								'name' => $matches[3][$i],
-								'callback_name' => $node->name,
-								'callback_class' => $this->getTraverser()->getCurrentClassname(),
-								'callback_type' => 'method',
-								'line' => $docBlock->getLine(),
-								'data' => array( 'register_type' => 'annotation', 'annotation' => $match ),
-								'args' => $hook_args,
-								'priority' => $hook_priority,
-								'catalog_time' => time(),
-							)
-						);
-					}
-				}
-			}
-		}
 	}
 }
 

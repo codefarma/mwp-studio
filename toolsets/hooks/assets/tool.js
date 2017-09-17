@@ -211,23 +211,6 @@
 	{
 		switch( type ) 
 		{
-			case 'comments':
-			
-				rules.$rules.start.push({
-					token: "comment.doc",
-					regex : "(Action|Filter)[\\s]*\\([\\s]*for=['\"]",
-					next: "mwp_hook"
-				});
-				
-				rules.addRules({
-					"mwp_hook" : [
-						{token : "wp_hook_name", regex : /[^'"]+/},
-						{token : "comment.doc", regex : "['\"]", next : "start"},
-						{defaultToken : "comment.doc"}		
-					]
-				});
-				break;
-				
 			case 'php':
 				
 				rules.$rules.start.splice( 1, 0, {
