@@ -190,15 +190,17 @@
 		/**
 		 * Create a new studio dialog window
 		 * 
-		 * @param   object      options             Window options
+		 * @param	string|null		id					Window id
+		 * @param   object|funcion 	options             Window options or function to get options
 		 * @return  Window
 		 */
-		createWindow: function( options )
+		openWindow: function( id, options )
 		{
 			var _window;
 			
-			if ( options.id ) {
-				_window = this.windowManager.findWindowByID( options.id );
+			// Look for existing window by this id
+			if ( id ) {
+				_window = this.windowManager.findWindowByID( id );
 				if ( _window ) {
 					_window.restore();
 					this.windowManager.setFocused( _window );
@@ -206,14 +208,27 @@
 				}
 			}
 			
-			options = $.extend( true, { 
+			// Optionally use callback to get the window options
+			if ( typeof options === 'function' ) {
+				options = options();
+			}
+			
+			// Provide some default options
+			options = $.extend( true, {
+				viewModel: {},
+				bodyContent: '',
+				footerContent: '<button type="button" class="btn btn-default" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>',
 				maximizable: false, 
 				minimizable: true, 
 				resizable: {}, 
-				draggable: {
-					handle: '.window-header'
-				} 
-			}, options );
+				draggable: { handle: '.window-header' },
+				submit: function() {}
+			}, options, { id: id || undefined } );
+			
+			if ( options.viewModel ) {
+				options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
+				ko.applyBindings( options.viewModel, options.bodyContent[0] );
+			}
 			
 		    var _window = this.windowManager.createWindow( options );
 			var element = $( _window.$el ).data( 'window', _window );
@@ -238,6 +253,37 @@
 			}
 			
 			return _window;
+		},
+		
+		/**
+		 * Get the editor settings dialog
+		 *
+		 * @return	object
+		 */
+		getEditorSettingsWindow: function()
+		{
+			var self = this;
+			
+			return {
+				title: 'Editor Settings',
+				bodyContent: this.local.templates.dialogs['editor-settings'],
+				viewModel: {
+					tabsType: ko.observable( localStorage.getItem( 'mwp-studio-editor-tabs-type' ) || 'tab' ),
+					tabsSize: ko.observable( localStorage.getItem( 'mwp-studio-editor-tabs-size' ) || 4 ),
+					lineWrap: ko.observable( localStorage.getItem( 'mwp-studio-editor-line-wrap' ) == 'true' )
+				},
+				submit: function( _window ) {
+					var viewModel = _window.options.viewModel;
+					localStorage.setItem( 'mwp-studio-editor-tabs-type', viewModel.tabsType() );
+					localStorage.setItem( 'mwp-studio-editor-tabs-size', viewModel.tabsSize() );
+					localStorage.setItem( 'mwp-studio-editor-line-wrap', viewModel.lineWrap() );
+					_.each( self.viewModel.openFiles(), function( file ) {
+						file.model().updateEditorOptions();
+					});
+				},
+				minimizable: false,
+				maximizable: false
+			};
 		},
 		
 		/**
@@ -420,8 +466,6 @@
 					var file = fileview.model();
 					var editor = ace.edit(element);
 					
-					editor.setShowPrintMargin(false);
-					
 					if ( file.get('mode') ) {
 						editor.getSession().setMode( 'ace/mode/' + file.get('mode') );
 					}
@@ -436,6 +480,7 @@
 							file.conflicted( false );
 							file.edited( false );
 							file.editor = editor;
+							file.updateEditorOptions();
 							file.editorReady.resolve( editor, options );
 						}
 					});

@@ -77,7 +77,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			<?php echo $this->getTemplateContent( 'views/components/statusbar' ) ?>
 		</div>
 	</div>
-	<div class="ui-layout-west outer-west overflow-hidden">
+	<div class="ui-layout-west outer-west overflow-visible">
 		<?php echo $this->getTemplateContent( 'views/components/west-pane' ) ?>
 	</div>
 	<div class="window-labels" data-role="window-labels"></div>

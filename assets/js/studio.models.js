@@ -526,6 +526,26 @@
 		},
 		
 		/**
+		 * Refresh the editor options with user preferences
+		 *
+		 * @return	void
+		 */
+		updateEditorOptions: function()
+		{
+			if ( ! this.editor ) {
+				return;
+			}
+			
+			this.editor.setShowPrintMargin(false);
+			this.editor.session.setOptions({
+				useSoftTabs: localStorage.getItem( 'mwp-studio-editor-tabs-type' ) === 'space',
+				tabSize: localStorage.getItem( 'mwp-studio-editor-tabs-size' ) || 4,
+				wrap: localStorage.getItem( 'mwp-studio-editor-line-wrap' ) == 'true'
+			});
+
+		},
+		
+		/**
 		 * Reindex file or directory
 		 *
 		 * @return	$.Deferred

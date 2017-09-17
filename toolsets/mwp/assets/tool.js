@@ -206,7 +206,7 @@
 				namespace:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-namespace' ) || '' )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-plugin'] ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-plugin'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Plugin', dialogContent, viewModel, function() 
 			{ 
@@ -249,7 +249,7 @@
 				classname: ko.observable( namespace )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-class'] ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-class'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Class', dialogContent, viewModel, function() { 
 				if ( ! viewModel.classname() ) { return false; }
@@ -274,7 +274,7 @@
 				filepath: ko.observable( filepath )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-template'] ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-template'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Template', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filepath() ) { return false; }
@@ -299,7 +299,7 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-stylesheet'] ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-stylesheet'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Stylesheet File', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }
@@ -324,7 +324,7 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-javascript'] ).wrap( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['create-javascript'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Javascript Module', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }

@@ -148,8 +148,16 @@ body.folded #wpcontent, body.folded #wpfooter {
 	overflow: hidden !important;
 }
 
+.mwp-studio .overflow-visible {
+	overflow: visible !important;
+}
+
 .mwp-studio .ui-layout-resizer {
-	z-index: 0 !important;
+	z-index: -1 !important;
+}
+
+.mwp-studio .ui-layout-resizer.ui-layout-resizer-dragging {
+	z-index: 2 !important;
 }
 
 /* Activity Indicator */
