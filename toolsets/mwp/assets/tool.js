@@ -23,6 +23,28 @@
 	
 	var GenericEnvironment = mwp.model.get( 'mwp-studio-generic-environment' );
 	var FileTree = mwp.model.get( 'mwp-studio-filetree' );
+	var FileTreeNode = mwp.model.get( 'mwp-studio-filetree-node' );
+	var Studio = mwp.controller.model.get( 'mwp-studio' );
+	
+	/**
+	 * Studio Augmentation
+	 */
+	Studio.override(
+	{
+		/**
+		 * Get the editor settings window configuration
+		 *
+		 * @param	function		parent				The parent method
+		 * @return	object
+		 */
+		newProjectWindow: function( parent )
+		{
+			var config = parent();
+			config.viewModel.pluginFrameworks.push({ name: 'Modern Wordpress (MWP)', value: 'mwp' });
+			return config;
+		}
+		
+	});
 	
 	/**
 	 * Modern Wordpress Environment

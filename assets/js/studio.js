@@ -316,38 +316,81 @@
 		{
 			var self = this;
 			
+			var parentThemes = _.map( _.filter( this.projects.models, 
+				function( project ) {
+					return project.get('type') == 'theme' && project.get('template') == '';
+				}), 
+				function( theme ) {
+					return { name: theme.get('name'), value: theme.get('key') };
+				}
+			);
+			
 			return {
-				title: 'Create A New Project',
+				title: '<i class="fa fa-coffee"></i> Create A New Project',
 				bodyContent: this.local.templates.dialogs['create-project'],
 				footerContent: '<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Create</button>',
 				viewModel: {
-					name:        ko.observable( name || '' ),
-					description: ko.observable( '' ),
-					author:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-author' ) || '' ),
-					authorurl:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-authorurl' ) || '' ),
-					pluginurl:   ko.observable( '' ),
-					slug:        ko.observable( '' ),
+					projectTypes:     ko.observableArray( [{ name: 'Plugin', value: 'plugin' }, { name: 'Theme', value: 'theme' }, { name: 'Child Theme', value: 'child-theme' }] ),
+					projectType:      ko.observable( 'plugin' ),
+					pluginFrameworks: ko.observableArray( [{ name: 'None', value: 'none' }] ),
+					pluginFramework:  ko.observable( 'none' ),
+					themeFrameworks:  ko.observableArray( [{ name: 'None', value: 'none' }] ),
+					themeFramework:   ko.observable( 'none' ),
+					parentThemes:     ko.observableArray( parentThemes ),
+					parentTheme:      ko.observable( parentThemes[0].value ),
+					name:             ko.observable( name || '' ),
+					description:      ko.observable( '' ),
+					author:           ko.observable( localStorage.getItem( 'mwp-studio-vendor-author' ) || '' ),
+					authorurl:        ko.observable( localStorage.getItem( 'mwp-studio-vendor-authorurl' ) || '' ),
+					projecturl:       ko.observable( '' ),
+					slug:             ko.observable( '' ),
+				},
+				getSubmitParams: function( _window )
+				{
+					var viewModel = _window.options.viewModel;
+					
+					return {
+						type:            viewModel.projectType(),
+						pluginFramework: viewModel.pluginFramework(),
+						themeFramework:  viewModel.themeFramework(),
+						parentTheme:     viewModel.parentTheme(),
+						name:            viewModel.name(),
+						description:     viewModel.description(),
+						author:          viewModel.author(),
+						author_url:      viewModel.authorurl(),
+						project_url:     viewModel.projecturl(),
+						slug:            viewModel.slug()
+					};
 				},
 				submit: function( _window ) 
 				{
 					var viewModel = _window.options.viewModel;
-					if ( ! viewModel.name() ) { return false; }
+					
+					// validation
+					if ( ! viewModel.name() ) { 
+						return false; 
+					}
 					
 					localStorage.setItem( 'mwp-studio-vendor-author', viewModel.author() || '' );
 					localStorage.setItem( 'mwp-studio-vendor-authorurl', viewModel.authorurl() || '' );
 					
-					var project_opts = {
-						name:        viewModel.name(),
-						description: viewModel.description(),
-						author:      viewModel.author(),
-						author_url:  viewModel.authorurl(),
-						plugin_url:  viewModel.pluginurl(),
-						slug:        viewModel.slug()
-					};
-					
-					return self.createProject( project_opts ); 
+					self.createProject( _window.options.getSubmitParams( _window ) ); 
 				},
-				dimensions: { width: 500 }
+				dimensions: { width: 600 }
+			};
+		},
+		
+		/**
+		 * About the studio window
+		 *
+		 * @return	object
+		 */
+		aboutWindow: function()
+		{
+			return {
+				title: 'About MWP Studio',
+				bodyContent: this.local.templates.dialogs['about'],
+				footerContent: '<button type="button" class="btn btn-primary" data-dismiss="window">Ok</button>'
 			};
 		},
 		
@@ -359,8 +402,7 @@
 		 */
 		createProject: function( options )
 		{
-			return $.ajax({
-				url: studio.local.ajaxurl,
+			return this.ajax({
 				method: 'post',
 				data: {
 					action: 'mwp_studio_create_project',
