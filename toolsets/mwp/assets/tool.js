@@ -206,54 +206,6 @@
 			
 			return actions;
 		},
-		
-		/**
-		 * Create a new plugin
-		 *
-		 * @param	object		node		The plugin to add the class to
-		 * @param	string		name		Optional suggested plugin name
-		 * @return	$.Deferred
-		 */
-		createPluginDialog: function( name )
-		{
-			var self = this;
-			
-			var viewModel = {
-				name:        ko.observable( name || '' ),
-				description: ko.observable( '' ),
-				vendor:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-name' ) || '' ),
-				author:      ko.observable( localStorage.getItem( 'mwp-studio-vendor-author' ) || '' ),
-				authorurl:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-authorurl' ) || '' ),
-				pluginurl:   ko.observable( '' ),
-				slug:        ko.observable( '' ),
-				namespace:   ko.observable( localStorage.getItem( 'mwp-studio-vendor-namespace' ) || '' )
-			};
-			
-			var dialogContent = $( studio.local.templates.dialogs['create-plugin'] ).wrapAll( '<div>' ).parent();
-			
-			return this.createDialog( 'Plugin', dialogContent, viewModel, function() 
-			{ 
-				if ( ! viewModel.name() ) { return false; }
-				
-				localStorage.setItem( 'mwp-studio-vendor-name', viewModel.vendor() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-author', viewModel.author() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-authorurl', viewModel.authorurl() || '' );
-				localStorage.setItem( 'mwp-studio-vendor-namespace', viewModel.namespace().split('\\')[0] || '' );
-				
-				var plugin_opts = {
-					name:        viewModel.name(),
-					description: viewModel.description(),
-					vendor:      viewModel.vendor(),
-					author:      viewModel.author(),
-					author_url:  viewModel.authorurl(),
-					plugin_url:  viewModel.pluginurl(),
-					slug:        viewModel.slug(),
-					namespace:   viewModel.namespace()
-				};
-				
-				return self.createPlugin( plugin_opts ); 
-			}, { size: 500 });
-		},
 
 		/**
 		 * Add a new php class
@@ -465,24 +417,6 @@
 			return dialogInteraction.promise();		
 		},
 		
-		/**
-		 * Create a new php class
-		 * 
-		 * @param	object			options			Plugin options
-		 * @return	$.Deferred
-		 */
-		createPlugin: function( options )
-		{
-			return $.ajax({
-				url: studio.local.ajaxurl,
-				method: 'post',
-				data: {
-					action: 'mwp_studio_create_plugin',
-					options: options
-				}
-			});
-		},
-	
 		/**
 		 * Create a new php class
 		 * 
