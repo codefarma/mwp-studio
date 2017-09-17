@@ -157,7 +157,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	public function wp_init()
 	{
 		foreach( scandir( $this->pluginFile( 'toolsets' ) ) as $toolset ) {
-			if ( is_dir( $this->pluginFile( 'toolsets/' . $toolset ) ) ) {
+			if ( substr( $toolset, 0, 1 ) !== '_' and is_dir( $this->pluginFile( 'toolsets/' . $toolset ) ) ) {
 				if ( is_file( $this->pluginFile( "toolsets/{$toolset}/tool.php" ) ) ) {
 					include_once $this->pluginFile( "toolsets/{$toolset}/tool.php" ); 
 				}
@@ -238,6 +238,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-javascript' => $this->getTemplateContent( 'dialogs/create-javascript' ),
 						'create-stylesheet' => $this->getTemplateContent( 'dialogs/create-stylesheet' ),
 						'create-template'   => $this->getTemplateContent( 'dialogs/create-template' ),
+						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
 					),
 					'panetabs' => array(
 						'project-info'      => $this->getTemplateContent( 'views/components/panetabs/project-info' ),
@@ -291,18 +292,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$composite_data[ strtolower( $key ) ] = $value;		
 		}
 		
-		if ( file_exists( ABSPATH . $basedir  . '/data/plugin-meta.php' ) )
-		{
-			$plugin_data = json_decode( include( ABSPATH . $basedir  . '/data/plugin-meta.php' ), true );
-			if ( is_array( $plugin_data ) ) {
-				$composite_data[ 'environment' ] = 'mwp';
-				$composite_data = array_merge( $plugin_data, $composite_data );
-			}
-		}
-		
 		$composite_data[ 'id' ] = md5( $basedir );
 		
-		return apply_filters( 'mwp_studio_plugin_info', $composite_data );
+		return apply_filters( 'mwp_studio_plugin_info', $composite_data, $file, $core_data, $basedir );
 	}
 	
 	/**
