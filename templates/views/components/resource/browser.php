@@ -25,7 +25,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <div class="breadcrumb" data-view-model="mwp-studio" data-bind="with: currentProject()" style="min-height: 50px">
 	<div class="btn-group btn-flex">
-	  <button type="button" style="border-right: 0; max-width: calc(100% - 30px); overflow: hidden;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="fa fa-sitemap"></i> &nbsp;&nbsp;<span data-bind="text: name"></span></button>
+	  <button type="button" style="border-right: 0; max-width: calc(100% - 30px); overflow: hidden;" class="btn btn-default" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+		<i class="fa" data-bind="css: { 'fa-plug': type() == 'plugin', 'fa-paint-brush': type() == 'theme' }"></i> &nbsp;&nbsp;<span data-bind="text: name"></span>
+	  </button>
 	  <ul class="dropdown-menu pull-left" data-bind="bootstrapMenu: $root.env().projectsMenu"></ul>
 	  <div class="btn-group">
 		  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

@@ -111,15 +111,34 @@
 			menu.push({	type: 'divider'	});
 			menu.push({	type: 'header',	title: 'Themes', icon: 'fa fa-paint-brush' });
 			
-			_.each( themes, function( theme ) {
-				menu.push({
-					type: 'action',
+			_.each( themes, function( theme ) 
+			{
+				if ( theme.template() ) {
+					return;
+				}
+				
+				var child_themes = _.map( _.filter( themes, function( _theme ) { return _theme.template() == theme.key(); } ), function( _theme ) {
+					return {
+						type: 'action',
+						title: _theme.name(),
+						icon: 'fa fa-angle-right',
+						callback: function() {
+							_theme.model().switchTo();
+						}
+					};
+				});
+				
+				var item = {
+					type: child_themes.length ? 'submenu' : 'action',
 					title: theme.name(),
-					icon: 'fa fa-angle-right',
+					icon: child_themes.length ? 'fa fa-angle-double-right' : 'fa fa-angle-right',
+					subitems: child_themes,
 					callback: function() {
 						theme.model().switchTo();
-					}					
-				});
+					}
+				};
+				
+				menu.push( item );
 			});
 		
 			return menu;
@@ -260,7 +279,12 @@
 				icon: 'fa fa-question-circle',
 				subitems: [
 				{
-				
+					type: 'action',
+					title: 'About',
+					icon: 'fa fa-info-circle',
+					callback: function() {
+						studio.openWindow( 'about', function() { return studio.aboutWindow(); } );
+					}
 				}]
 			}];
 		},
