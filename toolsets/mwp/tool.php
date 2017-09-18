@@ -98,6 +98,7 @@ class MWPSupport extends Tool
 		$params['templates']['dialogs']['create-javascript'] = $this->getToolTemplate( 'dialogs/create-javascript' );
 		$params['templates']['dialogs']['create-stylesheet'] = $this->getToolTemplate( 'dialogs/create-stylesheet' );
 		$params['templates']['dialogs']['create-template']   = $this->getToolTemplate( 'dialogs/create-template' );
+		$params['templates']['extras']['mwp']['create-project-vendor']  = $this->getToolTemplate( 'extras/create-project-vendor' );
 		
 		return $params;
 	}
@@ -139,6 +140,26 @@ class MWPSupport extends Tool
 		}
 		
 		return $info;
+	}
+	
+	/**
+	 * Create a new project
+	 *
+	 * @Wordpress\Filter( for="mwp_studio_create_project", args=2 )
+	 *
+	 * @param	array|null			$project 				Project Details
+	 * @param	array				$options				Creation options
+	 * @return	array
+	 */
+	public function createProject( $project, $options )
+	{
+		if ( $options['type'] == 'plugin' and $options['pluginFramework'] == 'mwp' ) 
+		{
+			$class_file = Framework::instance()->createPlugin( $options );
+			$project = Plugin::instance()->getPluginInfo( WP_PLUGIN_DIR . '/' . $options['slug'] . '/plugin.php' );
+		}
+	
+		return $project;
 	}
 }
 

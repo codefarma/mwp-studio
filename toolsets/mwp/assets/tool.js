@@ -39,8 +39,63 @@
 		 */
 		newProjectWindow: function( parent )
 		{
+			// get the base config
 			var config = parent();
+			
+			// Add modern wordpress as a plugin framework option
 			config.viewModel.pluginFrameworks.push({ name: 'Modern Wordpress (MWP)', value: 'mwp' });
+			
+			// Add some observables to the view model
+			_.extend( config.viewModel, {
+				vendor: ko.observable( localStorage.getItem( 'mwp-studio-project-vendor' ) || '' ),
+				namespace: ko.observable( '' )
+			});
+			
+			// Auto update the namespace observable for convenience
+			ko.computed( function() {
+				var vendor_name = config.viewModel.vendor();
+				var project_name = config.viewModel.name();
+				
+				var vendorParts = vendor_name.toString().split(' ').splice(0,2);
+				var vendorNS = _.map( vendorParts, function( part ) {
+					return part.toString().toLowerCase()
+						.replace(/\s+/g, '')
+						.replace(/[^\w]+/g, '')
+						.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+				}).join('') || 'ModernWordpress';
+				
+				var projectParts = project_name.toString().split(' ').splice(0,2);
+				var projectNS = _.map( projectParts, function( part ) {
+					return part.toString().toLowerCase()
+						.replace(/\s+/g, '')
+						.replace(/[^\w]+/g, '')
+						.replace(/(?:^|\s)\S/g, function(a) { return a.toUpperCase(); });
+				}).join('');
+				
+				if ( ! config.viewModel.namespace.custom ) {
+					config.viewModel.namespace( vendorNS + '\\' + projectNS );
+				}
+			});
+			
+			// Add in our custom html to the config form
+			$( studio.local.templates.extras.mwp['create-project-vendor'] ).insertAfter( config.bodyContent.find('.row.project-name') );
+			
+			// Decorate the submitted data to the backend
+			var getSubmitParams = config.getSubmitParams;			
+			config.getSubmitParams = function( _window ) {
+				var params = getSubmitParams( _window );
+				params.vendor = _window.options.viewModel.vendor();
+				params.namespace = _window.options.viewModel.namespace();
+				return params;
+			};
+			
+			// Decorate the submission handler to persist the vendor name
+			var submitFn = config.submit;
+			config.submit = function( _window ) {
+				localStorage.setItem( 'mwp-studio-project-vendor', _window.options.viewModel.vendor() );				
+				return submitFn( _window );
+			};
+			
 			return config;
 		}
 		

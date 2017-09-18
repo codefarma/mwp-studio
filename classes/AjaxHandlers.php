@@ -248,22 +248,25 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new php class
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_create_plugin", for={"users"} )
+	 * @Wordpress\AjaxHandler( action="mwp_studio_create_project", for={"users"} )
 	 *
 	 * @return	void
 	 */
-	public function createPlugin()
+	public function createProject()
 	{
 		$this->authorize();
 		
-		$framework = \Modern\Wordpress\Framework::instance();
-		$studio = \MWP\Studio\Plugin::instance();
 		$options = wp_unslash( $_REQUEST['options'] );
 		
 		try 
 		{
-			$class_file = $framework->createPlugin( $options );
-			wp_send_json( array( 'success' => true, 'plugin' => $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $options['slug'] . '/plugin.php' ) ) );
+			$project = apply_filters( 'mwp_studio_create_project', null, $options );
+			
+			if ( ! empty( $project ) ) {
+				wp_send_json( array( 'success' => true, 'project' => $project ) );
+			}
+			
+			wp_send_json( array( 'success' => false, 'message' => 'No creation engine available for the provided options.' ) );
 		}
 		catch( \Exception $e )
 		{

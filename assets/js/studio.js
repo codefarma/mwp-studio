@@ -29,6 +29,17 @@
 		$(window).resize();
 	});
 
+	// Bootbox center dialogs
+	$('body').on( 'shown.bs.modal', '.modal', function() {
+		var box = $(this);
+		box.css({
+			'top': '50%',
+			'margin-top': function () {
+				return -(box.height() / 2);
+			}
+		});
+	});	
+	
 	var CollectorModel    = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel  = mwp.model.get( 'mwp-studio-collectible' );
 	var FileTree          = mwp.model.get( 'mwp-studio-filetree' );
@@ -188,6 +199,28 @@
 		},
 		
 		/**
+		 * Open a bootbox dialog
+		 *
+		 * @param	string			type			Dialog type
+		 * @param	object			options			Dialog options
+		 * @return	bootbox
+		 */
+		openDialog: function( type, options )
+		{
+			var create = bootbox[ type ];
+			var box = create( options );
+			
+			box.css({
+				'top': '50%',
+				'margin-top': function () {
+					return -(box.height() / 2);
+				}
+			});
+			
+			return box;
+		},
+		
+		/**
 		 * Open a studio ui window
 		 * 
 		 * @param	string|null		id					Window id
@@ -230,21 +263,40 @@
 			// Provide some default options
 			options = $.extend( true, {
 				viewModel: {},
-				bodyContent: '',
-				footerContent: '<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>',
+				bodyContent: $(''),
+				footerContent: $('<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>'),
 				maximizable: false, 
 				minimizable: true, 
 				resizable: {}, 
 				draggable: { handle: '.window-header' },
-				submit: function() {}
+				submit: function() { return true; }
 			}, options, { id: id || undefined } );
 			
 			options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
 			
+			// apply the view model to the body content
 			if ( options.viewModel ) {
 				ko.applyBindings( options.viewModel, options.bodyContent[0] );
 			}
 			
+			// provide a processing indicator
+			var submitFn = options.submit;
+			options.submit = function( _window ) {
+				var submitResult = submitFn( _window );
+				var submitButton = _window.getElement().find('[data-submit="window"]');
+				
+				submitButton.attr('disabled', true);
+				submitButton.prepend( '<i class="fa fa-refresh fa-spin" style="margin-right: 5px"></i>' );
+				$.when( submitResult ).done( function() {
+					submitButton.find('i.fa-refresh').remove();
+					submitButton.removeAttr('disabled');
+				});
+				return submitResult;
+			}
+			
+			/**
+			 * Create the window and apply options
+			 */
 		    var _window = this.windowManager.createWindow( options );
 			var element = $( _window.$el ).data( 'window', _window );
 			
@@ -327,8 +379,8 @@
 			
 			return {
 				title: '<i class="fa fa-coffee"></i> Create A New Project',
-				bodyContent: this.local.templates.dialogs['create-project'],
-				footerContent: '<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Create</button>',
+				bodyContent: $(this.local.templates.dialogs['create-project']),
+				footerContent: $('<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Create</button>'),
 				viewModel: {
 					projectTypes:     ko.observableArray( [{ name: 'Plugin', value: 'plugin' }, { name: 'Theme', value: 'theme' }, { name: 'Child Theme', value: 'child-theme' }] ),
 					projectType:      ko.observable( 'plugin' ),
@@ -368,15 +420,31 @@
 					
 					// validation
 					if ( ! viewModel.name() ) { 
+						self.openDialog( 'alert', { title: '<i class="fa fa-exclamation-triangle" style="color:red"></i> More Information Needed', message: 'You must enter a name for this project.' } );
 						return false; 
 					}
 					
 					localStorage.setItem( 'mwp-studio-vendor-author', viewModel.author() || '' );
 					localStorage.setItem( 'mwp-studio-vendor-authorurl', viewModel.authorurl() || '' );
 					
-					self.createProject( _window.options.getSubmitParams( _window ) ); 
+					var deferredSubmit = $.Deferred();
+					
+					self.createProject( _window.options.getSubmitParams( _window ) ).done( function( response ) 
+					{
+						if ( response.success ) {
+							deferredSubmit.resolve(true);
+							var project = new Project( response.project );
+							self.projects.add( project );
+							project.switchTo();
+						} else {
+							deferredSubmit.resolve(false);
+							self.openDialog( 'alert', { title: '<i class="fa fa-exclamation-triangle" style="color:red"></i> Processing Error', message: response.message || 'The project could not be created.' } );
+						}
+					});
+					
+					return deferredSubmit;
 				},
-				dimensions: { width: 600 }
+				dimensions: { width: $(window).width() > 750 ? 750 : $(window).width() * .90 }
 			};
 		},
 		
