@@ -92,14 +92,12 @@ class AjaxHandlers extends Singleton
 		foreach( get_plugins() as $file => $data )
 		{			
 			$project = $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $file );
-			$project['type'] = 'plugin';
 			$projects[] = $project;
 		}
 		
 		foreach( wp_get_themes() as $theme_key => $theme )
 		{			
 			$project = $studio->getThemeInfo( $theme );
-			$project['type'] = 'theme';
 			$projects[] = $project;
 		}
 		
@@ -266,7 +264,7 @@ class AjaxHandlers extends Singleton
 				wp_send_json( array( 'success' => true, 'project' => $project ) );
 			}
 			
-			wp_send_json( array( 'success' => false, 'message' => 'No creation engine available for the provided options.' ) );
+			wp_send_json( array( 'success' => false, 'message' => 'No creation engine available for the chosen project.' ) );
 		}
 		catch( \Exception $e )
 		{

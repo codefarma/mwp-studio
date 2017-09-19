@@ -284,6 +284,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$composite_data[ 'pluginfile' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
 		$composite_data[ 'environment' ] = 'generic';
+		$composite_data[ 'type' ] = 'plugin';
 		
 		foreach( $core_data as $key => $value )	{
 			$composite_data[ strtolower( $key ) ] = $value;		
@@ -304,6 +305,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	{
 		$theme_info = array();
 		
+		$theme_info['type']        = 'theme';
 		$theme_info['key']         = $theme->get_stylesheet();
 		$theme_info['name']        = $theme->get('Name');
 		$theme_info['uri']         = $theme->get('ThemeURI');
@@ -829,6 +831,132 @@ class Plugin extends \Modern\Wordpress\Plugin
 		return $created_models;
 	}
 	
+	/**
+	 * Create a new project
+	 *
+	 * @Wordpress\Filter( for="mwp_studio_create_project", args=2 )
+	 *
+	 * @param	array|null			$project 				Project Details
+	 * @param	array				$options				Creation options
+	 * @return	array
+	 */
+	public function createProject( $project, $options )
+	{
+		/**
+		 * Create Generic Plugin
+		 */
+		if ( $options['type'] == 'plugin' and $options['pluginFramework'] == 'none' ) 
+		{
+			$slug = sanitize_title( $options['slug'] );
+			
+			if ( $slug !== $options['slug'] ) {
+				throw new \InvalidArgumentException( "Invalid plugin slug. Try using '{$slug}'." );
+			}
+			
+			$new_plugin_dir = WP_PLUGIN_DIR . '/' . $slug;
+			
+			if ( is_dir( $new_plugin_dir ) ) {
+				throw new \InvalidArgumentException( "The plugin directory already exists. ({$new_plugin_dir})" );
+			}
+			
+			if ( ! mkdir( $new_plugin_dir ) ) {
+				throw new \ErrorException( "Unable to create the plugin directory. ({$new_plugin_dir})" );
+			}
+			
+			$pluginfile = $new_plugin_dir . '/' . $slug . '.php';
+			$fh = fopen( $pluginfile, 'w' );
+			fwrite( $fh, $this->createPluginHeader( $options ) );
+			fclose( $fh );
+			
+			$project = $this->getPluginInfo( $pluginfile );
+		}
+	
+		/**
+		 * Create New Theme Child
+		 */
+		if ( $options['type'] == 'child-theme' ) 
+		{
+			$parent_theme = wp_get_theme( $options['parentTheme'] );
+			
+			if ( ! $parent_theme->exists() or $parent_theme->parent() ) {
+				throw new \InvalidArgumentException( "Invalid parent theme selection." );
+			}
+			
+			$slug = sanitize_title( $options['slug'] );
+			
+			if ( $slug !== $options['slug'] ) {
+				throw new \InvalidArgumentException( "Invalid theme slug. Try using '{$slug}'." );
+			}
+			
+			$new_theme_dir = get_theme_root() . '/' . $slug;
+			
+			if ( is_dir( $new_theme_dir ) ) {
+				throw new \InvalidArgumentException( "The theme directory already exists. ({$new_theme_dir})" );
+			}
+			
+			if ( ! mkdir( $new_theme_dir ) ) {
+				throw new \ErrorException( "Unable to create the theme directory. ({$new_theme_dir})" );
+			}
+			
+			$themefile = $new_theme_dir . '/style.css';
+			$fh = fopen( $themefile, 'w' );
+			fwrite( $fh, $this->createThemeHeader( $options ) );
+			fclose( $fh );
+			
+			$project = $this->getThemeInfo( wp_get_theme( $slug ) );
+		}
+		
+		return $project;
+	}
+	
+	/**
+	 * Create a plugin header docblock
+	 *
+	 * @param	array		$options			Plugin info
+	 * @return	string
+	 */
+	public function createPluginHeader( $options )
+	{
+		$header_content = "<?php\n";
+		$header_content .= "/*\n";
+		$header_content .= "Plugin Name: {$options['name']}\n";
+		$header_content .= "Plugin URI: {$options['project_url']}\n";
+		$header_content .= "Description: {$options['description']}\n";
+		$header_content .= "Version: 0.0.0\n";
+		$header_content .= "Author: {$options['author']}\n";
+		$header_content .= "Author URI: {$options['author_url']}\n";
+		$header_content .= "Text Domain: {$options['slug']}\n";
+		$header_content .= "*/\n";
+		
+		return $header_content;
+	}
+	
+	/**
+	 * Create a theme header docblock
+	 *
+	 * @param	array		$options			Plugin info
+	 * @return	string
+	 */
+	public function createThemeHeader( $options )
+	{
+		$header_content = "/*\n";
+		$header_content .= "Theme Name: {$options['name']}\n";
+		
+		if ( $options['parentTheme'] ) {
+			$header_content .= "Template: {$options['parentTheme']}\n";
+		}
+
+		$header_content .= "Theme URI: {$options['project_url']}\n";
+		$header_content .= "Author: {$options['author']}\n";
+		$header_content .= "Author URI: {$options['author_url']}\n";
+		$header_content .= "Description: {$options['description']}\n";
+		$header_content .= "Version: 1.0\n";
+		$header_content .= "Text Domain: {$options['slug']}\n";
+		$header_content .= "*/\n";
+		
+		return $header_content;
+	}
+
 	/**
 	 * Output studio
 	 *
