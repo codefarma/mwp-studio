@@ -279,6 +279,8 @@
 				ko.applyBindings( options.viewModel, options.bodyContent[0] );
 			}
 			
+			options.bodyContent = $(options.bodyContent).children();
+			
 			// provide a processing indicator
 			var submitFn = options.submit;
 			options.submit = function( _window ) {
@@ -298,7 +300,11 @@
 			 * Create the window and apply options
 			 */
 		    var _window = this.windowManager.createWindow( options );
-			var element = $( _window.$el ).data( 'window', _window );
+			var element = $( _window.$el );
+			
+			if ( id ) {
+				element.attr( 'id', 'window-' + id );
+			}
 			
 			if ( options.minimizable ) {
 				_window.on( 'bsw.minimize', function() { 
@@ -308,9 +314,10 @@
 			}
 			
 			if ( options.resizable ) {
-				element.resizable( $.extend( true, { minWidth: element.outerWidth(), minHeight: element.outerHeight() }, options.resizable ) );
+				element.resizable( $.extend( true, { minWidth: element.outerWidth(), minHeight: element.outerHeight(), maxWidth: $(window).width(), maxHeight: $(window).height() }, options.resizable ) );
 				_window.on( 'bsw.maximize', function() { element.resizable( 'disable' ); });
 				_window.on( 'bsw.restore', function() { element.resizable( 'enable' ); });
+				element.on( 'resize', function() { _window.sizeBody(true); element.trigger( 'resized' ); });
 			}
 			
 			if ( options.draggable ) {
@@ -324,6 +331,10 @@
 				if ( ! ( options.dimensions.left || options.dimensions.top ) ) {
 					_window.centerWindow();
 				}
+			}
+			
+			if ( typeof options.init == 'function' ) {
+				options.init( _window );
 			}
 			
 			return _window;
@@ -445,6 +456,39 @@
 					return deferredSubmit;
 				},
 				dimensions: { width: $(window).width() > 750 ? 750 : $(window).width() * .90 }
+			};
+		},
+		
+		/**
+		 * Get a web browser window
+		 *
+		 * @param	string			url			Starting url
+		 * @return	object
+		 */
+		browserWindow: function( url )
+		{
+			return {
+				title: '<i class="fa fa-globe"></i> Web Browser',
+				bodyContent: $(this.local.templates.dialogs['web-browser']),
+				footerContent: $(''),
+				viewModel: {
+					url: ko.observable( url || studio.local.site_url ),
+					bodyHeight: ko.observable(0)
+				},
+				resizable: {
+					minHeight: 300,
+					minWidth: 400
+				},
+				maximizable: true,
+				dimensions: {
+					width: $(window).width() / 2,
+					height:$(window).height() / 2
+				},
+				init: function( _window ) {
+					var updateHeight = function() { _window.options.viewModel.bodyHeight( _window.options.elements.body.height() ); };
+					_window.getElement().on( 'resized', updateHeight ).trigger( 'resized' );
+					_window.on( 'bsw.maximize bsw.restore', function() { _window.sizeBody(true); updateHeight(); } );
+				}
 			};
 		},
 		

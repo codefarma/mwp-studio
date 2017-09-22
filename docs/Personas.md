@@ -45,6 +45,7 @@ everybody who programs with it is a demon with a keyboard.
 * Analyzing Code Performance Issues
 * Managing Compatibility Tradeoffs
 * Troubleshooting Intercompatibility Bugs
+* Auditing For Security Vulnerabilities
 
 Darian the Developer
 --------------------

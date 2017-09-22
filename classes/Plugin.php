@@ -218,6 +218,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$this->useScript( $this->studioModels );
 			$this->useScript( $this->studioInterfaces );
 			$this->useScript( $this->studioController, apply_filters( 'studio_controller_params', array( 
+				'site_url'             => get_site_url(),
 				'cron_url'             => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
 				'studio_logo'          => $this->fileUrl( 'assets/img/studio.png' ),
 				'studio_animated_logo' => $this->fileUrl( 'assets/img/studio-animated-logo-alt.gif' ) . '?' . rand( 0, 1000000 ), // http://www.christiantailor.co.uk/
@@ -236,6 +237,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'create-project'    => $this->getTemplateContent( 'dialogs/create-project' ),
 						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
 						'about'             => $this->getTemplateContent( 'dialogs/about' ),
+						'web-browser'       => $this->getTemplateContent( 'dialogs/web-browser' ),
 					),
 					'panetabs' => array(
 						'project-info'      => $this->getTemplateContent( 'views/components/panetabs/project-info' ),

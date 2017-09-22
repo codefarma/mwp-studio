@@ -258,6 +258,15 @@
 				subitems: [
 				{
 					type: 'action',
+					title: 'Web Browser',
+					icon: 'fa fa-globe',
+					callback: function()
+					{
+						studio.openWindow( 'web-browser', function() { return studio.browserWindow(); } );
+					}
+				},
+				{
+					type: 'action',
 					title: 'Update Code Index',
 					icon: 'fa fa-database',
 					callback: function() {
