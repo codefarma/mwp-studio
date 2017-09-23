@@ -72,7 +72,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<ul data-bind="foreach: hooks">
 								<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
 									<a href="#" 
-										class="label label-success"
+										class="label label-info"
 										data-bind="
 										attr: {
 											title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
@@ -114,7 +114,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 							<ul data-bind="foreach: hooks">
 								<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-									<span title="Priority" class="label label-warning" data-bind="text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', jquery:{tooltip:{trigger:'hover'}}"></span>
+									<span title="Priority" class="label label-warning" data-bind="
+										text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', 
+										jquery:{
+											tooltip:{
+												trigger:'hover'
+											}
+										}"></span>
 									<a href="#" 
 										class="label label-success"
 										data-bind="
@@ -191,7 +197,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<ul data-bind="foreach: hooks">
 								<li class="overflow-ellipsis" style="color: #999; line-height: 1.75em;">
 									<a href="#" 
-										class="label label-success"
+										class="label label-info"
 										data-bind="
 										attr: {
 											title: '<i class=\'fa fa-search-plus\'></i> Inspect code'
@@ -233,7 +239,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 							<h4 style="margin:0 0 5px" data-bind="html: '<span class=\'text-capitalize\'>' + location + '</span>'	+ ( slug ? ' / ' + slug : '')"></h4>
 							<ul data-bind="foreach: hooks">
 								<li class="overflow-ellipsis" style="color: #aaa; line-height: 1.75em;">
-									<span title="Priority" class="label label-warning" data-bind="text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', jquery:{tooltip:{trigger:'hover'}}"></span>
+									<span title="Priority" class="label label-warning" data-bind="
+										text: hook_priority !== null ? ( hook_priority.toString.length < 2 ? ('00'+hook_priority).slice(-2) : hook_priority ) : '??', 
+										jquery:{
+											tooltip:{
+												trigger:'hover'
+											}
+										}"></span>
 									<a href="#" 
 										class="label label-success"
 										data-bind="

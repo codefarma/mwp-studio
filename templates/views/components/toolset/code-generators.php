@@ -46,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</button>
 
 	<button class="btn btn-default">
-		<i class="fa fa-2x fa-square btn-icon"></i>
+		<i class="fa fa-2x fa-square-o btn-icon"></i>
 		<span class="btn-label">Meta Box</span>
 	</button>
 
@@ -56,8 +56,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	</button>
 
 	<button class="btn btn-default">
-		<i class="fa fa-2x fa-tags btn-icon"></i>
-		<span class="btn-label">Term Meta</span>
+		<i class="fa fa-2x fa-database btn-icon"></i>
+		<span class="btn-label">WP Query</span>
 	</button>
 	
 	<button class="btn btn-default">

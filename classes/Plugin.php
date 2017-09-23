@@ -263,7 +263,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			'panelBodyClass' =>'',
 			'panelCollapseClass' => 'in',
 			'panelTitle' => 'Code Creator',
-			'panelIcon' => 'fa fa-code',
+			'panelIcon' => 'fa fa-magic',
 			'panelContent' => $this->getTemplateContent( 'views/components/toolset/code-generators' ),
 		);
 		

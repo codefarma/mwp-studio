@@ -38,7 +38,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 		<tbody data-bind="foreach: model().<?php echo $hook_type ?>, fillPaneContainer: { pane: '.ui-layout-south', container: '.tab-pane' }">
 			<tr>
 				<td style="width: 100px">
-					<span data-bind="text: hook_type" style="padding-right:15px"></span>
+					<span class="label" data-bind="
+						text: hook_type, 
+						css: {
+							'label-info': hook_type == 'do_action' || hook_type == 'apply_filters',
+							'label-success': hook_type == 'add_action' || hook_type == 'add_filter'
+						}"></span>
 				</td>
 				<td class="overflow-ellipsis">
 					<a href="#" style="margin-right: 10px" data-bind="
