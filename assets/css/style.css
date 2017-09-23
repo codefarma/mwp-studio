@@ -436,6 +436,29 @@ body.folded #wpcontent, body.folded #wpfooter {
 	box-shadow: none;
 }
 
+/* Code Creator Toolset */
+#code-creator-toolbox-panel button {
+	width: 60px;
+	height: 60px;
+	position: relative;
+	padding: 0;
+	margin-bottom: 3px;
+}
+
+#code-creator-toolbox-panel button .btn-icon {
+	position: relative;
+	top: -5px;
+}
+
+#code-creator-toolbox-panel button .btn-label {
+	font-size: 9px;
+	display: block;
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	padding: 0 0 4px;
+}
+
 /*
  * jQuery UI Resizable 1.8.7
  *

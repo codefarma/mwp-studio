@@ -257,12 +257,12 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function getToolboxComponents( $components )
 	{
-		$components[ 'code-generator' ] = array(
+		$components[ 'code-creator' ] = array(
 			'panelClass' => '',
 			'panelHeadingClass' => '',
 			'panelBodyClass' =>'',
-			'panelCollapseClass' => '',
-			'panelTitle' => 'Code Generators',
+			'panelCollapseClass' => 'in',
+			'panelTitle' => 'Code Creator',
 			'panelIcon' => 'fa fa-code',
 			'panelContent' => $this->getTemplateContent( 'views/components/toolset/code-generators' ),
 		);

@@ -23,3 +23,67 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
+<div class="text-center">
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-bolt btn-icon"></i>
+		<span class="btn-label">Action Hook</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-filter btn-icon"></i>
+		<span class="btn-label">Data Filter</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-code btn-icon"></i>
+		<span class="btn-label">Shortcode</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-thumb-tack btn-icon"></i>
+		<span class="btn-label">Post Type</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-square btn-icon"></i>
+		<span class="btn-label">Meta Box</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-tag btn-icon"></i>
+		<span class="btn-label">Taxonomy</span>
+	</button>
+
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-tags btn-icon"></i>
+		<span class="btn-label">Term Meta</span>
+	</button>
+	
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-dashboard btn-icon"></i>
+		<span class="btn-label">Dash Widget</span>
+	</button>
+	
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-cogs btn-icon"></i>
+		<span class="btn-label">Settings</span>
+	</button>
+	
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-bars btn-icon"></i>
+		<span class="btn-label">Menu</span>
+	</button>
+	
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-columns btn-icon"></i>
+		<span class="btn-label">Sidebar</span>
+	</button>
+	
+	<button class="btn btn-default">
+		<i class="fa fa-2x fa-cube btn-icon"></i>
+		<span class="btn-label">Widget</span>
+	</button>
+	
+	
+</div>
