@@ -23,6 +23,40 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 ?>
 
-<div data-bind="style: { height: bodyHeight() + 'px' }">
-<iframe class="web-browser-iframe" data-bind="attr: { src: url }"></iframe>
+<div class="web-browser-container" data-bind="style: { height: bodyHeight() + 'px' }">
+	<div class="web-browser-bar">
+		<div class="input-group">
+			<div class="input-group-addon">
+				<i class="fa fa-globe"></i>
+			</div>
+			<input type="text" class="form-control" data-bind="value: url" />
+			<div class="input-group-addon">
+				<a href="#" class="btn btn-link btn-xs" data-bind="
+					click: function( viewModel, event ) {
+						var iframe = jQuery(event.target).closest('.web-browser-container').find('.web-browser iframe').eq(0)[0];
+						iframe.src = iframe.src;
+					}">
+					<i class="fa fa-refresh"></i>
+				</a>
+			</div>
+		</div>
+	</div>
+	<div class="web-browser">
+		<iframe data-bind="
+			init: function() {
+				var iframe = this;
+				url.subscribe( function( href ) {
+					if ( iframe.contentWindow.location.href != href ) {
+						iframe.src = href;
+					}
+				});
+				iframe.src = url();
+			},
+			event: { 
+				load: function( viewModel, event ) { 
+					viewModel.url( event.target.contentWindow.location.href ); 
+				} 
+			}">
+		</iframe>
+	</div>
 </div>

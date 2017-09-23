@@ -482,7 +482,7 @@
 				maximizable: true,
 				dimensions: {
 					width: $(window).width() / 2,
-					height:$(window).height() / 2
+					height:$(window).height() / 1.5
 				},
 				init: function( _window ) {
 					var updateHeight = function() { _window.options.viewModel.bodyHeight( _window.options.elements.body.height() ); };
@@ -812,6 +812,18 @@
 				$(element).closest(options.pane).on( 'resize', fitElement );
 				fitElement();
 			}		
+		},
+		
+		/**
+		 * Bind an arbitrary callback
+		 */
+		init: {
+			init: function( element, valueAccessor, allBindingsAccessor ) {
+				var callback = ko.utils.unwrapObservable( valueAccessor() );
+				if ( typeof callback == 'function' ) {
+					callback.call( element, allBindingsAccessor );
+				}
+			}
 		},
 		
 		/**
