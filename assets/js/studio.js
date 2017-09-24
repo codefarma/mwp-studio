@@ -341,6 +341,38 @@
 		},
 		
 		/**
+		 * Create a modal dialog
+		 *
+		 * @param	object|function		options			The modal dialog options or a function to retrieve them
+		 * @return	bootbox
+		 */
+		createModal: function( options )
+		{
+			// Optionally use callback to get the window options
+			if ( typeof options === 'function' ) {
+				options = options();
+			}
+			
+			// Provide some default options
+			options = $.extend( true, {
+				viewModel: {},
+				title: '',
+				message: ''
+			}, options );
+			
+			options.message = $(options.message).wrapAll('<div>').parent();
+			
+			// apply the view model to the body content
+			if ( options.viewModel ) {
+				ko.applyBindings( options.viewModel, options.message[0] );
+			}
+			
+			options.message = $(options.message).children();
+			
+			return bootbox.dialog( options );
+		},
+
+		/**
 		 * Get the editor settings window configuration
 		 *
 		 * @return	object

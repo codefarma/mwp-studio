@@ -156,34 +156,42 @@
 			{
 				type: 'dropdown',
 				title: 'Studio',
-				icon: 'fa fa-server',
-				subitems: [{
+				icon: 'fa fa-window-restore',
+				subitems: [
+				{
+					type: 'header',
+					title: 'Projects'
+				},
+				{
 					type: 'action',
-					title: 'New Project',
-					icon: 'fa fa-plus-circle',
+					title: 'Create New Project',
+					icon: 'fa fa-coffee',
 					callback: function() {
 						studio.openWindow( 'create-project', function() { return studio.newProjectWindow(); } );
 					}
 				},
 				{
-					type: 'divider',
-				},
-				{
 					type: 'submenu',
-					title: 'Open Project',
+					title: 'Open A Project',
 					icon: 'fa fa-folder-open',
 					subitems: this.getProjectsMenu()
 				}]
 			},
 			{
 				type: 'dropdown',
+				title: 'Project',
+				icon: project.get('type') == 'theme' ? 'fa fa-paint-brush' : 'fa fa-plug',
+				subitems: this.getProjectMenuItems( project ),
+			},
+			{
+				type: 'dropdown',
 				title: 'Editor',
-				icon: 'fa fa-keyboard-o',
+				icon: 'fa fa-code',
 				subitems: [
 				{
 					type: 'action',
 					title: 'Full Screen',
-					icon: 'fa fa-window-maximize',
+					icon: 'fa fa-arrows-alt',
 					callback: function() {
 						var layout = studio.viewModel.studioLayout();
 						layout.close('west');
@@ -208,7 +216,7 @@
 				{
 					type: 'action',
 					title: 'View Left Pane',
-					icon: 'fa fa-angle-double-left',
+					icon: 'fa fa-arrow-circle-left',
 					callback: function() {
 						var layout = studio.viewModel.studioLayout();
 						layout.open('west');
@@ -218,7 +226,7 @@
 				{
 					type: 'action',
 					title: 'View Right Pane',
-					icon: 'fa fa-angle-double-right',
+					icon: 'fa fa-arrow-circle-right',
 					callback: function() {
 						var layout = studio.viewModel.studioLayout();
 						layout.open('east');
@@ -228,7 +236,7 @@
 				{
 					type: 'action',
 					title: 'View South Pane',
-					icon: 'fa fa-angle-double-down',
+					icon: 'fa fa-arrow-circle-down',
 					callback: function() {
 						var layout = studio.viewModel.studioLayout();
 						$(layout.panes.center[0]).layout().open('south');
@@ -241,7 +249,7 @@
 				{
 					type: 'action',
 					title: 'View All Panes',
-					icon: 'fa fa-arrows-alt',
+					icon: 'fa fa-arrows',
 					callback: function() {
 						var layout = studio.viewModel.studioLayout();
 						layout.open('west');

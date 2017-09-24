@@ -156,7 +156,23 @@
 				callback: function() {
 					self.addJSDialog();
 				}
-			});
+			},
+			{
+				type: 'divider'
+			},
+			{
+				type: 'header',
+				title: 'Packaging'
+			},
+			{
+				type: 'action',
+				title: 'Build New Version',
+				icon: 'fa fa-gift',
+				callback: function() {
+					self.buildPluginDialog();
+				}
+			}
+			);
 			
 			return elements;
 		},
@@ -265,7 +281,7 @@
 		/**
 		 * Add a new php class
 		 *
-		 * @param	object		node		The plugin to add the class to
+		 * @param	object		plugin		The plugin to add the class to
 		 * @param	string		namespace	Optional suggested namespace
 		 * @return	$.Deferred
 		 */
@@ -279,7 +295,7 @@
 				classname: ko.observable( namespace )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-class'] ).wrapAll( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['mwp-create-class'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Class', dialogContent, viewModel, function() { 
 				if ( ! viewModel.classname() ) { return false; }
@@ -290,8 +306,8 @@
 		/**
 		 * Add a new html template
 		 *
-		 * @param	object		node		The plugin to add the class to
-		 * @param	string		namespace	Optional suggested base path
+		 * @param	object		plugin		The plugin to add the class to
+		 * @param	string		filepath	Optional suggested base path
 		 * @return	$.Deferred
 		 */
 		addTemplateDialog: function( plugin, filepath )
@@ -304,7 +320,7 @@
 				filepath: ko.observable( filepath )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-template'] ).wrapAll( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['mwp-create-template'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Template', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filepath() ) { return false; }
@@ -315,7 +331,7 @@
 		/**
 		 * Add a new css file dialog
 		 *
-		 * @param	object		node		The plugin to add the file to
+		 * @param	object		plugin		The plugin to add the file to
 		 * @param	string		filename	Optional suggested filename
 		 * @return	$.Deferred
 		 */
@@ -329,7 +345,7 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-stylesheet'] ).wrapAll( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['mwp-create-stylesheet'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Stylesheet File', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }
@@ -340,7 +356,7 @@
 		/**
 		 * Add a new javascript file dialog
 		 *
-		 * @param	object		node		The plugin to add the file to
+		 * @param	object		plugin		The plugin to add the file to
 		 * @param	string		filename	Optional suggested filename
 		 * @return	$.Deferred
 		 */
@@ -354,12 +370,27 @@
 				filename: ko.observable( filename )
 			};
 			
-			var dialogContent = $( studio.local.templates.dialogs['create-javascript'] ).wrapAll( '<div>' ).parent();
+			var dialogContent = $( studio.local.templates.dialogs['mwp-create-javascript'] ).wrapAll( '<div>' ).parent();
 			
 			return this.createDialog( 'Javascript Module', dialogContent, viewModel, function() { 
 				if ( ! viewModel.filename() ) { return false; }
 				return self.createJS( plugin.get('slug'), viewModel.filename() ); 
 			}, { size: 500 });
+		},
+		
+		/**
+		 * Build a plugin version dialog
+		 *
+		 */
+		buildPluginDialog: function( plugin )
+		{
+			var options = {
+				viewModel: kb.viewModel( plugin ),
+				title: 'Build A New Plugin Version',
+				message: $(studio.local.templates.dialogs['mwp-build-plugin'])
+			};
+			
+			var bootbox = studio.createModal( options );
 		},
 		
 		/**
@@ -378,6 +409,7 @@
 			var plugin = viewModel.plugin ? viewModel.plugin.model() : studio.viewModel.currentPlugin().model();
 			var dialog;
 			
+			/* Add an enter key submit function to each dialog */
 			viewModel.enterKeySubmit = function( data, event ) {
 				if ( event.which == 13 ) {
 					dialog.modal('hide');
@@ -386,9 +418,8 @@
 				return true;
 			}
 			
-			ko.applyBindings( viewModel, dialogContent[0] );
-			
 			var opts = {
+				viewModel: viewModel,
 				size: 'large',
 				title: 'Add New ' + title,
 				message: dialogContent,
@@ -467,7 +498,7 @@
 			};
 
 			extraOptions = extraOptions || {};
-			dialog = bootbox.dialog( _.extend( opts, extraOptions ) );
+			dialog = studio.createModal( _.extend( opts, extraOptions ) );
 			
 			return dialogInteraction.promise();		
 		},

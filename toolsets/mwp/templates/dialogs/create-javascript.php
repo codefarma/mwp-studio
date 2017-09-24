@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div class="form-group">
   <label for="filename">Javascript Controller Name</label>
   <div class="input-group">
-	<div class="input-group-addon">/assets/js/</div>
+	<div class="input-group-addon">assets/js</div>
 	<input type="text" class="form-control" placeholder="controller-name" data-bind="textInput: filename, event:{ keypress: enterKeySubmit }" id="filename" />
   </div>
 </div>
