@@ -244,7 +244,7 @@ class AjaxHandlers extends Singleton
 	}
 
 	/**
-	 * Create a new php class
+	 * Create a new project
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_create_project", for={"users"} )
 	 *
@@ -271,6 +271,28 @@ class AjaxHandlers extends Singleton
 			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
 		}
 		
+	}
+	
+	/**
+	 * Build a new project version
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_build_mwp_project", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function buildProject()
+	{
+		$this->authorize();
+		
+		try 
+		{
+			$zipfile = \Modern\Wordpress\Plugin::createBuild( $_REQUEST['slug'], array( 'nobundle' => ! $_REQUEST['bundle'], 'version-update' => $_REQUEST['version'] ) );
+			wp_send_json( array( 'success' => true, 'version' => $_REQUEST['version'], 'file' => str_replace( ABSPATH, '', $zipfile ) ) );
+		}
+		catch( \Exception $e )
+		{
+			wp_send_json( array( 'success' => false, 'message' => $e->getMessage() ) );
+		}
 	}
 	
 	/**

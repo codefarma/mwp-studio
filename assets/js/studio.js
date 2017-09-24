@@ -260,28 +260,32 @@
 				options = options();
 			}
 			
-			// Provide some default options
-			options = $.extend( true, {
-				viewModel: {},
-				bodyContent: $(''),
+			// Apply defaults
+			options = $.extend( true, 
+			{
+				viewModel:     {},
+				modal:         false,
+				bodyContent:   $(''),
 				footerContent: $('<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Save</button>'),
-				maximizable: false, 
-				minimizable: true, 
-				resizable: {}, 
-				draggable: { handle: '.window-header' },
-				submit: function() { return true; }
-			}, options, { id: id || undefined } );
+				maximizable:   false, 
+				minimizable:   true, 
+				resizable:     {}, 
+				draggable:     { handle: '.window-header' },
+				dimensions:    { width: 600 },
+				submit:        function() { return true; }
+			}, 
+			options, { id: id || undefined } );
 			
-			options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
-			
-			// apply the view model to the body content
+			/* Apply the view model to the body content */
 			if ( options.viewModel ) {
-				ko.applyBindings( options.viewModel, options.bodyContent[0] );
+				options.bodyContent = $(options.bodyContent).wrapAll('<div>').parent();
+				if ( options.bodyContent[0] ) {
+					ko.applyBindings( options.viewModel, options.bodyContent[0] );
+				}
+				options.bodyContent = $(options.bodyContent).children();
 			}
 			
-			options.bodyContent = $(options.bodyContent).children();
-			
-			// provide a processing indicator
+			/* Wrap the submit function to provide user feedback */
 			var submitFn = options.submit;
 			options.submit = function( _window ) {
 				var submitResult = submitFn( _window );
@@ -338,38 +342,6 @@
 			}
 			
 			return _window;
-		},
-		
-		/**
-		 * Create a modal dialog
-		 *
-		 * @param	object|function		options			The modal dialog options or a function to retrieve them
-		 * @return	bootbox
-		 */
-		createModal: function( options )
-		{
-			// Optionally use callback to get the window options
-			if ( typeof options === 'function' ) {
-				options = options();
-			}
-			
-			// Provide some default options
-			options = $.extend( true, {
-				viewModel: {},
-				title: '',
-				message: ''
-			}, options );
-			
-			options.message = $(options.message).wrapAll('<div>').parent();
-			
-			// apply the view model to the body content
-			if ( options.viewModel ) {
-				ko.applyBindings( options.viewModel, options.message[0] );
-			}
-			
-			options.message = $(options.message).children();
-			
-			return bootbox.dialog( options );
 		},
 
 		/**

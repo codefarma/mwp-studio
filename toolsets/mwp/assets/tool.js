@@ -169,7 +169,7 @@
 				title: 'Build New Version',
 				icon: 'fa fa-gift',
 				callback: function() {
-					self.buildPluginDialog();
+					studio.openWindow( 'build-project-' + project.get('slug'), function() { return self.getBuildWindow( project ); } );
 				}
 			}
 			);
@@ -379,18 +379,71 @@
 		},
 		
 		/**
-		 * Build a plugin version dialog
+		 * Get the new plugin version build window config
 		 *
+		 * @param	object		plugin		The plugin to add the file to
+		 * @return	object
 		 */
-		buildPluginDialog: function( plugin )
+		getBuildWindow: function( plugin )
 		{
+			var plugin = plugin || studio.viewModel.currentProject().model();
+			var currentVersion = plugin.get('version') || '0.0.0';
+			var versionParts = _.map( currentVersion.split('.'), function( part ) { return parseInt( part ); } );
+			var newMajor = _.map( [ versionParts[0] + 1, 0, 0 ], function( part ) { return part.toString(); } ).join('.');
+			var newMinor = _.map( [ versionParts[0], versionParts[1] + 1, 0 ], function( part ) { return part.toString(); } ).join('.');
+			var newPoint = _.map( [ versionParts[0], versionParts[1], versionParts[2] + 1 ], function( part ) { return part.toString(); } ).join('.');
+			var newPatch = _.map( [ versionParts[0], versionParts[1], versionParts[2], (versionParts[3] || 0) + 1 ], function( part ) { return part.toString(); } ).join('.');
+			
 			var options = {
-				viewModel: kb.viewModel( plugin ),
-				title: 'Build A New Plugin Version',
-				message: $(studio.local.templates.dialogs['mwp-build-plugin'])
+				modal: true,
+				title: '<i class="fa fa-cog"></i> Build A New Plugin Version',
+				bodyContent: $(studio.local.templates.dialogs['mwp-build-plugin']),
+				footerContent: $('<button type="button" class="btn btn-default pull-left" data-dismiss="window">Cancel</button><button data-submit="window" type="button" class="btn btn-primary">Build</button>'),
+				dimensions: { width: 800 },
+				viewModel: {
+					plugin: kb.viewModel( plugin ),
+					buildType: ko.observable( 'point' ),
+					buildFramework: ko.observable( true ),
+					versions: {
+						rebuild: currentVersion,
+						point: newPoint,
+						minor: newMinor,
+						major: newMajor,
+						patch: newPatch,
+						custom: ko.observable( newPoint )
+					}
+				},
+				submit: function( _window ) {
+					var buildDeferred = $.Deferred();
+					var vm = _window.options.viewModel;
+					
+					studio.ajax({
+						method: 'post',
+						data: {
+							action: 'mwp_studio_build_mwp_project',
+							type: plugin.get('type'),
+							slug: plugin.get('slug'),
+							version: vm.versions[ vm.buildType() ],
+							bundle: vm.buildFramework()
+						}
+					}).done( function( response ) {
+						if ( response.success ) {
+							plugin.set( 'version', response.version );
+							window.location.href = studio.local.site_url + '/' + response.file;
+							buildDeferred.resolve(true);
+						} else {
+							buildDeferred.resolve(false);
+							if ( response.message ) {
+								studio.openDialog( 'alert', { title: 'Build Failure', message: response.message } );
+							}
+						}
+					});
+					
+					return buildDeferred;
+				}
 			};
 			
-			var bootbox = studio.createModal( options );
+			return options;
 		},
 		
 		/**

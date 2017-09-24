@@ -67,7 +67,7 @@ class MWPSupport extends Tool
 		if ( $this->getPlugin()->loadStudioUI() ) 
 		{
 			$this->getPlugin()->useScript( $this->javascript );
-			//$this->getPlugin()->useStyle( $this->stylesheet );
+			$this->getPlugin()->useStyle( $this->stylesheet );
 		}
 	}
 	
