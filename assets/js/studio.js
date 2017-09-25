@@ -504,7 +504,7 @@
 		aboutWindow: function()
 		{
 			return {
-				title: 'About MWP Studio',
+				title: '<i class="fa fa-info-circle"></i> About MWP Studio',
 				bodyContent: this.local.templates.dialogs['about'],
 				footerContent: '<button type="button" class="btn btn-primary" data-dismiss="window">Ok</button>'
 			};

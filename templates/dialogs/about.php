@@ -25,3 +25,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 <h1>Modern Wordpress Studio</h1>
 <p>&copy; 2017</p>
+
+<table class="table" style="margin-top:35px;">
+	<tr><td>WP Version</td><td><?php echo get_bloginfo('version'); ?></td></tr>	
+	<tr><td>PHP Version</td><td><?php echo phpversion(); ?></td></tr>
+</table>
