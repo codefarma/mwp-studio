@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<div class="form-group">
 		<label for="project-author-url" class="col-sm-3">Author URL</label>
 		<div class="col-sm-9">
-			<input type="text" id="project-author-url" data-bind="textInput: project.authorurl" class="form-control" />
+			<input type="text" id="project-author-url" data-bind="textInput: project.author_url" class="form-control" />
 		</div>
 	</div>
 </div>

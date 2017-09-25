@@ -284,10 +284,16 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$core_data = get_plugin_data( $file, false );
 		$composite_data = array();
 		$basedir = str_replace( ABSPATH, '', str_replace( "/" . basename( $file ), "", $file ) );
-		$composite_data[ 'pluginfile' ] = $file;
+		
+		$composite_data[ 'file' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
 		$composite_data[ 'environment' ] = 'generic';
 		$composite_data[ 'type' ] = 'plugin';
+		
+		$composite_data[ 'url' ] = $core_data[ 'pluginuri' ];
+		$composite_data[ 'author_url' ] = $core_data[ 'authoruri' ];
+		
+		unset( $core_data[ 'pluginuri' ], $core_data[ 'authoruri' ] );
 		
 		foreach( $core_data as $key => $value )	{
 			$composite_data[ strtolower( $key ) ] = $value;		
@@ -308,10 +314,13 @@ class Plugin extends \Modern\Wordpress\Plugin
 	{
 		$theme_info = array();
 		
+		$theme_info['file']        = $theme->get_stylesheet_directory() . '/style.css';
+		$theme_info['basedir']     = str_replace( ABSPATH, '', $theme->get_stylesheet_directory() );
+		$theme_info['environment'] = 'generic';
 		$theme_info['type']        = 'theme';
-		$theme_info['key']         = $theme->get_stylesheet();
+		
 		$theme_info['name']        = $theme->get('Name');
-		$theme_info['uri']         = $theme->get('ThemeURI');
+		$theme_info['url']         = $theme->get('ThemeURI');
 		$theme_info['description'] = $theme->get('Description');
 		$theme_info['author']      = $theme->get('Author');
 		$theme_info['author_url']  = $theme->get('AuthorURI');
@@ -321,9 +330,9 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$theme_info['tags']        = array_map( 'trim', $theme->get('Tags') );
 		$theme_info['text_domain'] = $theme->get('TextDomain');
 		$theme_info['domain_path'] = $theme->get('DomainPath');
-		$theme_info['basedir']     = str_replace( ABSPATH, '', $theme->get_stylesheet_directory() );
-		$theme_info['slug']        = $theme->get_stylesheet;
-		$theme_info['environment'] = 'generic';
+		$theme_info['slug']        = $theme->get_stylesheet();
+		$theme_info['key']         = $theme->get_stylesheet();
+		
 		$theme_info['id']          = md5( $theme_info['basedir'] );
 		
 		return apply_filters( 'mwp_studio_theme_info', $theme_info );
@@ -442,23 +451,23 @@ class Plugin extends \Modern\Wordpress\Plugin
 	 */
 	public function updateProjectInfo( $project_info )
 	{
+		$file = $project_info['file'];
+		$file_contents = file_get_contents( $file );
+		
+		$fp = fopen( $file, 'r' );
+		$file_data = $read_data = fread( $fp, 8192 );
+		fclose( $fp );
+		
 		switch( $project_info['type'] ) 
-		{
+		{			
 			case 'plugin':
-				
-				$file = $project_info['file'];
-				$file_contents = file_get_contents( $file );
-				
-				$fp = fopen( $file, 'r' );
-				$file_data = $read_data = fread( $fp, 8192 );
-				fclose( $fp );
-				
+			
 				$headers = array(
-	                'Name'        => 'Plugin Name',
-	                'PluginURI'   => 'Plugin URI',
-	                'Description' => 'Description',
-	                'Author'      => 'Author',
-	                'AuthorURI'   => 'Author URI',
+					'Name'        => 'Plugin Name',
+					'PluginURI'   => 'Plugin URI',
+					'Description' => 'Description',
+					'Author'      => 'Author',
+					'AuthorURI'   => 'Author URI',
 				);
 				
 				$mapped = array(
@@ -466,22 +475,40 @@ class Plugin extends \Modern\Wordpress\Plugin
 					'PluginURI'   => 'url',
 					'Description' => 'description',
 					'Author'      => 'author',
-					'AuthorURI'   => 'authorurl',
+					'AuthorURI'   => 'author_url',
 				);
-				
-				foreach ( $headers as $field => $regex ) {
-					$file_data = preg_replace( '/^([ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':)(.*)$/mi', '$1 ' . $project_info[$mapped[$field]], $file_data );
-				}
-
-				$file_contents = str_replace( $read_data, $file_data, $file_contents );
-				file_put_contents( $file, $file_contents );
-				
+		
 				break;
-			
+				
 			case 'theme':
 			
+				$headers = array(
+					'Name'        => 'Theme Name',
+					'ThemeURI'    => 'Theme URI',
+					'Description' => 'Description',
+					'Author'      => 'Author',
+					'AuthorURI'   => 'Author URI',
+				);
+				
+				$mapped = array(
+					'Name'        => 'name',
+					'ThemeURI'    => 'url',
+					'Description' => 'description',
+					'Author'      => 'author',
+					'AuthorURI'   => 'author_url',
+				);
+				
 				break;
+		
 		}
+		
+		foreach ( $headers as $field => $regex ) {
+			$file_data = preg_replace( '/^([ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':)(.*)$/mi', '$1 ' . $project_info[$mapped[$field]], $file_data );
+		}
+
+		$file_contents = str_replace( $read_data, $file_data, $file_contents );
+		file_put_contents( $file, $file_contents );
+	
 	}
 	
 	/**

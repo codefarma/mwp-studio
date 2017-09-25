@@ -284,7 +284,7 @@
 						}).done( function( response ) {
 							if ( response.success ) {
 								studio.updateStatus();
-								bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
+								studio.openDialog( 'alert', { title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
 							}
 						});
 					}
@@ -344,14 +344,14 @@
 				bodyContent: $(studio.local.templates.dialogs['edit-project']),
 				viewModel: {
 					project: {
-						file:        project.get('pluginfile'),
+						file:        project.get('file'),
 						slug:        project.get('slug'),
 						type:        project.get('type'),
 						name:        ko.observable( project.get('name') ),
 						description: ko.observable( project.get('description') ),
-						url:         ko.observable( project.get('pluginuri') ),
+						url:         ko.observable( project.get('url') ),
 						author:      ko.observable( project.get('author') ),
-						authorurl:   ko.observable( project.get('authoruri') )
+						author_url:  ko.observable( project.get('author_url') )
 					}
 				},
 				submit: function( _window ) {
@@ -373,14 +373,10 @@
 						if ( response.success ) {
 							project.set( 'name', _project.name );
 							project.set( 'description', _project.description );
+							project.set( 'url', _project.url );
 							project.set( 'author', _project.author );
-							if ( project.get('type') == 'theme' ) {
-								project.set( 'author_url', _project.authorurl );
-								project.set( 'uri', _project.url );
-							} else {
-								project.set( 'authoruri', _project.authorurl );
-								project.set( 'pluginuri', _project.url );
-							}
+							project.set( 'author_url', _project.author_url );
+
 							deferredEdit.resolve(true);
 						} else {
 							if ( response.message ) {
@@ -428,9 +424,9 @@
 						$.when( node.model.syncIndex() ).done( function( response ) {
 							if ( response.success ) {
 								if ( response.background ) {
-									bootbox.alert({ title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
+									studio.openDialog( 'alert', { title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });
 								} else {
-									bootbox.alert({ title: 'Notice', message: 'Success. Processing complete.' });
+									studio.openDialog( 'alert', { title: 'Notice', message: 'Success. Processing complete.' });
 								}
 							}
 						});

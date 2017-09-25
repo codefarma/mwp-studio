@@ -55,9 +55,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 		</li>
 	</ul>
 
-	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="margin-bottom: 0">
+	<div class="panel panel-default tabbed-panel full-height" data-bind="fillPaneContainer: { pane: '.ui-layout-south', container: '.column' }" style="margin-bottom: 0;">
 		<div class="tab-content full-height" data-bind="foreach: env().studioPaneTabs">
-			<div role="tabpanel" class="tab-pane full-height" data-bind="
+			<div role="tabpanel" class="tab-pane full-height" style="overflow-y: auto" data-bind="
 				attr: { id: id }, 
 				css: { active: $index() == 0 }, 
 				template: { 
