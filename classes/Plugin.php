@@ -233,10 +233,11 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'dropdown'          => $this->getTemplateContent( 'snippets/menus/item-dropdown' ),
 					),
 					'dialogs' => array(
+						'about'             => $this->getTemplateContent( 'dialogs/about' ),
 					    'window-template'   => $this->getTemplateContent( 'dialogs/window-template' ),
 						'create-project'    => $this->getTemplateContent( 'dialogs/create-project' ),
 						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
-						'about'             => $this->getTemplateContent( 'dialogs/about' ),
+						'edit-project'      => $this->getTemplateContent( 'dialogs/edit-project' ),
 						'web-browser'       => $this->getTemplateContent( 'dialogs/web-browser' ),
 					),
 					'panetabs' => array(
@@ -280,8 +281,8 @@ class Plugin extends \Modern\Wordpress\Plugin
 	{
 		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 		
-		$core_data = get_plugin_data( $file );
-		$composite_data = array();		
+		$core_data = get_plugin_data( $file, false );
+		$composite_data = array();
 		$basedir = str_replace( ABSPATH, '', str_replace( "/" . basename( $file ), "", $file ) );
 		$composite_data[ 'pluginfile' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
@@ -317,7 +318,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$theme_info['version']     = $theme->get('Version');
 		$theme_info['template']    = $theme->get('Template');
 		$theme_info['status']      = $theme->get('Status');
-		$theme_info['tags']        = array_map( 'trim', explode( ',', $theme->get('Tags') ) );
+		$theme_info['tags']        = array_map( 'trim', $theme->get('Tags') );
 		$theme_info['text_domain'] = $theme->get('TextDomain');
 		$theme_info['domain_path'] = $theme->get('DomainPath');
 		$theme_info['basedir']     = str_replace( ABSPATH, '', $theme->get_stylesheet_directory() );
@@ -429,6 +430,58 @@ class Plugin extends \Modern\Wordpress\Plugin
 				),
 			);
 		}		
+	}
+	
+	/**
+	 * Edit Project Info
+	 *
+	 * @Wordpress\Action( for="mwp_studio_update_project" )
+	 *
+	 * @param	array			$project_info				Project info
+	 * @return	void
+	 */
+	public function updateProjectInfo( $project_info )
+	{
+		switch( $project_info['type'] ) 
+		{
+			case 'plugin':
+				
+				$file = $project_info['file'];
+				$file_contents = file_get_contents( $file );
+				
+				$fp = fopen( $file, 'r' );
+				$file_data = $read_data = fread( $fp, 8192 );
+				fclose( $fp );
+				
+				$headers = array(
+	                'Name'        => 'Plugin Name',
+	                'PluginURI'   => 'Plugin URI',
+	                'Description' => 'Description',
+	                'Author'      => 'Author',
+	                'AuthorURI'   => 'Author URI',
+				);
+				
+				$mapped = array(
+					'Name'        => 'name',
+					'PluginURI'   => 'url',
+					'Description' => 'description',
+					'Author'      => 'author',
+					'AuthorURI'   => 'authorurl',
+				);
+				
+				foreach ( $headers as $field => $regex ) {
+					$file_data = preg_replace( '/^([ \t\/*#@]*' . preg_quote( $regex, '/' ) . ':)(.*)$/mi', '$1 ' . $project_info[$mapped[$field]], $file_data );
+				}
+
+				$file_contents = str_replace( $read_data, $file_data, $file_contents );
+				file_put_contents( $file, $file_contents );
+				
+				break;
+			
+			case 'theme':
+			
+				break;
+		}
 	}
 	
 	/**

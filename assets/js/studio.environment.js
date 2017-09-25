@@ -314,6 +314,7 @@
 		 */
 		getProjectMenuItems: function( project )
 		{
+			var self = this;
 			return [{
 				title: 'Meta Information',
 				type: 'header'
@@ -323,9 +324,75 @@
 				type: 'action',
 				icon: 'fa fa-info-circle',
 				callback: function() {
-				
+					studio.openWindow( 'edit-' + project.get('type') + '-' + project.get('slug'), function() { return self.editProjectWindow( project ); } );
 				}
 			}];
+		},
+		
+		/**
+		 * Get the edit project window settings
+		 *
+		 * @param	Project			project					The project to edit
+		 * @return	object
+		 */
+		editProjectWindow: function( project )
+		{	
+			var mockProject = new Backbone.Model( project.toJSON() );
+
+			return {
+				title: '<i class="fa fa-' + ( project.get('type') == 'theme' ? 'paint-brush' : 'plug' ) + '"></i> Edit ' + project.get('name'),
+				bodyContent: $(studio.local.templates.dialogs['edit-project']),
+				viewModel: {
+					project: {
+						file:        project.get('pluginfile'),
+						slug:        project.get('slug'),
+						type:        project.get('type'),
+						name:        ko.observable( project.get('name') ),
+						description: ko.observable( project.get('description') ),
+						url:         ko.observable( project.get('pluginuri') ),
+						author:      ko.observable( project.get('author') ),
+						authorurl:   ko.observable( project.get('authoruri') )
+					}
+				},
+				submit: function( _window ) {
+					var deferredEdit = $.Deferred();
+					var vm = _window.options.viewModel;
+					var _project = {};
+					
+					// Map project observables to json
+					$.each( vm.project, function( key, observable ) {
+						_project[key] = typeof observable == 'function' ? observable() : observable;
+					});
+					
+					studio.ajax({
+						data: {
+							action: 'mwp_studio_edit_project',
+							project: _project
+						}
+					}).done( function( response ) {
+						if ( response.success ) {
+							project.set( 'name', _project.name );
+							project.set( 'description', _project.description );
+							project.set( 'author', _project.author );
+							if ( project.get('type') == 'theme' ) {
+								project.set( 'author_url', _project.authorurl );
+								project.set( 'uri', _project.url );
+							} else {
+								project.set( 'authoruri', _project.authorurl );
+								project.set( 'pluginuri', _project.url );
+							}
+							deferredEdit.resolve(true);
+						} else {
+							if ( response.message ) {
+								studio.openDialog( 'alert', { title: 'Error Saving Data', message: response.message } );
+							}
+							deferredEdit.resolve(false);
+						}
+					});
+					
+					return deferredEdit;
+				}
+			};
 		},
 		
 		/**

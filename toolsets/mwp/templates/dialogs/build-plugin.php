@@ -35,6 +35,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</label><br>
 				</span>
 				
+				<input type="radio" id="build-type-patch"  name="build-type" value="patch"  data-bind="checked: buildType" /> 
+				<label for="build-type-patch"><?php _e( 'Patch Release', 'mwp-studio' ) ?>
+						<pre style="display: inline-block; padding: 3px; display: inline; margin-left: 15px;" data-bind="text: versions.patch"></pre>			
+				</label><br>
+				
 				<input type="radio" id="build-type-point"  name="build-type" value="point"  data-bind="checked: buildType" /> 
 				<label for="build-type-point"><?php _e( 'Point Release', 'mwp-studio' ) ?>
 						<pre style="display: inline-block; padding: 3px; display: inline; margin-left: 15px;" data-bind="text: versions.point"></pre>			
@@ -48,11 +53,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 				<input type="radio" id="build-type-major"  name="build-type" value="major"  data-bind="checked: buildType" /> 
 				<label for="build-type-major"><?php _e( 'Major Release', 'mwp-studio' ) ?>
 						<pre style="display: inline-block; padding: 3px; display: inline; margin-left: 15px;" data-bind="text: versions.major"></pre>			
-				</label><br>
-				
-				<input type="radio" id="build-type-patch"  name="build-type" value="patch"  data-bind="checked: buildType" /> 
-				<label for="build-type-patch"><?php _e( 'Patch Release', 'mwp-studio' ) ?>
-						<pre style="display: inline-block; padding: 3px; display: inline; margin-left: 15px;" data-bind="text: versions.patch"></pre>			
 				</label><br>
 				
 				<input type="radio" id="build-type-custom" name="build-type" value="custom" data-bind="checked: buildType" /> 

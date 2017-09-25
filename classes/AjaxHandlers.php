@@ -274,6 +274,29 @@ class AjaxHandlers extends Singleton
 	}
 	
 	/**
+	 * Create a new project
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_edit_project", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function editProject()
+	{
+		$this->authorize();
+		
+		$project_info = wp_unslash( $_REQUEST['project'] );
+		$errors = apply_filters( 'mwp_studio_edit_project_validation_errors', array(), $project_info );
+		
+		if ( ! empty( $errors ) ) {
+			wp_send_json( array( 'success' => false, 'message' => '<ul><li>' . implode( '</li><li>', $errors ) . '</li></ul>' ) );
+		}
+		
+		do_action( 'mwp_studio_update_project', $project_info );
+		
+		wp_send_json( array( 'success' => true ) );
+	}
+	
+	/**
 	 * Build a new project version
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_build_mwp_project", for={"users"} )

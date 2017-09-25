@@ -471,6 +471,8 @@
 				return true;
 			}
 			
+			ko.applyBindings( viewModel, dialogContent[0] );
+			
 			var opts = {
 				viewModel: viewModel,
 				size: 'large',
@@ -551,7 +553,7 @@
 			};
 
 			extraOptions = extraOptions || {};
-			dialog = studio.createModal( _.extend( opts, extraOptions ) );
+			dialog = studio.openDialog( 'dialog', _.extend( opts, extraOptions ) );
 			
 			return dialogInteraction.promise();		
 		},

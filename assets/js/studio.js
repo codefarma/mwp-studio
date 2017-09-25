@@ -425,7 +425,7 @@
 						description:     viewModel.description(),
 						author:          viewModel.author(),
 						author_url:      viewModel.authorurl(),
-						project_url:     viewModel.projecturl(),
+						url:             viewModel.projecturl(),
 						slug:            viewModel.slug()
 					};
 				},
