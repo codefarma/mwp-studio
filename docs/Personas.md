@@ -1,78 +1,77 @@
 Personas
 ========
 
-Arias the Architect
--------------------
-Arias has been programming software for 15 years. Before becoming the lead architect at his development shop...
+Darian the Developer
+--------------------
+Darian is a university graduate with a computer science degree. Most all of his experience coding has come from
+school projects, with a small amount attributed to customizing the Wordpress site for his high school band. He earned
+the directors award for outstanding performance his senior year.
+
+Darian currently works for ShopConnect, a company providing turn key ecommerce solutions for franchisees that also do
+business online. His biggest client is a chain of pet accessory retail stores that all run on WooCommerce. As a new
+developer, he is most excited to learn how to build software from the ground up. His company has developed and maintains
+8 different commercial Wordpress plugin offerings.
 
 ### Problem Scenarios
 
 * Bootstrapping New Plugins
-* Designing Data Models
-* Leveraging MVC & MVVM
-* Managing the Database Schema
-* Communicating Architecture
-* Communicating Standards
+* Coding to Modern Design Patterns
+* Inspecting/Understanding Call Stacks
+* Grouping Code Change Commits
 
 Edwin the Engineer
 ------------------
-Edwin knows how to program in 5 different languages. Java, PHP, Python, Javascript, and Ruby. He mainly works in PHP
-now since he has started working for a design shop that deals heavily in Wordpress sites and WooCommerce store builds.
-He started programming in Python and Java when he was in school, and then moved on to Ruby for some of his side projects.
-He became proficient in Javascript while developing for the client side of his open source web analytics platform. 
+Edwin works for a 20 person IT development company. A typical project for them involves 3-5 people working on a 
+project and typically lasts 6-12 months, though they're sometimes called upon to squeeze in a quick (1 month) project 
+and they also have some long term customers for which they maintain apps that they've built in the past.
 
-On tuesdays, Edwin plays basketball at a local gym with his buddies after getting home from work. He was all state guard in
-high school and has really been nailing it lately with his jump shots. His friend James is always giving him a hard time for
-wearing old school converse shoes, but he has fond memories of shooting hoops with his dad when he was young, and his dad
-used to rock the converse.
+Edwin enjoys flying his Phantom 4 drone on the weekends and moonlights as an amateur photographer. He's outfitted his
+drone with a few extra upgrades that gives it extra flight time. His girlfriend jokes about him not being able to fly
+it straight while in sport mode.
 
-He's worked for 5 different corporate outfits in the last 10 years, and has built everything from mobile apps on Android, 
-to backend API's for startup companies, and web applications for brick and mortar enterprises that required a high degree
-of communication between departments.
-
-His first introduction to PHP was with his last job, where he needed to maintain and optimize a subset of code that ran the
-internal company ERP platform. His pre-disposition to PHP was that it was a sloppy language that required you to write sloppy 
-code, and he wasn't too enthusiastic about the thought of having to work with it. He soon began to gain some respect for it
-as the ERP platform code he was working with was actually fairly elegantly written and well documented.
-
-Then he moved jobs once again to work for his current employer, Digital Emporium, who provides custom plugin development
-solutions for a wide client base of customers using the Wordpress platform. After troubleshooting a handful of client issues
-that were caused by 3rd party plugins that they were using, he is now once again convinced that PHP is a sloppy language and
-everybody who programs with it is a demon with a keyboard.
+Most of the dev work he has done in the past has been ASP/Java based on corporate networks. But recently, his company has
+shifted into the world of web application development, with a significant amount of work coming from clients with 
+websites running on LAMP stacks that need custom development work. 1 out of 3 new clients require custom Wordpress
+development.
 
 ### Problem Scenarios
 
 * Analyzing Code Performance Issues
-* Managing Compatibility Tradeoffs
-* Troubleshooting Intercompatibility Bugs
+* Troubleshooting Inter-plugin Compatibility Bugs
 * Auditing For Security Vulnerabilities
+* Testing Coverage
 
-Darian the Developer
---------------------
-Darian recently graduated from a local university with a computer science degree. Most of his experience building software
-is limited to school projects and some personal projects that he worked on while he was in high school. After graduating,
-he accepted a job with ShopConnect, a company providing turn key ecommerce store rollouts for franchises that want to do
-business online. The platform of choice is Wordpress/Woocommerce, which is familiar to him because he used Wordpress to
-build his personal blog a few years back.
+Andrew the Architect
+-------------------
+Andrew enjoys contemplating the big picture and solving problems abstractly. Whenever he is presented with a problem,
+he wants to find a solution that can be re-used and applied in many different capacities. When he began working for
+his current company, the first thing he did was to create and document a set of development tools that could be used
+within his team to streamline new projects.
 
-When he was in high school, he hiked to the top of mount...
+As a middle aged adult, Andrew has been finding it a bit tougher to stay fit. He enjoys being outdoors and boating,
+and has recently started a new diet challenge in hopes of gaining back some of his youthfulness.
+
+His next big project at work will be to help his company launch a new software product in the web application domain
+built on the Wordpress platform that will position his team in the forefront of the industry and allow the company to
+expand even further.
 
 ### Problem Scenarios
 
-* Coding to Modern Design Patterns
-* Inspecting/Understanding Call Stacks
-* Grouping Code Change Commits
-* Running Tests
+* Designing Data Models
+* Leveraging MVC & MVVM
+* Managing Database Schemas
+* Managing Compatibility Tradeoffs
+* Communicating Architecture
+* Communicating Standards
 
 Thomas the Designer
 -------------------
-Thomas loves to sketch things out on paper and create new designs that capture his mood. He decided to go to a web design 
-boot camp to learn how to program websites, and found that the design aspect of the process was the most appealing to him.
-He loves to create layouts and themes that make him feel good, and decided to make a business of it so he can live the 
-dream of working for himself. He decided that Wordpress was the platform he would design his themes for since his research
-revealed that it has the largest market and the best potential for him to earn a profit.
+Thomas is the lead designer at a contract web development firm in San Jose. He has a degree in graphic design and divides 
+his time between Photoshop/Illustrator and HTML/CSS. Lately, he has been learning to code his HTML/CSS designs as Wordpress
+themes since a majority of the clients he works for have sites built on Wordpress.  
 
-In his spare time, Thomas...
+George works on a Mac exclusively. On his way into the office, he grabs coffee from the barista next to his apartment. He 
+enjoys the fact that he only has a 20 minute commute each way.
 
 ### Problem Scenarios
 
@@ -83,32 +82,37 @@ In his spare time, Thomas...
 
 Marvin the Manager
 ------------------
-Marvin was an engineer for 8 years, and was in sales for another 5. Two of those 5 years in sales were as a sales manager,
-which he truly enjoyed because of the people he was managing. However, he wasn't too keen on the long hours on the road and
-the unpredicatable nature of an income based on sales commissions. When he was presented the opportunity to move back into 
-the engineering department of his company, SoftWorks Inc., as a DevOps Manager, he obliged.
-
-SoftWorks is a solution provider that deals mainly with...
+Marvin manages a team of 6 developers in house, and another 3-5 at any given time as outsourced work.
 
 ### Problem Scenarios
 
 * Code Quality Review Processes
 * Product Lifecycle Management
-* Product Distribution
-* Delta Reviews for New Clients
+* Product Distribution Management
 
 Samuel the Site Owner
 ---------------------
+Samuel runs the most popular site for São Paulo’s music scene and nightlife. If there’s music playing anywhere in São Paulo, 
+Samuel's site has got the scoop. It has an events calendar, photo galleries, videos and a blog with articles and interviews.
+
+Samuel uses a Windows computer exclusively.
+
+Through the years of running his site, Samuel has learned how to bend WordPress to do what he wants. He has had outside help 
+with the graphic design, but he has done everything else himself, relying heavily on WordPress and jQuery plugins to get the 
+desired effect.
+
+Gabriel’s site already has a mobile presentation, but he knows that many people rely on mobile apps rather than the browser. 
+He would like to have an app that lets people submit photos, can receive push notifications about big events and can have a 
+snappier, more responsive feel than his mobile website. 
+
 ### Problem Scenarios
 
-* Finding Bottleneck Components
-* Getting Support
-* Monitoring
-
+* Optimizing Performance
+* Customizing Functionality
 
 Steven the Support Agent
 ------------------------
 ### Problem Scenarios
 
 * Remote Diagnostics
-* Remote Command Line Execution
+* Remote Monitoring
