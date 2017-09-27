@@ -3,8 +3,8 @@ Personas
 
 Darian the Developer
 --------------------
-Darian is a university graduate with a computer science degree. Most all of his experience coding has come from
-school projects, with a small amount attributed to customizing the Wordpress site for his high school band. He earned
+Darian is a university graduate with a computer science degree. Most of his early experience coding came from school
+projects, with a small amount being attributed to customizing the Wordpress site for his high school band. He earned
 the directors award for outstanding performance his senior year.
 
 Darian currently works for ShopConnect, a company providing turn key ecommerce solutions for franchisees that also do
@@ -15,9 +15,27 @@ developer, he is most excited to learn how to build software from the ground up.
 ### Problem Scenarios
 
 * Bootstrapping New Plugins
-* Coding to Modern Design Patterns
+  - Starting a plugin without an existing framework is difficult
+  - Starting a plugin by copying a framework is a chore
+  - Choosing a solid architecture for a new plugin is difficult
+  - Copying code from previous projects leads to cruft and bugs
+  
+* Developing using Modern Design Patterns
+  - Wordpress lacks any fundamental OOP architecture
+  - Implementing modern design patterns is cumbersome 
+  - Using code samples found online leads to technical debt
+  
 * Inspecting/Understanding Call Stacks
+  - Finding all actors on filters/hooks is a chore
+  - Visualizing the heirarchy of hook stack execution is difficult
+  - Discovering code based bottlenecks is time consuming
+  
 * Grouping Code Change Commits
+  - On the fly refactors and fixes lead to unclear/muddy code commits
+  
+* Implementing WP Code Patterns
+  - Naive solutions often lead to incompatibilities and bypassed subsystems
+  - Naive solutions often lead to security vulnerabilities
 
 Edwin the Engineer
 ------------------
@@ -78,7 +96,9 @@ enjoys the fact that he only has a 20 minute commute each way.
 * Bootstrapping New Themes
 * Refactoring HTML Structures
 * Finding Proper Hook Points
+  - Finding where certain output is being generated from is challenging
 * Implementing WP Code Patterns
+  - Implementing solutions for basic problems impedes the creative process
 
 Marvin the Manager
 ------------------
