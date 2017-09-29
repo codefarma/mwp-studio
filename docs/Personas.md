@@ -55,9 +55,15 @@ development.
 ### Problem Scenarios
 
 * Analyzing Code Performance Issues
+  - Finding/optimizing slow hooks/filters is difficult
+  - Finding/optimizing slow database queries is boring
 * Troubleshooting Inter-plugin Compatibility Bugs
+  - Finding bugs caused by interactions between plugins
 * Auditing For Security Vulnerabilities
+  - Finding instances of outputting unsanitized user input
 * Testing Coverage
+  - Bootstrapping tests
+  - Writing tests
 
 Andrew the Architect
 -------------------
@@ -76,11 +82,14 @@ expand even further.
 ### Problem Scenarios
 
 * Designing Data Models
+  - Modeling data with proper classes is a repetitive time consuming chore
 * Leveraging MVC & MVVM
+  - Scaffolding a template system for each new project is laborious and redundant
 * Managing Database Schemas
+  - Writing sql scripts to manage database table versions is a pain
+  - Incorrect or failed sql updates cause frustrating bugs
 * Managing Compatibility Tradeoffs
-* Communicating Architecture
-* Communicating Standards
+  - Keeping on top of compatibility and deprecation tradeoffs for new and existing code is tedious
 
 Thomas the Designer
 -------------------
@@ -94,6 +103,7 @@ enjoys the fact that he only has a 20 minute commute each way.
 ### Problem Scenarios
 
 * Bootstrapping New Themes
+  - Creating and customizing new theme scaffolding is a barrier to creativity
 * Refactoring HTML Structures
 * Finding Proper Hook Points
   - Finding where certain output is being generated from is challenging
@@ -107,8 +117,11 @@ Marvin manages a team of 6 developers in house, and another 3-5 at any given tim
 ### Problem Scenarios
 
 * Code Quality Review Processes
+  - Understanding the full range of code in a project requires hours of review
 * Product Lifecycle Management
+  - Product versioning and build management is a bane
 * Product Distribution Management
+  - Distributing premium products and keeping clients up to date is chalk full of obstacles
 
 Samuel the Site Owner
 ---------------------
@@ -128,11 +141,6 @@ snappier, more responsive feel than his mobile website.
 ### Problem Scenarios
 
 * Optimizing Performance
+  - Understanding which plugins are responsible for speed bottlenecks is next to impossible
 * Customizing Functionality
-
-Steven the Support Agent
-------------------------
-### Problem Scenarios
-
-* Remote Diagnostics
-* Remote Monitoring
+  - Finding quick solutions to simple problems is never quick
