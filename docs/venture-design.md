@@ -17,6 +17,7 @@ Personas
 ----------------------------
 Rhonda (Freelance Developer)
 ----------------------------
+![Photo](rhonda.jpg)
 
 **Screening Question:**
 How many hours per week do you spend writing or troubleshooting code for Wordpress? (more than 8)
@@ -33,23 +34,23 @@ Rhonda loves the fact that she makes her own hours, and she has been able to sec
 ensures that she stays busy for at least 25-30 hours a week. She usually works another 10-20 additional hours each
 week on odd jobs from client referrals and leads she generates from her Wordpress plugin.
 
-> **Think:**
+> **Thinks:**
 Rhonda has ideas of one day improving her event booking plugin and selling a version of it as a premium offering. It
 would be nice to have an additional income stream and a polished product that she could show off when talking to new
 clients.
 
-> **See:**
+> **Sees:**
 Rhonda sees a wide range of different code qualities and styles as she troubleshoots issues for clients and customizes 
 site functionality. It's easy to tell when a theme or a plugin has been professionally developed. Some of her most 
 frustrating experiences are when she is asked to modify the functionality of a poorly written plugin/theme.
 
-> **Feel:**
+> **Feels:**
 Rhonda likes Wordpress because most of the work she needs to complete already has a solution in the form of a plugin or
 a code example that she can find on Stack Overflow or a similar site. Finding new solutions to problems causes her to 
 feel a bit of pressure sometimes when she can't find an appropriate example. She feels like her code is sometimes a bit
 hacky, but it always gets the job done.
 
-> **Do:**
+> **Does:**
 When making customizations for clients, she will usually just add some functions to the theme to get the job done. She 
 knows that the code could be better off in its own plugin and that it could be organized a bit better, but her clients 
 dont have unlimited budgets and coming up with structured approaches is a difficult task. She often finds herself just
@@ -58,6 +59,7 @@ copying code she wrote previously to solve similar problems on different client 
 -------------------------
 Darian (Junior Developer)
 -------------------------
+![Photo](darian.jpg)
 
 **Screening Question:**
 How many hours per week do you spend writing or troubleshooting code for Wordpress? (more than 8)
@@ -75,24 +77,24 @@ business online. His biggest client is a chain of pet accessory retail stores th
 developer, he is most excited to learn how to build software from the ground up. His company has developed and maintains
 8 different commercial WooCommerce plugins.
 
-> **Think:**
+> **Thinks:**
 Darian knows that he has a lot to learn and plans to become experienced enough in his craft to take on the role of a 
 senior developer or a team lead. He is confident in his abilities as a developer and has always been good at picking up
 new concepts.
 
-> **See:**
+> **Sees:**
 The senior developers at his company are always talking in abstract ways and in terms of "design patterns". A lot of 
 their time is spent discussing how to approach a problem before they even get down to coding a solution. Then before a
 code commit is merged into the main branch, there is always a final review by another developer to ensure nothing obvious 
 is being overlooked.
 
-> **Feel:**
+> **Feels:**
 Darian wants to make valuable contributions to the software that his company develops. He's already learned a lot and 
 is excited to apply his knowledge about coding at a high level to the existing products that he is helping to maintain.
 He is a bit apprehensive about the code he writes sometimes because he doesn't want to introduce technical debt into
 the project or be responsible for any major bugs.
 
-> **Do:**
+> **Does:**
 Darian mostly follows the examples set by his senior team members. When he creates some new code, he'll run a manual test
 against his development site and then commits under good faith that his solution doesn't create any other bugs in the
 system.
@@ -122,9 +124,10 @@ ________________________
 ---------------------------
 Edwin (Senior IT Developer)
 ---------------------------
+![Photo](edwin.jpg)
 
 **Screening Question:**
-How many new clients have you aquired in the past 6 months who need custom Wordpress applications developed. (1 or more)
+How many new clients do you aquire yearly who need custom Wordpress applications developed. (3 or more)
 
 Edwin works for a 20 person IT development company. A typical project for them involves 3-5 people working on a 
 project and typically lasts 6-12 months, though they're sometimes called upon to squeeze in a quick (1 month) project 
@@ -139,26 +142,26 @@ has shifted into the world of linux application development, with a significant 
 websites running on LAMP stacks that need custom development work. 1 out of 4 new clients require some sort of custom 
 Wordpress development.
 
-> **Think:**
+> **Thinks:**
 Edwin knows that a large part of the web is built on linux servers and understands that with the advancement of on
 demand computing resources, a lot of potential clients are moving from in-house IT infrastructures to cloud based
 infrastructures, and also making the switch over to open source software solutions rather than those that are home
 grown or proprietary.
 
-> **See:**
+> **Sees:**
 Edwin sees that there is a very large range of different technologies being used in the web application world. He
 also sees that most of the options available for open source content management systems are built using PHP. He has
 heard that PHP is a sloppy language and that it is like using a hammer to do the job of a screwdriver. After
 reviewing a handful of code examples and wordpress plugins, he is convinced that it is a bunch of monkey's who have
 been holding that hammer.
 
-> **Feel:**
+> **Feels:**
 Edwin is used to clearly defined software architectures and specifications for outcomes. He is fearful that his team
 will be lured into sloppy habits and difficult to maintian solutions as they are becoming experienced in the trade
 of LAMP stack development, and specifically since a fair amount of work that they will be doing is on the Wordpress
 platform.
 
-> **Do:**
+> **Does:**
 In the past, Edwin has outsourced the small amount of development work they have needed to do for clients that fell
 outside the range of their expertise. Now that they are bringing that work in house, he is working with some of the other
 experienced engineers on his team to come up with a framework that they can use moving forward with new projects.
@@ -177,36 +180,50 @@ ________________________
   - Finding instances of outputting unsanitized user input
   
 ---------------------------------
-Andrew (Software Architect)
+Abdul (Software Architect)
 ---------------------------------
-Andrew enjoys contemplating the big picture and solving problems abstractly. Whenever he is presented with a problem,
-he wants to find a solution that can be re-used and applied in as many situations as possible. This is a result of his
-15 years of experience developing software. When he began working for his current employer, one of the first things he 
-did was to create and document a set of new development tools to help his team function at a higher level.
+![Photo](abdul.jpg)
 
-Andrew is pushing 40 years old, and as a middle aged adult, he is finding it tougher to stay fit. He enjoys being outdoors 
+**Screening Question:**
+How many hours per week do you spend writing or troubleshooting code for Wordpress? (more than 8)
+
+Abdul enjoys contemplating the big picture and solving problems abstractly. Whenever he is presented with a problem,
+he wants to find a solution that can be re-used and applied in as many situations as possible. When he began working 
+for his current employer, one of the first things he did was to create and document a set of new development tools to 
+help his team function at a higher level.
+
+Abdul is pushing 40 years old, and as a middle aged adult, he is finding it tougher to stay fit. He enjoys being outdoors 
 and boating, and has recently started a new diet challenge in hopes of gaining back some of his youthfulness.
 
 He is currently working on a new project at work with the goal of positioning his company as a major player and solution
 provider in a growing market of Wordpress developers. The plan is to architect an extensible development tool that runs
 on Wordpress itself, and that can support a scaling up of add-ons to it as the product matures.
 
-> **Think:**
+> **Thinks:**
+Abdul sees an opportunity in the current Wordpress landscape to address the need for a more comprehensive set of development
+tools that can help all developers involved with wordpress to be more effective and productive. He believes that it is also
+an opportunity to help his company make a name for itself in the Wordpress development community.
 
-> **See:**
+> **Sees:**
+Abdul sees a lot of great tools that are available to developers using Wordpress, as well as quite a few gaps and fundamental
+deficiencies in the platform. But even the tools that are available are segmented between different products, services, and
+environments.
 
-> **Feel:**
+> **Feels:**
+Abdul feels like the general quality of software produced for the Wordpress platform could be improved greatly if there 
+were a better set of tools and patterns available to guide and bootstrap new projects. It also makes him happy when he can
+achieve a core consistency between all of the projects he works on.
 
-> **Do:**
-
+> **Does:**
+Abdul creates new interfaces around core wordpress functionality that is better suited to integration with modern object
+oriented design patterns so that good programming habits can be encouraged within his team.
 ________________________
 
 ### Problem Scenarios
 
 * Bootstrapping New Plugins
   - Starting a plugin without an existing framework is difficult
-  - Starting a plugin by copying a framework is a chore
-  - Choosing a solid architecture for a new plugin is difficult
+  - Starting a plugin by editing a plugin template is a chore
  
 * Designing Data Models
   - Correctly modeling data with object patterns is a repetitive and time consuming chore
@@ -224,22 +241,42 @@ ________________________
   - Writing tests
 
 -------------------------  
-Thomas (Graphic Designer)
+Eshan (Graphic Designer)
 -------------------------
-Thomas is the lead designer at a contract web development firm in San Jose. He has a degree in graphic design and divides 
+![Photo](eshan.jpg)
+
+**Screening Question:**
+Have you created any themes for a wordpress site within the last 3 months? (1 or more)
+
+Eshan is the lead designer at a contract web development firm in San Jose. He has a degree in graphic design and divides 
 his time between Photoshop/Illustrator and HTML/CSS. Lately, he has been learning to code his HTML/CSS designs as Wordpress
 themes since a majority of the clients he works for have sites built on Wordpress.  
 
-George works on a Mac exclusively. On his way into the office, he grabs coffee from the barista next to his apartment. He 
-enjoys the fact that he only has a 20 minute commute each way.
+Eshan works on a Mac exclusively. On his way into the office, he grabs coffee from the barista next to his apartment. He 
+enjoys the fact that he only has a 20 minute commute each way. He only buys shoes that are black or white so that they
+don't clash with any of the other clothes in his wardrobe.
 
-> **Think:**
+There are three other developers at his firm that usually do the coding for the functionality that is needed to power the
+themes he creates. 
 
-> **See:**
+> **Thinks:**
+Eshan knows that being able to create fully coded Wordpress themes is a great skill to have. Besides being able to provide
+additional value to his current employer, having the ability to create standalone themes on his own could help him further
+down the road of his career also.
 
-> **Feel:**
+> **Sees:**
+Eshan sees the enormous market that is available for Wordpress themes. He also sees that there is a wide range of quality
+in themes available for the Wordpress CMS. He has heard that the best way to develop a theme is to build from an existing
+framework so that many fundamental problems are already solved for you.
 
-> **Do:**
+> **Feels:**
+Eshan feels a little overwhelmed with the "patterns" introduced by the theme frameworks he is looking at. He knows that 
+they will provide him a solid foundation for his themes, but this is all fairly new to him and he wants to be able to do 
+things correctly.
+
+> **Does:**
+Eshan mostly looks at other themes that he thinks are good examples and tries to learn from them and model his code after
+them.
 
 ________________________
 
@@ -254,23 +291,33 @@ ________________________
   - Implementing solutions for basic problems impedes the creative process
   
 --------------------------------
-Marvin (Project Owner/Team Lead)
+Marvin (Project Manager/Team Lead)
 --------------------------------
-Marvin manages a team of 6 developers in house, and another 3-5 at any given time as outsourced contractors. He used to
-be a full time software developer, but most of his time is now dedicated to managing agile design sprints and developing
-user stories through direct communication with users, stakeholders, and the sales team.
+![Photo](marvin.jpg)
+
+**Screening Question:**
+How many projects do you complete on wordpress each month? (4 or more)
+
+Marvin manages a team of 6 developers in house, and another 3-5 at any given time as outsourced contractors for his 
+company, WPIntegrate. He used to be a full time software developer, but most of his time is now dedicated to managing 
+the new and existing projects that the sales team brings in for development.
 
 His favorite color is blue. His favorite drink is tequila. Sometimes when the team goes out to lunch together, he likes
 to order a blue curacao if they eat at the taqueria across the street from the office. He's very happy that his team 
 gets along so well and is proud of the culture they have.
 
-> **Think:**
+On any given day, Marvin may have both physical and/or virtual meetings with clients being onboarded, follow up meetings
+with existing clients, meetings with the development team, and communications with other stakeholders such as sales and
+ownership regarding project updates. WPIntegrate deals almost exclusively with building custom wordpress plugins for 
+outside companies who want to provide their own Wordpress plugins but offload the development work.
 
-> **See:**
+> **Thinks:**
 
-> **Feel:**
+> **Sees:**
 
-> **Do:**
+> **Feels:**
+
+> **Does:**
 
 ________________________
 
@@ -297,17 +344,19 @@ Through the years of running his site, Samuel has learned how to bend WordPress 
 with the graphic design, but he has done everything else himself, relying heavily on WordPress and jQuery plugins to get the 
 desired effect.
 
-Gabriel's site already has a mobile presentation, but he knows that many people rely on mobile apps rather than the browser. 
+Samuels's site already has a mobile presentation, but he knows that many people rely on mobile apps rather than the browser. 
 He would like to have an app that lets people submit photos, can receive push notifications about big events and can have a 
 snappier, more responsive feel than his mobile website. 
 
-> **Think:**
+> **Thinks:**
+Samuel doesnt want to learn how to be a developer to make the changes he needs to his website. However, he does want to make
+sure that his website stays up to date, provides the features that his visitors want
 
-> **See:**
+> **Sees:**
 
-> **Feel:**
+> **Feels:**
 
-> **Do:**
+> **Does:**
 
 ________________________
 
@@ -317,3 +366,7 @@ ________________________
   - Understanding which plugins are responsible for speed bottlenecks is next to impossible
 * Customizing Functionality
   - Finding quick solutions to simple problems is never quick
+
+  
+----
+<style>img{float:right;margin: 15px;max-width:250px;}</style>
