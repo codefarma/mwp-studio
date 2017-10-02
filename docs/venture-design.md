@@ -103,23 +103,47 @@ ________________________
 
 ### Problem Scenarios
 
-* Developing using Modern Design Patterns
-  - Wordpress lacks any fundamental OOP architecture
-  - Implementing modern design patterns requires extra work
-  - Using code samples found online is crufty and buggy
-  - Writing and running tests is an afterthought
+* __Developing using Modern Design Patterns__
+
+  1. Wordpress lacks any fundamental OOP architecture
+     - *Alternative:* Use namespaced functions or hand roll classes and use includes
+	 - *Value-Proposition:* Provide a base OOP framework with automatic PSR-4 autoloading
+  2. Implementing modern design patterns requires extra work
+     - *Alternative:* 
+     - *Value-Proposition:* 
+  3. Using code samples found online is crufty and buggy
+     - *Alternative:* 
+     - *Value-Proposition:* 
+  4. Writing and running tests is an afterthought
+     - *Alternative:* 
+     - *Value-Proposition:* 
  
-* Inspecting/Understanding Call Stacks
-  - Finding all actors on filters/hooks is a chore
-  - Visualizing the heirarchy of hook stack execution is difficult
-  - Discovering code based bottlenecks is time consuming
+* __Inspecting/Understanding Call Stacks__
+
+  5. Finding all actors on filters/hooks is a chore
+     - *Alternative:* 
+     - *Value-Proposition:* 
+  6. Visualizing the heirarchy of hook stack execution is difficult
+     - *Alternative:* 
+     - *Value-Proposition:* 
+  7. Discovering code based bottlenecks is time consuming
+     - *Alternative:* 
+     - *Value-Proposition:* 
  
-* Grouping Code Change Commits
-  - On the fly refactors and fixes lead to unclear/muddy code commits
+* __Grouping Code Change Commits__
+
+  8. On the fly refactors and fixes lead to unclear/muddy code commits
+     - *Alternative:* 
+     - *Value-Proposition:* 
  
-* Implementing WP Code Patterns
-  - Naive solutions often lead to incompatibilities and bypassed subsystems
-  - Naive solutions often lead to security vulnerabilities
+* __Implementing WP Code Patterns__
+
+  9.  Naive solutions often lead to incompatibilities and bypassed subsystems
+      - *Alternative:* 
+	  - *Value-Proposition:* 
+  10. Naive solutions often lead to security vulnerabilities
+      - *Alternative:* 
+	  - *Value-Proposition:* 
 
 ---------------------------
 Edwin (Senior IT Developer)
@@ -169,15 +193,32 @@ ________________________
 
 ### Problem Scenarios
 
-* Structure & Framework
-  - Creating a new framework to build on just for Wordpress is not ideal
-* Analyzing Code Performance Issues
-  - Finding/optimizing slow hooks/filters is difficult
-  - Finding/optimizing slow database queries is boring
-* Troubleshooting Inter-plugin Compatibility Bugs
-  - Finding bugs caused by interactions between plugins
-* Auditing For Security Vulnerabilities
-  - Finding instances of outputting unsanitized user input
+* __Structure & Framework__
+
+  11. Creating a new framework to build on just for Wordpress is not ideal
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Analyzing Code Performance Issues__
+
+  12. Finding/optimizing slow hooks/filters is difficult
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  13. Finding/optimizing slow database queries is boring
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Troubleshooting Inter-plugin Compatibility Bugs__
+
+  14. Finding bugs caused by interactions between plugins
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Auditing For Security Vulnerabilities__
+
+  15. Finding instances of outputting unsanitized user input
+      - *Alternative:* 
+      - *Value-Proposition:* 
   
 ---------------------------------
 Abdul (Software Architect)
@@ -221,24 +262,56 @@ ________________________
 
 ### Problem Scenarios
 
-* Bootstrapping New Plugins
-  - Starting a plugin without an existing framework is difficult
-  - Starting a plugin by editing a plugin template is a chore
+* __Bootstrapping New Plugins__
+
+  16. Starting a plugin without an existing framework is difficult
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  17. Starting a plugin by editing a plugin template is a chore
+      - *Alternative:* 
+      - *Value-Proposition:* 
  
-* Designing Data Models
-  - Correctly modeling data with object patterns is a repetitive and time consuming chore
-  - Maintaining consistency between multiple developers in a team requires a lot of auxilary effort
-* Leveraging MVC & MVVM
-  - Scaffolding a new template system for each new project is laborious and wasteful
-  - Creating scalable architectures that can be maintained over many cycles is very difficult
-* Managing Database Schemas
-  - Writing sql scripts to manage database table versions is a pain
-  - Keeping multiple development environments in sync with schema changes is challenging
-* Managing Compatibility Tradeoffs
-  - Keeping on top of compatibility and deprecation issues for new and existing code is tedious
-* Testing Coverage
-  - Bootstrapping tests / Creating testing harnesses
-  - Writing tests
+* __Designing Data Models__
+
+  18. Correctly modeling data with object patterns is a repetitive and time consuming chore
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  19. Maintaining consistency between multiple developers in a team requires a lot of auxilary effort
+      - *Alternative:* 
+      - *Value-Proposition:* 
+	 
+* __Leveraging MVC & MVVM__
+
+  20. Scaffolding a new template system for each new project is laborious and wasteful
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  21. Creating scalable architectures that can be maintained over many cycles is very difficult
+      - *Alternative:* 
+      - *Value-Proposition:* 
+	 
+* __Managing Database Schemas__
+
+  22. Writing sql scripts to manage database table versions is a pain
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  23. Keeping multiple development environments in sync with schema changes is challenging
+      - *Alternative:* 
+      - *Value-Proposition:* 
+	 
+* __Managing Compatibility Tradeoffs__
+
+  24. Keeping on top of compatibility and deprecation issues for new and existing code is tedious
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Testing Coverage__
+
+  25. Bootstrapping tests / Creating testing harnesses
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  26. Writing tests
+      - *Alternative:* 
+      - *Value-Proposition:* 
 
 -------------------------  
 Eshan (Graphic Designer)
@@ -282,13 +355,23 @@ ________________________
 
 ### Problem Scenarios
 
-* Bootstrapping New Themes
-  - Creating and customizing new theme scaffolding is a barrier to creativity
-* Refactoring HTML Structures
-* Finding Proper Hook Points
-  - Finding where certain output is being generated from is challenging
-* Implementing WP Code Patterns
-  - Implementing solutions for basic problems impedes the creative process
+* __Bootstrapping New Themes__
+
+  27. Creating and customizing new theme scaffolding is a barrier to creativity
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Finding Proper Hook Points__
+
+  28. Finding where certain output is being generated from is challenging
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Implementing WP Code Patterns__
+
+  29. Implementing solutions for basic problems impedes the creative process
+      - *Alternative:* 
+      - *Value-Proposition:* 
   
 --------------------------------
 Marvin (Project Manager/Team Lead)
@@ -311,30 +394,40 @@ with existing clients, meetings with the development team, and communications wi
 ownership regarding project updates. WPIntegrate deals almost exclusively with building custom wordpress plugins for 
 outside companies who want to provide their own Wordpress plugins but offload the development work.
 
-> **Thinks:**
-
-> **Sees:**
-
-> **Feels:**
-
-> **Does:**
-
 ________________________
 
 ### Problem Scenarios
 
-* Code Quality Review Processes
-  - Understanding the full range of code in a project requires constant review
-  - Common mistakes made by junior devs costs additional time in reviews and refactorings
-* Product Lifecycle Management
-  - Product versioning and build management is a bane
-* Product Distribution Management
-  - Distributing premium products and keeping clients up to date is chalk full of obstacles
+* __Code Quality Review Processes__
+
+  30. Understanding the full range of code in a project requires constant review
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  31. Common mistakes made by junior devs costs additional time in reviews and refactorings
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Product Lifecycle Management__
+
+  32. Product versioning and build management is a bane
+      - *Alternative:* 
+      - *Value-Proposition:* 
+  
+* __Product Distribution Management__
+
+  33. Distributing premium products and keeping clients up to date is chalk full of obstacles
+      - *Alternative:* 
+      - *Value-Proposition:* 
 
 
 ---------------------  
 Samuel (Site Operator)
 ---------------------
+![Photo](samuel.jpg)
+
+**Screening Question:**
+Do you perform maintenance on your own Wordpress site? How many times do you touch the code each month? (Yes, 1 or more times)
+
 Samuel runs the most popular site for Sao Paulo's music scene and nightlife. If there's music playing anywhere in Sao Paulo, 
 Samuel's site has got the scoop. It has an events calendar, photo galleries, videos and a blog with articles and interviews.
 
@@ -349,24 +442,40 @@ He would like to have an app that lets people submit photos, can receive push no
 snappier, more responsive feel than his mobile website. 
 
 > **Thinks:**
-Samuel doesnt want to learn how to be a developer to make the changes he needs to his website. However, he does want to make
-sure that his website stays up to date, provides the features that his visitors want
+Samuel isn't really concerned about having the fastest site in the world, he just cares that it works. He knows that there
+are probably a lot of things that could be optimized to make his site run faster and avoid some of the hiccups it has, but
+he doesn't want to pay a lot of money to a consulting/development firm to come in and re-do his site.
 
 > **Sees:**
+Samuel has been to a couple of Wordpress meetups in Sao Paulo to talk with other site operators. He sees that they have spent
+thousands of dollars to have development work on their sites and they also suffer from some of the same ineffeciencies that
+his does.
 
 > **Feels:**
+Samuel feels good that he is able to make updates to his own site and even make the customizations necessary to make things
+work the way he wants to. When he can do the work that he knows would normally cost him hundreds of dollars to outsource, it
+gives him motivation to learn more.
 
 > **Does:**
-
+Samuel searches Google any time he needs to make a site customization. He'll normally just copy any paste code into his theme
+file and then tweak it until he achieves the desired effect. Sometimes he can't get the first solution he finds to work so 
+he just works down the list of solutions he finds online until he can get one of them to work.
 ________________________
 
 ### Problem Scenarios
 
-* Optimizing Performance
-  - Understanding which plugins are responsible for speed bottlenecks is next to impossible
-* Customizing Functionality
-  - Finding quick solutions to simple problems is never quick
+* __Optimizing Performance__
 
+  34. Understanding which plugins are responsible for speed bottlenecks is next to impossible
+      - *Alternative:* 
+      - *Value-Proposition:* 
   
+* __Customizing Functionality__
+
+  35. Finding quick solutions to simple problems is never quick
+      - *Alternative:* 
+      - *Value-Proposition:* 
+
+
 ----
 <style>img{float:right;margin: 15px;max-width:250px;}</style>
