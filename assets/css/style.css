@@ -1,5 +1,5 @@
 /* Wordpress overrides */
-#wpfooter, .updated, .notice, .update-nag { 
+#wpfooter, .updated, .notice, .update-nag, #wpbody-content > .error { 
 	display: none; 
 }
 
@@ -17,10 +17,6 @@
 
 #adminmenuwrap {
 	z-index: 898 !important;
-}
-
-body {
-	overflow: hidden;
 }
 
 body.folded #wpcontent, body.folded #wpfooter {
