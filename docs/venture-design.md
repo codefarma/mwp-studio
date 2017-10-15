@@ -221,7 +221,7 @@ ________________________
       - *Value-Proposition:* 
   
 ---------------------------------
-Abdul (Software Architect)
+Abdul (Application Architect)
 ---------------------------------
 ![Photo](abdul.jpg)
 
