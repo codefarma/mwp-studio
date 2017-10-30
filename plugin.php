@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: Wordpress Plugin Studio
+ * Plugin Name: MWP Studio
  * Depends: lib-modern-framework
- * Description: A graphical design studio for building wordpress plugins
+ * Description: A graphical design studio for building wordpress plugins and themes.
  * Version: 0.0.0
  * Author: Kevin Carwile
- * Author URI: 
+ * Author URI: http://millermedia.io
  */
  
 if ( ! defined( 'ABSPATH' ) ) {

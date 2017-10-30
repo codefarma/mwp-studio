@@ -3,7 +3,7 @@
  * Plugin Class File
  *
  * @vendor: Kevin Carwile
- * @package: Wordpress Plugin Studio
+ * @package: MWP Studio
  * @author: Kevin Carwile
  * @link: 
  * @since: May 1, 2017
@@ -35,7 +35,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * @var string		Plugin Name
 	 */
-	public $name = 'Wordpress Plugin Studio';
+	public $name = 'MWP Studio';
 	
 	/**
 	 * Main Stylesheet

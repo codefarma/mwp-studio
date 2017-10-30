@@ -4,7 +4,7 @@
  *
  * Created:   May 1, 2017
  *
- * @package:  Wordpress Plugin Studio
+ * @package:  MWP Studio
  * @author:   Kevin Carwile
  * @since:    0.0.0
  */
@@ -19,7 +19,7 @@ use Modern\Wordpress\Pattern\Singleton;
 /**
  * Main Studio Controller
  *
- * @Wordpress\AdminPage( type="dashboard", menu="Plugin Studio", title="Wordpress Plugin Studio", slug="mwp-studio-dashboard" )
+ * @Wordpress\AdminPage( type="dashboard", menu="MWP Studio", title="MWP Studio", slug="mwp-studio-dashboard" )
  */
 class Dashboard extends Singleton
 {

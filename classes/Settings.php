@@ -3,7 +3,7 @@
  * Settings Class File
  *
  * @vendor: Kevin Carwile
- * @package: Wordpress Plugin Studio
+ * @package: MWP Studio
  * @author: Kevin Carwile
  * @link: 
  * @since: May 1, 2017

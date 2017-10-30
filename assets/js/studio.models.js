@@ -3,7 +3,7 @@
  *
  * Created     August 8, 2017
  *
- * @package    Wordpress Plugin Studio
+ * @package    MWP Studio
  * @author     Kevin Carwile
  * @since      0.0.0
  */
