@@ -288,6 +288,7 @@
 		 */
 		constructor: function( attributes )
 		{
+			// Return the cached object for this file if we've already created it
 			if ( attributes && attributes.id ) {
 				var node = FileTreeNode.cache.get( attributes.id );
 				if ( node ) {
@@ -296,7 +297,10 @@
 				}
 			}
 			
+			// Call base model constructor with arguments
 			Backbone.Model.apply( this, arguments );
+			
+			// Add to cache
 			FileTreeNode.cache.add( this );
 		},
 		
@@ -895,7 +899,7 @@
 				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_fetch_filetree',
-					dirpath: self.get('basedir')
+					treepath: self.get('treeroot')
 				}
 			})
 			.done( function( data ) {
@@ -928,7 +932,7 @@
 				url: studio.local.ajaxurl,
 				data: { 
 					action: 'mwp_studio_load_catalog_items',
-					basepath: self.get('basedir'),
+					basepath: self.get('treeroot'),
 					datatype: datatype
 				}
 			})

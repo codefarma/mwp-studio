@@ -38,7 +38,7 @@
 				return -(box.height() / 2);
 			}
 		});
-	});	
+	});
 	
 	var CollectorModel    = mwp.model.get( 'mwp-studio-collector' );
 	var CollectibleModel  = mwp.model.get( 'mwp-studio-collectible' );

@@ -287,6 +287,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		$composite_data[ 'file' ] = $file;
 		$composite_data[ 'basedir' ] = $basedir;
+		$composite_data[ 'treeroot' ] = ( $basedir == str_replace( ABSPATH, '', WP_PLUGIN_DIR ) ? $basedir . '/' . basename( $file ) : $basedir );
 		$composite_data[ 'environment' ] = 'generic';
 		$composite_data[ 'type' ] = 'plugin';
 		
@@ -316,6 +317,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		
 		$theme_info['file']        = $theme->get_stylesheet_directory() . '/style.css';
 		$theme_info['basedir']     = str_replace( ABSPATH, '', $theme->get_stylesheet_directory() );
+		$theme_info['treeroot']    = $theme_info['basedir'];
 		$theme_info['environment'] = 'generic';
 		$theme_info['type']        = 'theme';
 		

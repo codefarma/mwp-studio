@@ -90,7 +90,7 @@ class AjaxHandlers extends Singleton
 		$projects = array();
 		
 		foreach( get_plugins() as $file => $data )
-		{			
+		{
 			$project = $studio->getPluginInfo( WP_PLUGIN_DIR . '/' . $file );
 			$projects[] = $project;
 		}
@@ -115,13 +115,13 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$basedir = ABSPATH . str_replace( '../', '', $_REQUEST['dirpath'] );
+		$treepath = ABSPATH . str_replace( '../', '', $_REQUEST['treepath'] );
 		
-		if ( ! is_dir( $basedir ) ) {
-			wp_send_json( array( 'success' => false ) );
+		if ( is_file( $treepath ) ) {
+			wp_send_json( array( 'nodes' => array( $this->getPlugin()->getFileNodeInfo( $treepath ) ) ) );
 		}
 		
-		wp_send_json( $this->getPlugin()->getFileNodeInfo( $basedir ) );
+		wp_send_json( $this->getPlugin()->getFileNodeInfo( $treepath ) );
 	}
 	
 	/**
