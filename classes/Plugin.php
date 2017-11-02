@@ -222,7 +222,8 @@ class Plugin extends \Modern\Wordpress\Plugin
 				'cron_url'             => rtrim( get_site_url(), '/' ) . '/wp-cron.php',
 				'studio_logo'          => $this->fileUrl( 'assets/img/studio.png' ),
 				'studio_animated_logo' => $this->fileUrl( 'assets/img/studio-animated-logo-alt.gif' ) . '?' . rand( 0, 1000000 ), // http://www.christiantailor.co.uk/
-				'heartbeat_interval'   => 20000,
+				'heartbeat_interval'   => $this->getSetting( 'heartbeat_interval' ) * 1000,
+				'auto_index_interval'  => $this->getSetting( 'auto_index_interval' ) * 1000,
 				'templates' => array
 				(
 					'menus' => array(

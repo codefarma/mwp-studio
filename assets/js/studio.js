@@ -180,7 +180,22 @@
 				localStorage.setItem( 'mwp-studio-current-project', project.get('id') );
 			});
 
-			// Start our ticker
+			/**
+			 * Automatically update the code index periodically
+			 *
+			 * @return	void
+			 */
+			var automaticIndexUpdate = function() {
+				self.updateCodeIndex();
+				if ( self.local.auto_index_interval ) {
+					setTimeout( automaticIndexUpdate, self.local.auto_index_interval );
+				}
+			};
+			
+			// update the code index
+			automaticIndexUpdate();
+			
+			// Start the heart
 			this.heartbeat();
 		},
 		
@@ -196,6 +211,19 @@
 			}
 			
 			return this.environments.get('generic');
+		},
+		
+		/**
+		 * Trigger an update of the code index
+		 *
+		 * @return	$.Deferred
+		 */
+		updateCodeIndex: function()
+		{
+			return $.ajax({
+				url: studio.local.ajaxurl,
+				data: { action: 'mwp_studio_sync_catalog', path: 'all' }
+			});
 		},
 		
 		/**
@@ -556,7 +584,7 @@
 				}
 			});
 			
-			/* Tick Tock. */
+			/* Setup the next cycle */
 			$.when.apply( this, checkups ).done( function() 
 			{
 				$.ajax({ url: self.local.cron_url });

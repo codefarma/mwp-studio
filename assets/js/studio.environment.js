@@ -278,10 +278,7 @@
 					title: 'Update Code Index',
 					icon: 'fa fa-database',
 					callback: function() {
-						$.ajax({
-							url: studio.local.ajaxurl,
-							data: { action: 'mwp_studio_sync_catalog', path: 'all' }
-						}).done( function( response ) {
+						studio.updateCodeIndex().done( function( response ) {
 							if ( response.success ) {
 								studio.updateStatus();
 								studio.openDialog( 'alert', { title: 'Notice', message: 'Task scheduled. Processing will now continue as a background process.' });

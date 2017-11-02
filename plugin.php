@@ -35,7 +35,7 @@ if ( ! class_exists( 'MWPStudioPlugin' ) )
 				->attach( $plugin )
 				->attach( $dashboard )
 				->attach( $ajaxHandlers )
-				//->attach( $settings )
+				->attach( $settings )
 				;
 			
 			/* Enable Widgets */
