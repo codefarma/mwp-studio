@@ -68,7 +68,8 @@ class AjaxHandlers extends Singleton
 	 */
 	public function authorize()
 	{
-		if ( get_current_user_id() !== 1 )
+		$authorized_users = array_map( 'intval', array_filter( explode( ',', $this->getPlugin()->getSetting( 'authorized_users' ) ) ) );
+		if ( ! in_array( get_current_user_id(), $authorized_users ) )
 		{
 			exit('unauthorized');
 		}
