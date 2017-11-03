@@ -22,7 +22,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 1028,
@@ -36,7 +36,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 15,
@@ -50,7 +50,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 0,
@@ -65,7 +65,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 11,
                     "name": "file_last_analyzed",
                     "type": "INT",
@@ -99,7 +99,7 @@ return <<<'JSON'
                     "type": "key",
                     "name": "file_path",
                     "length": [
-                        767
+                        191
                     ],
                     "columns": [
                         "file_file"
@@ -137,7 +137,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 255,
@@ -151,7 +151,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 255,
@@ -165,7 +165,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 0,
@@ -179,7 +179,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 1056,
@@ -194,7 +194,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 6,
                     "name": "class_line",
                     "type": "INT",
@@ -207,7 +207,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 11,
                     "name": "class_catalog_time",
                     "type": "INT",
@@ -231,8 +231,8 @@ return <<<'JSON'
                     "type": "key",
                     "name": "class_name",
                     "length": [
-                        null,
-                        767
+                        191,
+                        191
                     ],
                     "columns": [
                         "class_name",
@@ -271,7 +271,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 255,
@@ -285,7 +285,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 255,
@@ -299,7 +299,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 15,
@@ -314,7 +314,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 2,
                     "name": "function_args",
                     "type": "INT",
@@ -326,7 +326,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 0,
@@ -340,7 +340,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 1056,
@@ -355,7 +355,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 6,
                     "name": "function_line",
                     "type": "INT",
@@ -368,7 +368,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 11,
                     "name": "function_catalog_time",
                     "type": "INT",
@@ -392,8 +392,8 @@ return <<<'JSON'
                     "type": "key",
                     "name": "function_name",
                     "length": [
-                        null,
-                        null,
+                        191,
+                        191,
                         null,
                         null
                     ],
@@ -408,7 +408,7 @@ return <<<'JSON'
                     "type": "key",
                     "name": "function_file",
                     "length": [
-                        767
+                        191
                     ],
                     "columns": [
                         "function_file"
@@ -436,7 +436,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 255,
@@ -450,7 +450,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 15,
@@ -464,7 +464,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 255,
@@ -478,7 +478,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 255,
@@ -492,7 +492,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 15,
@@ -506,7 +506,7 @@ return <<<'JSON'
                     "allow_null": true,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": null,
                     "length": 0,
@@ -520,7 +520,7 @@ return <<<'JSON'
                     "allow_null": false,
                     "auto_increment": false,
                     "binary": false,
-                    "collation": "latin1_swedish_ci",
+                    "collation": "utf8mb4_unicode_ci",
                     "decimals": null,
                     "default": "",
                     "length": 1056,
@@ -574,7 +574,7 @@ return <<<'JSON'
                     "auto_increment": false,
                     "binary": false,
                     "decimals": null,
-                    "default": "",
+                    "default": "0",
                     "length": 11,
                     "name": "hook_catalog_time",
                     "type": "INT",
@@ -598,7 +598,7 @@ return <<<'JSON'
                     "type": "key",
                     "name": "hook_name",
                     "length": [
-                        null,
+                        191,
                         null
                     ],
                     "columns": [
@@ -610,7 +610,7 @@ return <<<'JSON'
                     "type": "key",
                     "name": "hook_file",
                     "length": [
-                        767
+                        191
                     ],
                     "columns": [
                         "hook_file"
@@ -620,7 +620,7 @@ return <<<'JSON'
                     "type": "key",
                     "name": "hook_callback",
                     "length": [
-                        null,
+                        191,
                         null
                     ],
                     "columns": [
