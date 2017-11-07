@@ -358,7 +358,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			$parts = explode( '.', $file );
 			$ext = array_pop( $parts );
 			$icon = 'fa fa-file-o';
-			$selectable = false;
+			$selectable = in_array( $ext, explode( ',', $this->getSetting('editable_file_types') ) );
 			$mode = null;
 			
 			if ( in_array( $ext, array( 'php', 'css', 'js', 'html', 'xml' ) ) ) {

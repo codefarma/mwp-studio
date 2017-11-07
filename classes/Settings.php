@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @Wordpress\Options\Field( title="Automatic Index Update Interval (seconds)", name="auto_index_interval", type="text", default=300 )
  * @Wordpress\Options\Field( title="Studio Heartbeat Interval (seconds)", name="heartbeat_interval", type="text", default=20 )
  * @Wordpress\Options\Field( title="Authorized Users", name="authorized_users", type="text", default="1" )
+ * @Wordpress\Options\Field( title="Editable File Types", name="editable_file_types", type="text", default="php,css,less,js,html,xml,txt,md,pot,mo,gitignore,buildignore,json,lock" )
  */
 class Settings extends \Modern\Wordpress\Plugin\Settings
 {
