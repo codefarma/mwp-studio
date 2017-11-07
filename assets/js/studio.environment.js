@@ -91,14 +91,20 @@
 		getProjectsMenu: function()
 		{
 			var plugins = _.filter( studio.viewModel.projects(), function( project ) { return project.model().get('type') == 'plugin'; } );
-			var themes = _.filter( studio.viewModel.projects(), function( project ) { return project.model().get('type') == 'theme'; } );
-			
+			var themes = _.filter( studio.viewModel.projects(), function( project ) { return project.model().get('type') == 'theme'; } );			
 			var menu = [];
 			
-			menu.push({	type: 'header',	title: 'Plugins', icon: 'fa fa-plug' });
+			/* Plugin submenu */
+			var pluginMenu = {
+				classes: 'plugin-projects-menu',
+				type: 'submenu',
+				title: 'Plugins',
+				icon: 'fa fa-plug',
+				subitems: []
+			};
 			
 			_.each( plugins, function( plugin ) {
-				menu.push({
+				pluginMenu.subitems.push({
 					type: 'action',
 					title: plugin.name(),
 					icon: 'fa fa-angle-right',
@@ -108,8 +114,17 @@
 				});
 			});
 
+			menu.push( pluginMenu );
 			menu.push({	type: 'divider'	});
-			menu.push({	type: 'header',	title: 'Themes', icon: 'fa fa-paint-brush' });
+			
+			/* Theme submenu */
+			var themeMenu = {
+				classes: 'theme-projects-menu',
+				type: 'submenu',
+				title: 'Themes',
+				icon: 'fa fa-paint-brush',
+				subitems: []
+			};
 			
 			_.each( themes, function( theme ) 
 			{
@@ -138,9 +153,11 @@
 					}
 				};
 				
-				menu.push( item );
+				themeMenu.subitems.push( item );
 			});
 		
+			menu.push( themeMenu );
+			
 			return menu;
 		},
 		
