@@ -417,6 +417,29 @@
 				/**
 				 * Edit the file in the editor
 				 */
+				createFile: {
+					name: 'Create New File',
+					iconClass: 'fa-plus',
+					onClick: function( node ) {
+						studio.openDialog( 'prompt', {
+							title: 'Enter new filename: ',
+							callback: function( newname ) { 
+								if ( newname ) {
+									$.when( node.model.createFile( newname ) ).done( function( newFile ) {
+										if ( newFile.collection ) {
+											newFile.collection.trigger( 'updated' );
+										}
+										newFile.switchTo();
+									});
+								}
+							}
+						});
+					}
+				},
+				
+				/**
+				 * Edit the file in the editor
+				 */
 				editFile: {
 					name: 'Edit File',
 					iconClass: 'fa-pencil',
@@ -429,10 +452,99 @@
 				},
 				
 				/**
+				 * Copy a file
+				 */
+				copyFile: {
+					name: 'Copy File',
+					iconClass: 'fa-copy',
+					onClick: function( node ) {
+						$.when( node.model.copyFile() ).done( function( fileCopy ) {
+							fileCopy.switchTo();
+						});
+					},
+					isShown: function( node ) {
+						return node.model.get('type') == 'file';
+					}
+				},
+				
+				/**
+				 * Rename a file
+				 */
+				renameFile: {
+					name: 'Rename File',
+					iconClass: 'fa-i-cursor',
+					onClick: function( node ) {
+						studio.openDialog( 'prompt', {
+							title: 'Rename File: ' + node.model.get('text'),
+							value: node.model.get('text'),
+							callback: function( newname ) { 
+								if ( newname ) {
+									$.when( node.model.renameFile( newname ) ).done( function() {
+										if ( node.model.collection ) {
+											node.model.collection.trigger( 'updated' );
+										}
+									});
+								}
+							}
+						});
+					},
+					isShown: function( node ) {
+						return node.model.get('type') == 'file';
+					}
+				},
+
+				/**
+				 * Delete a file
+				 */
+				deleteFile: {
+					name: 'Delete File',
+					iconClass: 'fa-trash',
+					onClick: function( node ) {
+						studio.openDialog( 'dialog', {
+							size: 'large',
+							title: 'Warning! Delete File: ' + node.model.get('text'),
+							message: "Are you sure you want to delete this file?",
+							buttons: {
+								cancel: {
+									label: 'Cancel',
+									className: 'btn-default'
+								},
+								no: {
+									label: 'No',
+									className: 'btn-primary'
+								},
+								yes: {
+									label: 'Yes',
+									className: 'btn-danger',
+									callback: function() { 
+										node.model.deleteFile(); 
+									}
+								}
+							}
+						});
+						
+					},
+					isShown: function( node ) {
+						return node.model.get('type') == 'file';
+					}
+				},
+				
+				/**
+				 * Refresh the file tree
+				 */
+				refreshFileTree: {
+					name: 'Refresh Files',
+					iconClass: 'fa-refresh',
+					onClick: function( node ) {
+						studio.viewModel.currentProject().model().fetchFileTree();
+					}
+				},
+				
+				/**
 				 * Reindex the directory
 				 */
 				syncIndex: {
-					name: 'Sync code index',
+					name: 'Sync to code index',
 					iconClass: 'fa-database',
 					onClick: function( node ) {
 						$.when( node.model.syncIndex() ).done( function( response ) {

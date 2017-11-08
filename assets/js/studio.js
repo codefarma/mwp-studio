@@ -160,8 +160,8 @@
 					if ( index == -1 ) { index = 0; }
 					self.viewModel.currentProject( self.viewModel.projects()[index] );
 				});
-			}, 1250 );
-			
+			}, 250 );
+				
 			/**
 			 * Lazy load project resources only after it becomes active
 			 *
@@ -229,7 +229,7 @@
 		/**
 		 * Open a bootbox dialog
 		 *
-		 * @param	string			type			Dialog type
+		 * @param	string			type			Dialog type (alert,prompt,confirm,dialog)
 		 * @param	object			options			Dialog options
 		 * @return	bootbox
 		 */

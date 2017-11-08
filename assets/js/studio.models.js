@@ -456,7 +456,170 @@
 				});
 			}
 			
-			return $.Deferred().promise();
+			return $.Deferred();
+		},
+		
+		/**
+		 * Create a file
+		 *
+		 * @return	$.Deferred
+		 */
+		createFile: function( filename )
+		{
+			var self = this;
+			var createDeferred = $.Deferred();
+			
+			$.ajax({
+				method: 'post',
+				url: studio.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_create_file',
+					filepath: self.get('path'),
+					filename: filename
+				}
+			}).done( function( response ) 
+			{
+				if ( response.success ) 
+				{
+					// Create the new file
+					var newfile = new FileTreeNode( response.file );
+					
+					// Add the file to its parent if it exists
+					var parent = FileTreeNode.cache.get( response.file.parent_id );
+					if ( parent ) {
+						newfile.collection = undefined;
+						parent.nodes.add( newfile );
+					}
+					
+					createDeferred.resolve( newfile );
+				} else {
+					if ( response.message ) {
+						studio.openDialog( 'alert', { title: 'Error', message: response.message } );
+					}
+					createDeferred.reject();
+				}
+			});
+			
+			return createDeferred;			
+		},
+
+		/**
+		 * Copy a file
+		 *
+		 * @return	$.Deferred
+		 */
+		copyFile: function()
+		{
+			var self = this;
+			var copyDeferred = $.Deferred();
+			
+			$.ajax({
+				method: 'post',
+				url: studio.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_copy_file',
+					filepath: self.get('path')
+				}
+			}).done( function( response ) 
+			{
+				if ( response.success ) 
+				{
+					// Create the new file
+					var newfile = new FileTreeNode( response.file );
+					
+					// Add the file to its parent if it exists
+					var parent = FileTreeNode.cache.get( response.file.parent_id );
+					if ( parent ) {
+						newfile.collection = undefined;
+						parent.nodes.add( newfile );
+					}
+					
+					copyDeferred.resolve( newfile );
+				} else {
+					if ( response.message ) {
+						studio.openDialog('alert', { title: 'Error', message: response.message });
+					}
+					copyDeferred.reject();
+				}
+			});
+			
+			return copyDeferred;			
+		},
+		
+		/**
+		 * Rename a file
+		 *
+		 * return $.Deferred
+		 */
+		renameFile: function( newname )
+		{
+			var self = this;
+			
+			if ( ! newname ) {
+				throw new Error( 'Invalid file name: ' + newname );
+			}
+			
+			return $.ajax({
+				method: 'post',
+				url: studio.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_rename_file',
+					filepath: self.get('path'),
+					newname: newname
+				}
+			}).done( function( response ) 
+			{
+				if ( response.success ) {
+					self.set( response.file );
+				} else {
+					if ( response.message ) {
+						studio.openDialog('alert', response.message);
+					}
+				}
+			});
+		},
+		
+		/**
+		 * Delete the file
+		 *
+		 * @return	$.Deferred
+		 */
+		deleteFile: function()
+		{
+			var self = this;
+			
+			return $.ajax({
+				method: 'post',
+				url: studio.local.ajaxurl,
+				data: { 
+					action: 'mwp_studio_delete_file',
+					filepath: self.get('path')
+				}
+			}).done( function( response ) {
+				if ( response.success ) {
+					self.destroy();
+				} else {
+					if ( response.message ) {
+						studio.openDialog('alert', response.message);
+					}
+				}
+			});			
+		},
+		
+		/**
+		 * Destroy the file from memory
+		 *
+		 * @return	void
+		 */
+		destroy: function()
+		{
+			this.edited(false);
+			this.closeFile();
+			FileTreeNode.cache.remove( this );
+			var parent = FileTreeNode.cache.get( this.get('parent_id') );
+			if ( parent ) {
+				parent.nodes.remove( this );
+			}
 		},
 		
 		/**
@@ -500,7 +663,7 @@
 				
 				if ( this.edited() ) 
 				{
-					bootbox.dialog( {
+					studio.openDialog( 'dialog', {
 						size: 'large',
 						title: 'Close File: ' + self.get('text'),
 						message: "This file has been edited. Do you want to save it before closing?",

@@ -245,6 +245,152 @@ class AjaxHandlers extends Singleton
 	}
 
 	/**
+	 * Create a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_create_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function createFile()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$dir = ABSPATH . $file_path;
+
+		if ( is_file( $dir ) ) {
+			$dir = dirname( $dir );
+		}
+
+		$filename = str_replace( '../', '', $_REQUEST['filename'] );
+		$filename = str_replace( '\\', '/', $filename );
+		$filename = explode( '/', $filename );
+		$filename = array_pop( $filename );
+		$newfile = $dir . '/' . $filename;
+		
+		if ( is_file ( $newfile ) ) {
+			wp_send_json( array( 'success' => false, 'message' => __( 'That file already exists', 'mwp-studio' ) ) );
+		}
+		
+		if ( file_put_contents( $newfile, '' ) !== false ) {
+			wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $newfile ) ) );
+		} else {
+			wp_send_json( array( 'success' => false, 'message' => __( 'Could not create the file. Perhaps a permission issue?', 'mwp-studio' ) ) );
+		}
+	}
+
+	/**
+	 * Copy a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_copy_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function copyFile()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
+		$filename = basename( $file );
+		$dirname = dirname( $file );
+		$ext = '';
+		
+		if ( strpos( $filename, '.' ) !== false ) {
+			$parts = explode( '.', $file );
+			$ext = '.' . array_pop( $parts );
+			$file = implode( '.', $parts );
+		}
+		
+		if ( is_file( $file . $ext ) ) 
+		{
+			$x = 2;
+			$newfile = $file . '(copy)' . $ext;
+			while( file_exists( $newfile ) ) {
+				$newfile = $file . '(copy ' . $x++ . ')' . $ext;
+			}
+			
+			if ( copy( $file . $ext, $newfile ) ) {
+				wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $newfile ) ) );
+			} else {
+				wp_send_json( array( 'success' => false, 'message' => __( 'Could not copy the file. Perhaps a permission issue?', 'mwp-studio' ) ) );
+			}
+		}
+		else
+		{
+			wp_send_json( array( 'success' => false, 'message' => __( 'Only files can be copied.', 'mwp-studio' ) ) );
+		}
+	}
+
+	/**
+	 * Rename a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_rename_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function renameFile()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
+		$filename = basename( $file );
+		$dirname = dirname( $file );
+		
+		$newname = str_replace( '../', '', $_REQUEST['newname'] );
+		$newname = str_replace( '\\', '/', $newname );
+		$newname = explode( '/', $newname );
+		$newname = array_pop( $newname );
+		$newfile = $dirname . '/' . $newname;
+		
+		if ( is_file ( $newfile ) ) {
+			wp_send_json( array( 'success' => false, 'message' => __( 'That filename already exists', 'mwp-studio' ) ) );
+		}
+		
+		if ( is_file( $file ) ) 
+		{
+			if ( rename( $file, $newfile ) ) {
+				wp_send_json( array( 'success' => true, 'file' => $this->getPlugin()->getFileNodeInfo( $newfile ) ) );
+			} else {
+				wp_send_json( array( 'success' => false, 'message' => __( 'Could not rename the file. Perhaps a permission issue?', 'mwp-studio' ) ) );
+			}
+		}
+		else
+		{
+			wp_send_json( array( 'success' => false, 'message' => __( 'Only files can be renamed.', 'mwp-studio' ) ) );
+		}
+	}
+
+	/**
+	 * Delete a file
+	 *
+	 * @Wordpress\AjaxHandler( action="mwp_studio_delete_file", for={"users"} )
+	 *
+	 * @return	void
+	 */
+	public function deleteFile()
+	{
+		$this->authorize();
+		
+		$file_path = str_replace( '../', '', $_REQUEST['filepath'] );
+		$file = ABSPATH . $file_path;
+		
+		if ( is_file( $file ) ) 
+		{
+			if ( unlink( $file ) ) {
+				wp_send_json( array( 'success' => true ) );
+			} else {
+				wp_send_json( array( 'success' => false, 'message' => __( 'Could not delete the file. Perhaps a permission issue?', 'mwp-studio' ) ) );
+			}
+		}
+		else
+		{
+			wp_send_json( array( 'success' => false, 'message' => __( 'Only files can be deleted.', 'mwp-studio' ) ) );
+		}
+	}
+
+	/**
 	 * Create a new project
 	 *
 	 * @Wordpress\AjaxHandler( action="mwp_studio_create_project", for={"users"} )

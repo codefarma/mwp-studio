@@ -459,7 +459,7 @@
 		{
 			var self = this;
 			var dialogInteraction = $.Deferred();
-			var plugin = viewModel.plugin ? viewModel.plugin.model() : studio.viewModel.currentPlugin().model();
+			var project = viewModel.plugin ? viewModel.plugin.model() : studio.viewModel.currentProject().model();
 			var dialog;
 			
 			/* Add an enter key submit function to each dialog */
@@ -492,15 +492,15 @@
 							{
 								if ( response.success ) 
 								{
-									if ( response.plugin ) {
-										var _plugin = studio.plugins.add( response.plugin );
-										_plugin.switchToPlugin();
-										dialogInteraction.resolve( _plugin );
+									if ( response.project ) {
+										var _project = studio.projects.add( response.project );
+										_project.switchTo();
+										dialogInteraction.resolve( _project );
 										return;
 									}
 									
 									// Look for existing parent node
-									var parent = plugin.fileTree.findChild( 'nodes', function( node ) {
+									var parent = project.fileTree.findChild( 'nodes', function( node ) {
 										return node.get('id') === response.file.parent_id;
 									});
 									
@@ -526,8 +526,8 @@
 									else
 									{
 										// Refresh the whole file tree and then find the correct file. 
-										$.when( plugin.fetchFileTree() ).done( function() {
-											var file = plugin.fileTree.findChild( 'nodes', function( node ) {
+										$.when( project.fetchFileTree() ).done( function() {
+											var file = project.fileTree.findChild( 'nodes', function( node ) {
 												return node.get('id') === response.file.id;
 											});
 											
