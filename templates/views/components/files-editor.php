@@ -29,7 +29,21 @@ if ( ! defined( 'ABSPATH' ) ) {
 <div data-view-model="mwp-studio" class="ace-editors">
 	<div class="breadcrumb">
 		<div class="btn-group pull-right">
-		  <button type="button" class="btn btn-default" disabled="disabled" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() ), click: function() { activeFile().model().saveFile(); activeFile().model().editor.focus(); }"><i class="fa fa-floppy-o"></i> Save</button>
+		  <button type="button" class="btn btn-default" disabled="disabled" data-bind="
+			css: { 
+				'btn-success': activeFile() && activeFile().model().edited() 
+			}, 
+			disable: ( ! activeFile() ), 
+			click: function() { 
+				activeFile().model().saveFile(); 
+				activeFile().model().editor.focus(); 
+			}">
+			<i class="fa fa-floppy-o" data-bind="
+				css: {
+					'fa-floppy-o': ! activeFile() || ! activeFile().model().saving(),
+					'fa-refresh fa-spin': activeFile() && activeFile().model().saving()
+				}"></i> Save
+		  </button>
 		  <button type="button" class="btn btn-default dropdown-toggle" data-bind="css: { 'btn-success': activeFile() && activeFile().model().edited() }, disable: ( ! activeFile() )" data-toggle="dropdown">
 			<span class="caret"></span>
 			<span class="sr-only">Toggle Dropdown</span>

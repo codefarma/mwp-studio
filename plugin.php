@@ -1,8 +1,7 @@
 <?php
 /**
  * Plugin Name: MWP Studio
- * Depends: lib-modern-framework
- * Description: A graphical design studio for building wordpress plugins and themes.
+ * Description: A graphical design studio for building WordPress plugins and themes.
  * Version: 0.0.0
  * Author: Kevin Carwile
  * Author URI: http://millermedia.io
@@ -31,7 +30,7 @@ if ( ! class_exists( 'MWPStudioPlugin' ) )
 			$ajaxHandlers = \MWP\Studio\AjaxHandlers::instance();
 			
 			/* Connect annotated resources to wordpress core */
-			$framework = \Modern\Wordpress\Framework::instance()
+			$framework = \MWP\Framework\Framework::instance()
 				->attach( $plugin )
 				->attach( $dashboard )
 				->attach( $ajaxHandlers )
@@ -43,7 +42,7 @@ if ( ! class_exists( 'MWPStudioPlugin' ) )
 		}
 		
 		public static function status() {
-			if ( ! class_exists( 'ModernWordpressFramework' ) ) {
+			if ( ! class_exists( 'MWPFramework' ) ) {
 				echo '<td colspan="3" class="plugin-update colspanchange">
 						<div class="update-message notice inline notice-error notice-alt">
 							<p><strong style="color:red">INOPERABLE.</strong> Please activate <a href="' . admin_url( 'plugins.php?page=tgmpa-install-plugins' ) . '"><strong>Modern Framework for Wordpress</strong></a> to enable the operation of this plugin.</p>
@@ -73,11 +72,11 @@ if ( ! class_exists( 'MWPStudioPlugin' ) )
 	 * This plugin depends on the modern wordpress framework.
 	 * This block ensures that it is loaded before we init.
 	 */
-	if ( class_exists( 'ModernWordpressFramework' ) ) {
+	if ( class_exists( 'MWPFramework' ) ) {
 		MWPStudioPlugin::init();
 	}
 	else {
-		add_action( 'modern_wordpress_init', array( 'MWPStudioPlugin', 'init' ) );
+		add_action( 'mwp_framework_init', array( 'MWPStudioPlugin', 'init' ) );
 	}
 	
 }

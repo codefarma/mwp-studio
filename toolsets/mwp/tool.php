@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Pattern\ActiveRecord;
-use Modern\Wordpress\Framework;
+use MWP\Framework\Pattern\ActiveRecord;
+use MWP\Framework\Framework;
 
 use MWP\Studio\Analyzers\AbstractAnalyzer;
 use MWP\Studio\AjaxHandlers;
@@ -33,14 +33,14 @@ class MWPSupport extends Tool
 	/**
 	 * MWP Framework Support JS
 	 *
-	 * @Wordpress\Script( handle="mwp-studio-mwp-support", deps={"mwp-studio"} )
+	 * @MWP\WordPress\Script( handle="mwp-studio-mwp-support", deps={"mwp-studio"} )
 	 */
 	public $javascript;
 	
 	/**
 	 * CSS
 	 *
-	 * @Wordpress\Stylesheet
+	 * @MWP\WordPress\Stylesheet
 	 */
 	public $stylesheet;
 	
@@ -58,7 +58,7 @@ class MWPSupport extends Tool
 	/**
 	 * Enqueue scripts and stylesheets
 	 * 
-	 * @Wordpress\Action( for="admin_enqueue_scripts" )
+	 * @MWP\WordPress\Action( for="admin_enqueue_scripts" )
 	 *
 	 * @return	void
 	 */
@@ -74,7 +74,7 @@ class MWPSupport extends Tool
 	/**
 	 * Add the toolbox component to the studio
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_toolbox_components" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_toolbox_components" )
 	 *
 	 * @param	array		$components				Toolbox components
 	 * @return	array
@@ -87,7 +87,7 @@ class MWPSupport extends Tool
 	/**
 	 * Add parameters to the studio javascript local object
 	 *
-	 * @Wordpress\Filter( for="studio_controller_params" )
+	 * @MWP\WordPress\Filter( for="studio_controller_params" )
 	 *
 	 * @param	array		$params				The studio javascript localized parameters
 	 * @return	array
@@ -107,7 +107,7 @@ class MWPSupport extends Tool
 	/**
 	 * Add hooks analyzer to code agent
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_code_analyzers" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_code_analyzers" )
 	 *
 	 * @param	array			$analyzers				Existing analyzers
 	 * @return	array
@@ -121,7 +121,7 @@ class MWPSupport extends Tool
 	/**
 	 * Customize the environment for modern wordpress plugins
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_plugin_info", args=4 )
+	 * @MWP\WordPress\Filter( for="mwp_studio_plugin_info", args=4 )
 	 *
 	 * @param	array			$info				The plugin info
 	 * @param	string			$file				The plugin file
@@ -146,7 +146,7 @@ class MWPSupport extends Tool
 	/**
 	 * Create a new project
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_create_project", args=2 )
+	 * @MWP\WordPress\Filter( for="mwp_studio_create_project", args=2 )
 	 *
 	 * @param	array|null			$project 				Project Details
 	 * @param	array				$options				Creation options
@@ -183,7 +183,7 @@ class MWPCodeAnalyzer extends AbstractAnalyzer
 		{
 			if ( $docBlock = $node->getDocComment() ) 
 			{
-				if ( preg_match_all( '/@Wordpress\\\(Action|Filter)\((.*)for="(.+)"(.*)\)/sU', $docBlock->getText(), $matches ) ) 
+				if ( preg_match_all( '/@MWP\WordPress\\\(Action|Filter)\((.*)for="(.+)"(.*)\)/sU', $docBlock->getText(), $matches ) ) 
 				{
 					foreach( $matches[0] as $i => $match ) 
 					{

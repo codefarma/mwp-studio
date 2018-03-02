@@ -11,9 +11,9 @@ if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) or ! WP_UNINSTALL_PLUGIN ) {
 	die( 'Access denied.' );
 }
 
-if ( file_exists( WP_PLUGINS_DIR . '/modern-framework/plugin.php' ) )
+if ( file_exists( WP_PLUGINS_DIR . '/mwp-framework/plugin.php' ) )
 {
-	include_once WP_PLUGINS_DIR . '/modern-framework/plugin.php';
+	include_once WP_PLUGINS_DIR . '/mwp-framework/plugin.php';
 
 	require_once 'vendor/autoload.php';
 

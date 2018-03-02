@@ -285,9 +285,16 @@
 					type: 'action',
 					title: 'Web Browser',
 					icon: 'fa fa-globe',
-					callback: function()
-					{
+					callback: function() {
 						studio.openWindow( 'web-browser', function() { return studio.browserWindow(); } );
+					}
+				},
+				{
+					type: 'action',
+					title: 'Search',
+					icon: 'fa fa-search',
+					callback: function() {
+						studio.openWindow( 'search', function() { return studio.searchWindow(); } );
 					}
 				},
 				{

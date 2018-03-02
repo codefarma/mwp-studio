@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Tool
 {
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
@@ -42,7 +42,7 @@ class Tool
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -54,7 +54,7 @@ class Tool
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -63,10 +63,10 @@ class Tool
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$reflection = new \ReflectionClass( get_called_class() );
 		$this->toolsetDir = array_slice( explode( '/', str_replace( '\\', '/', $reflection->getFileName() ) ), -2 , 1 )[0];		
@@ -104,7 +104,7 @@ class Tool
 	/**
 	 * Get toolsets
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_get_toolsets" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_get_toolsets" )
 	 *
 	 * @param	array		$toolsets				Array of toolsets
 	 * @return	array

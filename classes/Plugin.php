@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Task;
+use MWP\Framework\Task;
 use MWP\Studio\Models;
 use MWP\Studio\Analyzers\Agent;
 use MWP\Studio\Models\Function_;
@@ -24,7 +24,7 @@ use MWP\Studio\Models\File;
 /**
  * Plugin Class
  */
-class Plugin extends \Modern\Wordpress\Plugin
+class Plugin extends \MWP\Framework\Plugin
 {
 	/**
 	 * Instance Cache - Required
@@ -39,110 +39,110 @@ class Plugin extends \Modern\Wordpress\Plugin
 	
 	/**
 	 * Main Stylesheet
-	 * @Wordpress\Stylesheet(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Stylesheet(deps={"mwp-bootstrap"})
 	 */
 	public $mainStyle = 'assets/css/style.css';
 	
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( handle="mwp-studio-models", deps={"mwp", "mwp-bootstrap", "knockback"} )
+	 * @MWP\WordPress\Script( handle="mwp-studio-models", deps={"mwp", "mwp-bootstrap", "knockback"} )
 	 */
 	public $studioModels = 'assets/js/studio.models.js';
 
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( handle="mwp-studio-environment", deps={"mwp-studio-models"} )
+	 * @MWP\WordPress\Script( handle="mwp-studio-environment", deps={"mwp-studio-models"} )
 	 */
 	public $studioInterfaces = 'assets/js/studio.environment.js';
 
 	/**
 	 * Main Javascript Controller
-	 * @Wordpress\Script( handle="mwp-studio", deps={"mwp-studio-environment"} )
+	 * @MWP\WordPress\Script( handle="mwp-studio", deps={"mwp-studio-environment"} )
 	 */
 	public $studioController = 'assets/js/studio.js';
 	
 	/**
 	 * jQuery Layout JS
-	 * @Wordpress\Script( deps={"jquery","jquery-ui-draggable"} )
+	 * @MWP\WordPress\Script( deps={"jquery","jquery-ui-draggable"} )
 	 */
 	public $jqueryLayout = 'assets/js/lib/jquery.layout.js';
 	
 	/**
 	 * Ace code editor
-	 * @Wordpress\Script
+	 * @MWP\WordPress\Script
 	 */
 	public $aceEditor = 'assets/ace/src-min-noconflict/ace.js';
 	
 	/**
 	 * Activity Indicator
-	 * @Wordpress\Script( deps={"jquery"} )
+	 * @MWP\WordPress\Script( deps={"jquery"} )
 	 */
 	public $activityIndicatorJS = 'assets/js/lib/jquery.activity-indicator-1.0.0.min.js';
 	
 	/**
 	 * Bootflat JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 */
 	public $bootflatJS1 = 'assets/bootflat/js/icheck.min.js';
 	
 	/**
 	 * Bootflat JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 */
 	public $bootflatJS2 = 'assets/bootflat/js/jquery.fs.selecter.min.js';
 	
 	/**
 	 * Bootflat JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 */
 	public $bootflatJS3 = 'assets/bootflat/js/jquery.fs.stepper.min.js';
 	
 	/**
 	 * Fontawesome CSS
-	 * @Wordpress\Stylesheet
+	 * @MWP\WordPress\Stylesheet
 	 */
 	public $fontawesome = 'assets/fontawesome/css/font-awesome.min.css';
 	
 	/**
 	 * Bootflat CSS
-	 * @Wordpress\Stylesheet(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Stylesheet(deps={"mwp-bootstrap"})
 	 */
 	public $bootflatCSS = 'assets/bootflat/css/bootflat.min.css';
 	
 	/**
 	 * Bootstrap Treeview CSS
-	 * @Wordpress\Stylesheet(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Stylesheet(deps={"mwp-bootstrap"})
 	 */
 	public $bootstrapTreeviewCSS = 'assets/css/bootstrap-treeview.min.css';
 	
 	/**
 	 * Bootstrap Treeview JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 */
 	public $bootstrapTreeviewJS = 'assets/js/lib/bootstrap-treeview.min.js';
 	
 	/**
 	 * Bootstrap Window JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap","jquery-ui-draggable","jquery-ui-resizable"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap","jquery-ui-draggable","jquery-ui-resizable"})
 	 */
 	public $bootstrapWindowJS = 'assets/js/lib/bootstrap-window.min.js';
 	
 	/**
 	 * Bootstrap Window CSS
-	 * @Wordpress\Stylesheet(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Stylesheet(deps={"mwp-bootstrap"})
 	 */
 	public $bootstrapWindowCSS = 'assets/css/bootstrap-window.css';	
 	
 	/**
 	 * Bootstrap Context Menu JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 * @see: https://github.com/dgoguerra/bootstrap-menu
 	 */
 	public $bootstrapContextmenuJS = 'assets/js/lib/bootstrap-contextmenu.min.js';
 	
 	/**
 	 * Bootbox JS
-	 * @Wordpress\Script(deps={"mwp-bootstrap"})
+	 * @MWP\WordPress\Script(deps={"mwp-bootstrap"})
 	 * @see: http://bootboxjs.com
 	 */
 	public $bootboxJS = 'assets/js/lib/bootstrap-bootbox.min.js';
@@ -150,7 +150,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Init
 	 *
-	 * @Wordpress\Action( for="plugins_loaded" )
+	 * @MWP\WordPress\Action( for="plugins_loaded" )
 	 *
 	 * @return	void
 	 */
@@ -179,7 +179,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Enqueue scripts and stylesheets
 	 * 
-	 * @Wordpress\Action( for="admin_enqueue_scripts" )
+	 * @MWP\WordPress\Action( for="admin_enqueue_scripts" )
 	 *
 	 * @return	void
 	 */
@@ -240,9 +240,14 @@ class Plugin extends \Modern\Wordpress\Plugin
 						'editor-settings'   => $this->getTemplateContent( 'dialogs/editor-settings' ),
 						'edit-project'      => $this->getTemplateContent( 'dialogs/edit-project' ),
 						'web-browser'       => $this->getTemplateContent( 'dialogs/web-browser' ),
+						'search'            => $this->getTemplateContent( 'dialogs/search' ),
 					),
 					'panetabs' => array(
 						'project-info'      => $this->getTemplateContent( 'views/components/panetabs/project-info' ),
+					),
+					'search' => array( 
+						'result_summary'            => $this->getTemplateContent( 'snippets/search/result/summary' ),	
+						'result_details'            => $this->getTemplateContent( 'snippets/search/result/details' ),	
 					),
 				),
 			)));
@@ -252,7 +257,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Add the toolbox component to the studio
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_toolbox_components" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_toolbox_components" )
 	 *
 	 * @param	array		$components				Toolbox components
 	 * @return	array
@@ -447,7 +452,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Edit Project Info
 	 *
-	 * @Wordpress\Action( for="mwp_studio_update_project" )
+	 * @MWP\WordPress\Action( for="mwp_studio_update_project" )
 	 *
 	 * @param	array			$project_info				Project info
 	 * @return	void
@@ -517,7 +522,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Add the wordpress code analyzer skips
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_analyzer_skip", args=2 )
+	 * @MWP\WordPress\Filter( for="mwp_studio_analyzer_skip", args=2 )
 	 *
 	 * @param	bool			$skip				Whether to skip or not
 	 * @param	string			$relative_path		File to be analyzed
@@ -561,7 +566,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Add the wordpress code analyzer skips
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_analyzer_update_file", args=2 )
+	 * @MWP\WordPress\Filter( for="mwp_studio_analyzer_update_file", args=2 )
 	 *
 	 * @param	bool			$update				Whether file needs update or not
 	 * @param	string			$relative_path		Relative path to the file
@@ -574,7 +579,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			return $update;
 		}
 		
-		$db = \Modern\Wordpress\Framework::instance()->db();
+		$db = \MWP\Framework\Framework::instance()->db();
 		
 		if ( ! $db->get_var( $db->prepare( "SELECT COUNT(*) FROM {$db->base_prefix}studio_file_catalog WHERE file_file=%s AND file_last_analyzed >= %d", $relative_path, filemtime( rtrim( ABSPATH, '/' ) . '/' . $relative_path ) ) ) ) {
 			return true;
@@ -586,7 +591,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Scan code index and delete records for missing files
 	 *
-	 * @Wordpress\Action( for="mwp_studio_remove_missing_files" )
+	 * @MWP\WordPress\Action( for="mwp_studio_remove_missing_files" )
 	 *
 	 * @param	Task			$task			The task
 	 * @return	void
@@ -666,7 +671,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 			array( 'action' => 'mwp_studio_catalog_directory' ),
 			array( 'fullpath' => get_theme_root(), 'recurse' => true, 'force' => $force )
 		);
-
+		
 		/**
 		 * Remove missing files
 		 */
@@ -715,7 +720,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Catalog files from a directory (setup)
 	 *
-	 * @Wordpress\Action( for="mwp_studio_catalog_directory_setup" )
+	 * @MWP\WordPress\Action( for="mwp_studio_catalog_directory_setup" )
 	 *
 	 * @return	void
 	 */
@@ -725,7 +730,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		{
 			if ( ! $task->getData( 'initialized' ) )
 			{
-				$db      = \Modern\Wordpress\Framework::instance()->db();				
+				$db      = \MWP\Framework\Framework::instance()->db();				
 				$force   = $task->getData( 'force' );
 				$recurse = $task->getData( 'recurse' );
 				
@@ -799,7 +804,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Catalog files from a directory
 	 * 
-	 * @Wordpress\Action( for="mwp_studio_catalog_directory" )
+	 * @MWP\WordPress\Action( for="mwp_studio_catalog_directory" )
 	 *
 	 * @param	Task		$task			The catalog task
 	 * @return	void
@@ -824,7 +829,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 		$agent->saveAnalysis();
 		$agent->resetAnalysis();
 		
-		$db      = \Modern\Wordpress\Framework::instance()->db();
+		$db      = \MWP\Framework\Framework::instance()->db();
 		$data    = json_decode( $db->get_results( "SELECT task_data FROM {$db->base_prefix}queued_tasks WHERE task_id={$monitor->id()}" )[0]->task_data, true );
 		$monitor->setData( 'files_left', $data['files_left'] - 1 );
 		$monitor->log( 'Analyzed: ' . $file );
@@ -836,7 +841,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * A task that will monitor all other catalog tasks
 	 *
-	 * @Wordpress\Action( for="mwp_studio_catalog_monitor" )
+	 * @MWP\WordPress\Action( for="mwp_studio_catalog_monitor" )
 	 *
 	 * @param	Task		$task			The task
 	 * @return	void
@@ -857,7 +862,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Save analysis data
 	 *
-	 * @Wordpress\Action( for="mwp_studio_save_analysis" )
+	 * @MWP\WordPress\Action( for="mwp_studio_save_analysis" )
 	 *
 	 * @param	Agent		$agent			The analysis agent
 	 * @return	void
@@ -889,7 +894,6 @@ class Plugin extends \Modern\Wordpress\Plugin
 		if ( isset( $data['classes'] ) and ! empty( $data['classes'] ) ) {
 			$this->saveAnalysisModels( $data['classes'], 'MWP\Studio\Models\Class_' );
 		}
-		
 	}
 	
 	/**
@@ -919,7 +923,7 @@ class Plugin extends \Modern\Wordpress\Plugin
 	/**
 	 * Create a new project
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_create_project", args=2 )
+	 * @MWP\WordPress\Filter( for="mwp_studio_create_project", args=2 )
 	 *
 	 * @param	array|null			$project 				Project Details
 	 * @param	array				$options				Creation options

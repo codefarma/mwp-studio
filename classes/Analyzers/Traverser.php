@@ -22,7 +22,7 @@ use PhpParser\NodeTraverser;
 class Traverser extends NodeTraverser
 {
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
@@ -54,7 +54,7 @@ class Traverser extends NodeTraverser
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -66,7 +66,7 @@ class Traverser extends NodeTraverser
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -75,10 +75,10 @@ class Traverser extends NodeTraverser
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->setPlugin( $plugin ?: \MWP\Studio\Plugin::instance() );
 	}

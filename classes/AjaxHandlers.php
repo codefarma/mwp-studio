@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Framework;
-use Modern\Wordpress\Pattern\Singleton;
+use MWP\Framework\Framework;
+use MWP\Framework\Pattern\Singleton;
 
 /**
  * AjaxHandlers Class
@@ -25,14 +25,14 @@ class AjaxHandlers extends Singleton
 	protected static $_instance;
 
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -44,7 +44,7 @@ class AjaxHandlers extends Singleton
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -53,10 +53,10 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->setPlugin( $plugin ?: \MWP\Studio\Plugin::instance() );
 	}
@@ -78,7 +78,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Load available studio projects
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_load_projects", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_load_projects", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -108,7 +108,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Fetch the files contained within a plugin
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_fetch_filetree", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_fetch_filetree", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -128,7 +128,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Fetch the files contained within a plugin
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_load_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_load_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -148,7 +148,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Get the 
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_get_function", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_get_function", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -168,7 +168,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Get the content of a file 
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_get_file_content", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_get_file_content", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -192,7 +192,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Synchronize the modification state of a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_sync_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_sync_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -216,7 +216,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Save the content of a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_save_file_content", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_save_file_content", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -247,7 +247,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_create_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_create_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -282,7 +282,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Copy a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_copy_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_copy_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -325,7 +325,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Rename a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_rename_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_rename_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -365,7 +365,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Delete a file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_delete_file", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_delete_file", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -389,11 +389,32 @@ class AjaxHandlers extends Singleton
 			wp_send_json( array( 'success' => false, 'message' => __( 'Only files can be deleted.', 'mwp-studio' ) ) );
 		}
 	}
-
+	
+	/**
+	 * Do a studio search
+	 * 
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_search", for={"users"} )
+	 * 
+	 * @return	void
+	 */
+	public function studioSearch()
+	{
+		$this->authorize();
+		
+		$phrase = $_REQUEST['phrase'];
+		$results = apply_filters( 'mwp_studio_search_results', array(), $phrase );
+		
+		if ( ! empty( $results ) ) {
+			wp_send_json( array( 'success' => true, 'results' => $results ) );
+		}
+		
+		wp_send_json( array( 'success' => false, 'message' => array( 'title' => 'Notice', 'message' => 'No results found.' ) ) );
+	}
+	
 	/**
 	 * Create a new project
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_create_project", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_create_project", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -423,7 +444,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new project
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_edit_project", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_edit_project", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -446,7 +467,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Build a new project version
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_build_mwp_project", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_build_mwp_project", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -456,7 +477,7 @@ class AjaxHandlers extends Singleton
 		
 		try 
 		{
-			$zipfile = \Modern\Wordpress\Plugin::createBuild( $_REQUEST['slug'], array( 'nobundle' => ! $_REQUEST['bundle'], 'version-update' => $_REQUEST['version'] ) );
+			$zipfile = \MWP\Framework\Plugin::createBuild( $_REQUEST['slug'], array( 'nobundle' => ! $_REQUEST['bundle'], 'version-update' => $_REQUEST['version'] ) );
 			wp_send_json( array( 'success' => true, 'version' => $_REQUEST['version'], 'file' => str_replace( ABSPATH, '', $zipfile ) ) );
 		}
 		catch( \Exception $e )
@@ -468,7 +489,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new php class
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_add_class", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_add_class", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -476,7 +497,7 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$framework = \Modern\Wordpress\Framework::instance();
+		$framework = \MWP\Framework\Framework::instance();
 		$classname = wp_unslash( $_REQUEST['classname'] );
 		$plugin = wp_unslash( $_REQUEST['plugin'] );
 		
@@ -495,7 +516,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new php template
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_add_template", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_add_template", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -503,7 +524,7 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$framework = \Modern\Wordpress\Framework::instance();
+		$framework = \MWP\Framework\Framework::instance();
 		$template = wp_unslash( $_REQUEST['template'] );
 		$plugin = wp_unslash( $_REQUEST['plugin'] );
 		
@@ -522,7 +543,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new css file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_add_css", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_add_css", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -530,7 +551,7 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$framework = \Modern\Wordpress\Framework::instance();
+		$framework = \MWP\Framework\Framework::instance();
 		$filename = wp_unslash( $_REQUEST['filename'] );
 		$plugin = wp_unslash( $_REQUEST['plugin'] );
 		
@@ -549,7 +570,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Create a new javascript file
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_add_js", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_add_js", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -557,7 +578,7 @@ class AjaxHandlers extends Singleton
 	{
 		$this->authorize();
 		
-		$framework = \Modern\Wordpress\Framework::instance();
+		$framework = \MWP\Framework\Framework::instance();
 		$filename = wp_unslash( $_REQUEST['filename'] );
 		$plugin = wp_unslash( $_REQUEST['plugin'] );
 		
@@ -576,7 +597,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Load items from the catalog
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_load_catalog_items", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_load_catalog_items", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -604,7 +625,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Check the status of the backend
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_statuscheck", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_statuscheck", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -625,7 +646,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Check the status of a backend process
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_process_status", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_process_status", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -676,7 +697,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Rebuild catalog
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_sync_catalog", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_sync_catalog", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -690,7 +711,7 @@ class AjaxHandlers extends Singleton
 			wp_send_json( array( 'success' => true, 'background' => true ) );
 		}
 		else if ( is_dir( ABSPATH . $path ) ) {
-			\Modern\Wordpress\Task::queueTask(
+			\MWP\Framework\Task::queueTask(
 				array( 'action' => 'mwp_studio_catalog_directory' ),
 				array( 'fullpath' => ABSPATH . $path, 'recurse' => true )
 			);
@@ -711,7 +732,7 @@ class AjaxHandlers extends Singleton
 	/**
 	 * Do a fuzzy search
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_search", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_search", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -720,14 +741,14 @@ class AjaxHandlers extends Singleton
 		$this->authorize();		
 		
 		$search = strtolower( $_REQUEST['phrase'] );
-		$db = \Modern\Wordpress\Framework::instance()->db();
+		$db = \MWP\Framework\Framework::instance()->db();
 		$results = array(
 			'hooks' => array(),
 		);
 		
 		if ( $search ) {
 			$words = array_filter( explode( ' ', $search ) );
-			$hooks_like = array_map( function( $word ) { return "hook_names.hook_name LIKE '%" . mysql_real_escape_string( $word ) . "%'"; }, $words );
+			$hooks_like = array_map( function( $word ) { return "hook_names.hook_name LIKE '%" . $db::_real_escape( $word ) . "%'"; }, $words );
 			
 			$results['hooks'] = $db->get_results( "SELECT * FROM ( SELECT DISTINCT(hook_name) FROM {$db->base_prefix}studio_hook_catalog WHERE 1 ) AS hook_names WHERE " . implode( ' AND ', $hooks_like ) );
 		}

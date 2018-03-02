@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Pattern\Singleton;
+use MWP\Framework\Pattern\Singleton;
 use PhpParser\ParserFactory;
 use PhpParser\Node;
 use PhpParser\NodeVisitor\NameResolver;
@@ -30,7 +30,7 @@ class Agent extends Singleton
 	protected static $_instance;
 
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
@@ -62,7 +62,7 @@ class Agent extends Singleton
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -74,7 +74,7 @@ class Agent extends Singleton
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -83,10 +83,10 @@ class Agent extends Singleton
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->setPlugin( $plugin ?: \MWP\Studio\Plugin::instance() );
 		

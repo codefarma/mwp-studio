@@ -17,14 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Plugin Settings
  *
- * @Wordpress\Options
- * @Wordpress\Options\Section( title="General Settings" )
- * @Wordpress\Options\Field( title="Automatic Index Update Interval (seconds)", name="auto_index_interval", type="text", default=300 )
- * @Wordpress\Options\Field( title="Studio Heartbeat Interval (seconds)", name="heartbeat_interval", type="text", default=20 )
- * @Wordpress\Options\Field( title="Authorized Users", name="authorized_users", type="text", default="1" )
- * @Wordpress\Options\Field( title="Editable File Types", name="editable_file_types", type="text", default="php,css,less,js,html,xml,txt,md,pot,mo,gitignore,buildignore,json,lock" )
+ * @MWP\WordPress\Options
+ * @MWP\WordPress\Options\Section( title="General Settings" )
+ * @MWP\WordPress\Options\Field( title="Automatic Index Update Interval (seconds)", name="auto_index_interval", type="text", default=300 )
+ * @MWP\WordPress\Options\Field( title="Studio Heartbeat Interval (seconds)", name="heartbeat_interval", type="text", default=20 )
+ * @MWP\WordPress\Options\Field( title="Authorized Users", name="authorized_users", type="text", default="1" )
+ * @MWP\WordPress\Options\Field( title="Editable File Types", name="editable_file_types", type="text", default="php,css,less,js,html,xml,txt,md,pot,gitignore,buildignore,json,lock" )
  */
-class Settings extends \Modern\Wordpress\Plugin\Settings
+class Settings extends \MWP\Framework\Plugin\Settings
 {
 	/**
 	 * Instance Cache - Required for singleton

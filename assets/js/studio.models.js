@@ -230,6 +230,52 @@
 	});
 	
 	/**
+	 * [Model] Search Result
+	 */
+	var SearchResult = mwp.model( 'mwp-studio-search-result', 
+	{
+		/**
+		 * Initialize
+		 *
+		 * @return	void
+		 */
+		initialize: function()
+		{
+			var self = this;
+			
+			this.set( 'title', this.get('title') || '' );
+			this.set( 'snippet', this.get('snippet') || '' );
+			this.set( 'content', this.get('content') || '' );
+			this.set( 'type', this.get('type') || 'generic' );
+		},
+		
+		/**
+		 * Get the search result summary view
+		 * 
+		 * @return	jQuery
+		 */
+		getSummaryView: function()
+		{
+			var template = $( studio.local.templates.search.result_summary );
+			ko.applyBindings( kb.viewModel( this ), template[0] );
+			return template;
+		},
+		
+		/**
+		 * Get the search result detailed view
+		 *
+		 * @return	jQuery
+		 */
+		getDetailedView: function()
+		{
+			var template = $( studio.local.templates.search.result_details );
+			ko.applyBindings( kb.viewModel( this ), template[0] );
+			return template;			
+		}
+		
+	});
+	
+	/**
 	 * File sort comparator
 	 *
 	 * @param	Model		model1			One of two models to compare
@@ -327,6 +373,11 @@
 			 * @var	bool		File is in a conflicting state
 			 */
 			this.conflicted = ko.observable( false );
+			
+			/**
+			 * @var bool		File is being saved
+			 */
+			this.saving = ko.observable( false );
 			
 			/**
 			 * @var	$.Deferred	File editor ready
@@ -436,8 +487,10 @@
 		{
 			var self = this;
 			
-			if ( this.editor ) 
+			if ( this.editor && ! this.saving() ) 
 			{
+				this.saving( true );
+				
 				return $.ajax({
 					method: 'post',
 					url: studio.local.ajaxurl,
@@ -448,6 +501,7 @@
 					}
 				}).done( function( response ) 
 				{
+					self.saving( false );
 					if ( response.success ) {
 						self.conflicted( false );
 						self.edited( false );
@@ -643,6 +697,7 @@
 					self.open(false);
 					self.conflicted(false);
 					self.edited(false);
+					self.saving(false);
 					
 					// If we're closing the active file, we need to pick a new active file
 					if ( studio.viewModel.activeFile() === self.getFileViewModel() )

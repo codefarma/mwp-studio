@@ -14,8 +14,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Pattern\ActiveRecord;
-use Modern\Wordpress\Framework;
+use MWP\Framework\Pattern\ActiveRecord;
+use MWP\Framework\Framework;
 
 use MWP\Studio\Analyzers\AbstractAnalyzer;
 use MWP\Studio\AjaxHandlers;
@@ -33,14 +33,14 @@ class HookInspector extends Tool
 	/**
 	 * Hook Inspector JS
 	 *
-	 * @Wordpress\Script( handle="mwp-studio-hook-inspector", deps={"mwp-studio"} )
+	 * @MWP\WordPress\Script( handle="mwp-studio-hook-inspector", deps={"mwp-studio"} )
 	 */
 	public $inspectorToolJS;
 	
 	/**
 	 * Hook Inspector CSS
 	 *
-	 * @Wordpress\Stylesheet
+	 * @MWP\WordPress\Stylesheet
 	 */
 	public $inspectorToolCSS;
 	
@@ -58,7 +58,7 @@ class HookInspector extends Tool
 	/**
 	 * Enqueue scripts and stylesheets
 	 * 
-	 * @Wordpress\Action( for="admin_enqueue_scripts" )
+	 * @MWP\WordPress\Action( for="admin_enqueue_scripts" )
 	 *
 	 * @return	void
 	 */
@@ -74,7 +74,7 @@ class HookInspector extends Tool
 	/**
 	 * Add the toolbox component to the studio
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_toolbox_components" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_toolbox_components" )
 	 *
 	 * @param	array		$components				Toolbox components
 	 * @return	array
@@ -97,7 +97,7 @@ class HookInspector extends Tool
 	/**
 	 * Add our templates to the studio javascript controller
 	 *
-	 * @Wordpress\Filter( for="studio_controller_params" )
+	 * @MWP\WordPress\Filter( for="studio_controller_params" )
 	 *
 	 * @param	array		$params				The studio javascript localized parameters
 	 * @return	array
@@ -113,7 +113,7 @@ class HookInspector extends Tool
 	/**
 	 * Get results for a hook
 	 *
-	 * @Wordpress\AjaxHandler( action="mwp_studio_hook_results", for={"users"} )
+	 * @MWP\WordPress\AjaxHandler( action="mwp_studio_hook_results", for={"users"} )
 	 *
 	 * @return	void
 	 */
@@ -144,7 +144,7 @@ class HookInspector extends Tool
 	/**
 	 * Load actions/filters catalog results
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_load_catalog_items" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_load_catalog_items" )
 	 *
 	 * @param	array			$results				The loaded catalog results
 	 * @return	array
@@ -183,7 +183,7 @@ class HookInspector extends Tool
 	/**
 	 * Add hooks analyzer to code agent
 	 *
-	 * @Wordpress\Filter( for="mwp_studio_code_analyzers" )
+	 * @MWP\WordPress\Filter( for="mwp_studio_code_analyzers" )
 	 *
 	 * @param	array			$analyzers				Existing analyzers
 	 * @return	array
@@ -197,7 +197,7 @@ class HookInspector extends Tool
 	/**
 	 * Save analysis data
 	 *
-	 * @Wordpress\Action( for="mwp_studio_save_analysis" )
+	 * @MWP\WordPress\Action( for="mwp_studio_save_analysis" )
 	 *
 	 * @param	Agent		$agent			The analysis agent
 	 * @return	void
@@ -221,7 +221,7 @@ class HookInspector extends Tool
 	/**
 	 * Delete hook records for detected missing files
 	 *
-	 * @Wordpress\Action( for="mwp_studio_missing_file" )
+	 * @MWP\WordPress\Action( for="mwp_studio_missing_file" )
 	 *
 	 * @param	File		$file			The missing file record
 	 * @return	void
@@ -436,14 +436,14 @@ class HookModel extends ActiveRecord
 	public static $prefix = 'hook_';
 	
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -455,7 +455,7 @@ class HookModel extends ActiveRecord
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -464,10 +464,10 @@ class HookModel extends ActiveRecord
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->setPlugin( $plugin ?: \MWP\Studio\Plugin::instance() );
 	}

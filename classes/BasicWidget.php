@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Widget Class
  */
-class BasicWidget extends \Modern\Wordpress\Plugin\Widget
+class BasicWidget extends \MWP\Framework\Plugin\Widget
 {
  	/**
 	 * @var	Plugin (Do Not Remove)

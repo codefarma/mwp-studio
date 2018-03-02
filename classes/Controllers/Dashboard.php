@@ -14,12 +14,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	die( 'Access denied.' );
 }
 
-use Modern\Wordpress\Pattern\Singleton;
+use MWP\Framework\Pattern\Singleton;
 
 /**
  * Main Studio Controller
  *
- * @Wordpress\AdminPage( type="dashboard", menu="MWP Studio", title="MWP Studio", slug="mwp-studio-dashboard" )
+ * @MWP\WordPress\AdminPage( type="dashboard", menu="MWP Studio", title="MWP Studio", slug="mwp-studio-dashboard" )
  */
 class Dashboard extends Singleton
 {
@@ -29,14 +29,14 @@ class Dashboard extends Singleton
 	protected static $_instance; 
 	 
 	/**
-	 * @var 	\Modern\Wordpress\Plugin		Provides access to the plugin instance
+	 * @var 	\MWP\Framework\Plugin		Provides access to the plugin instance
 	 */
 	protected $plugin;
 	
 	/**
  	 * Get plugin
 	 *
-	 * @return	\Modern\Wordpress\Plugin
+	 * @return	\MWP\Framework\Plugin
 	 */
 	public function getPlugin()
 	{
@@ -48,7 +48,7 @@ class Dashboard extends Singleton
 	 *
 	 * @return	this			Chainable
 	 */
-	public function setPlugin( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function setPlugin( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin;
 		return $this;
@@ -57,10 +57,10 @@ class Dashboard extends Singleton
 	/**
 	 * Constructor
 	 *
-	 * @param	\Modern\Wordpress\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
+	 * @param	\MWP\Framework\Plugin	$plugin			The plugin to associate this class with, or NULL to auto-associate
 	 * @return	void
 	 */
-	public function __construct( \Modern\Wordpress\Plugin $plugin=NULL )
+	public function __construct( \MWP\Framework\Plugin $plugin=NULL )
 	{
 		$this->plugin = $plugin ?: \MWP\Studio\Plugin::instance();
 	}

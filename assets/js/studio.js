@@ -46,6 +46,7 @@
 	var FileTreeNode      = mwp.model.get( 'mwp-studio-filetree-node' );
 	var Project           = mwp.model.get( 'mwp-studio-project' );
 	var GenericInterface  = mwp.model.get( 'mwp-studio-generic-interface' );
+	var SearchResult      = mwp.model.get( 'mwp-studio-search-result' );
 	
 	/**
 	 * @var	bool		Flag indicating if a process polling is active
@@ -200,6 +201,18 @@
 		},
 		
 		/**
+		 * Proxy ajax requests to the backend
+		 *
+		 * @param	object			options			The ajax options
+		 * @return	$.ajax
+		 */
+		ajax: function( options )
+		{
+			options.url = this.local.ajaxurl;
+			return $.ajax( options );
+		},		
+		
+		/**
 		 * Get the current studio environment
 		 *
 		 * @return	Environment
@@ -220,7 +233,7 @@
 		 */
 		updateCodeIndex: function()
 		{
-			return $.ajax({
+			return this.ajax({
 				url: studio.local.ajaxurl,
 				data: { action: 'mwp_studio_sync_catalog', path: 'all' }
 			});
@@ -525,6 +538,49 @@
 		},
 		
 		/**
+		 * Get the search window configuration
+		 *
+		 * @param	string		phrase		Phrase to populate search with
+		 * @return	object
+		 */
+		searchWindow: function( phrase )
+		{
+			var resultsCollection = new Backbone.Collection({ model: SearchResult });
+			var viewModel = {
+				phrase: ko.observable( phrase ),
+				results: kb.collectionObservable( resultsCollection ),
+				searching: ko.observable( false ),
+				doSearch: function() {
+					viewModel.searching( true );
+					return studio.ajax({
+						method: 'post',
+						data: {
+							action: 'mwp_studio_search',
+							phrase: viewModel.phrase()
+						}
+					})
+					.done( function( response ) {
+						viewModel.searching( false );
+						if ( response.success ) {
+							resultsCollection.reset( response.results );
+						} else {
+							if ( response.message ) {
+								studio.openDialog( 'alert', response.message );
+							}
+						}
+					});
+				}
+			};
+			
+			return {
+				title: '<i class="fa fa-search"></i> Search',
+				bodyContent: $(this.local.templates.dialogs.search),
+				footerContent: $(''),
+				viewModel: viewModel
+			}
+		},
+		
+		/**
 		 * About the studio window
 		 *
 		 * @return	object
@@ -555,18 +611,6 @@
 			});
 		},
 
-		/**
-		 * Proxy ajax requests for abstract functionality implementation
-		 *
-		 * @param	object			options			The ajax options
-		 * @return	$.ajax
-		 */
-		ajax: function( options )
-		{
-			options.url = this.local.ajaxurl;
-			return $.ajax( options );
-		},
-		
 		/**
 		 * Heartbeat
 		 *
@@ -847,41 +891,18 @@
 		},
 		
 		/**
-		 * Bind an arbitrary callback
+		 * Enter key pressed
 		 */
-		init: {
+		enterKey: {
 			init: function( element, valueAccessor, allBindingsAccessor ) {
 				var callback = ko.utils.unwrapObservable( valueAccessor() );
 				if ( typeof callback == 'function' ) {
-					callback.call( element, allBindingsAccessor );
+					$(element).on( 'keypress', function(e) {
+						if ( e.which == 13 ) {
+							callback.call( element, allBindingsAccessor );
+						}
+					});
 				}
-			}
-		},
-		
-		/**
-		 * Bind an arbitrary callback
-		 */
-		callback: {
-			update: function( element, valueAccessor, allBindingsAccessor ) {
-				var callback = ko.utils.unwrapObservable( valueAccessor() );
-				if ( typeof callback == 'function' ) {
-					callback.call( element, allBindingsAccessor );
-				}
-			}
-		},
-		
-		/**
-		 * jQuery proxy
-		 */
-		jquery: {
-			update: function( element, valueAccessor, allBindingsAccessor ) {
-				var options = ko.utils.unwrapObservable( valueAccessor() );
-				var el = $(element);
-				$.each( options, function( key, props ) {
-					if ( typeof el[key] == 'function' ) {
-						el[key](props);
-					}
-				});
 			}
 		}
 	});

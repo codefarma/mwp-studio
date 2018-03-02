@@ -23,12 +23,12 @@ class MWPStudioPluginTest extends WP_UnitTestCase
 	 */
 	public function __construct()
 	{
-		if ( ! file_exists( WP_PLUGIN_DIR . '/modern-framework/plugin.php' ) )
+		if ( ! file_exists( WP_PLUGIN_DIR . '/mwp-framework/plugin.php' ) )
 		{
-			die( 'Error: You must first install the Modern Wordpress Framework plugin to your test suite to run tests on this plugin.' );
+			die( 'Error: You must first install the MWP Framework plugin to your test suite to run tests on this plugin.' );
 		}
 		
-		require_once WP_PLUGIN_DIR . '/modern-framework/plugin.php';
+		require_once WP_PLUGIN_DIR . '/mwp-framework/plugin.php';
 	}
 
 	/**
@@ -38,7 +38,7 @@ class MWPStudioPluginTest extends WP_UnitTestCase
 	{
 		$plugin = \MWP\Studio\Plugin::instance();
 		
-		// Check that the plugin is a subclass of Modern\Wordpress\Plugin 
-		$this->assertTrue( $plugin instanceof \Modern\Wordpress\Plugin );
+		// Check that the plugin is a subclass of MWP\Framework\Plugin 
+		$this->assertTrue( $plugin instanceof \MWP\Framework\Plugin );
 	}
 }
